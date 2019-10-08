@@ -7,6 +7,7 @@ import lib.util as util
 import time
 import sqlite3
 from  globals import *
+
 app = Bottle()
 
 ########################  SQL STRINGS ####################################
@@ -169,8 +170,10 @@ def addWebMark():
     except:
         print "Insert Error Error Error wmboookmark"
         return renderMainView(user_id,Error(2000))
-    conn.commit()
-    conn.close()
+    else:
+        conn.commit()
+    finally:
+        conn.close()
       
     return renderMainView()
 
@@ -224,7 +227,7 @@ def authorize(user_id,user_name):
 #    reponse.set_cookie('domain', None)
 
 def renderMainView(user_id=None,errObj=None):
-    user_id=None
+
     user_name=None
     try:
         user_name = request.params['user_name']

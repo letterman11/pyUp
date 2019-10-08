@@ -2,6 +2,7 @@ from marks import *
 from SQLStrings import *
 from error import *
 import globals as g
+from globals import *
 import sqlite3
 import re
 from lib.util import *
@@ -10,10 +11,10 @@ from lib.util import *
 ## PJJExecPageSQL                       ####
 ## standalone CGI function to be required ##
 ############################################
-def exec_page(req,user_id,user_name):
-    tabMap = {'tab_AE':1,'tab_FJ':2,'tab_KP':3,'tab_QU':4,'tab_VZ':5,'tab_SRCH_TITLE':6,'tab_SRCH_URL':7,'tab_SRCH_DATE':8,'tab_DATE':9,'searchBox':10}
+def exec_page(req,user_id,user_name,errObj):
+#    tabMap = {'tab_AE':1,'tab_FJ':2,'tab_KP':3,'tab_QU':4,'tab_VZ':5,'tab_SRCH_TITLE':6,'tab_SRCH_URL':7,'tab_SRCH_DATE':8,'tab_DATE':9,'searchBox':10}
+    tabMap = g.tabMap
     print user_id + "Req Cookie  ID"
-    errObj = None
     searchboxTitle = unWrap(req,'searchbox')
     searchTypeBool = unWrap(req,'searchtype')
     tabtype = unWrap(req,'tab') or tabMap['tab_DATE']
@@ -30,10 +31,6 @@ def exec_page(req,user_id,user_name):
     print str(searchboxTitle)   + " searchBox"
     print str(searchTypeBool)  + " searchBool"
 
-# Correct later
-    if errObj != 'Error':
-        NO_HEADER = errObj    
-        errObj = None
 #############################################################################
 #Sort Criteria setting of ORDER_BY_CRITERIA
 #############################################################################
@@ -134,7 +131,8 @@ def exec_page(req,user_id,user_name):
     tabMap = {y:x for x,y in tabMap.iteritems()}
     print "Exec webMark SQL " + executed_sql_str
     print str(tabtype) + " tab in play"
-    conn = sqlite3.connect(g.connFile)
+#    conn = sqlite3.connect(g.connFile)
+    conn = sqlite3.connect(connFile)
     #conn.text_factory = bytes
     conn.text_factory = lambda x: x.decode("latin1")
     try:

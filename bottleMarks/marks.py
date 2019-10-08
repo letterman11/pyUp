@@ -14,9 +14,8 @@ class Marks(object):
         tabTable = self.genTabTable(sort_crit)        
         return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable)
 
-    def renderDefaultView(self):
+    def renderDefaultView(self,colorStyle="red",displayText=str()):
         colorStyle="red"
-        displayText =  ""
         tab = 6
         user_name = "aab"
         return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle,
@@ -38,7 +37,6 @@ class Marks(object):
    <li style="font-size:16px; color:red"> ''' + errText + '''  </li>
   </ul>
 </div>
-ERR_HTML
 '''
         return errOut
 
