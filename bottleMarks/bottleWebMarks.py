@@ -6,7 +6,7 @@ from  PJJExecPageSQL import *
 import lib.util as util 
 import time
 import sqlite3
-
+from  globals import *
 app = Bottle()
 
 ########################  SQL STRINGS ####################################
@@ -29,7 +29,8 @@ ORDER_BY_DATE =  " ) order by a.dateAdded "
 ########################################################################
 # global database name 
 #connFile = gConn =  webmarksDB = sqlite3.connect('/home/angus/dcoda_net/cgi-bin/webMarks/cgi-bin/dcoda_acme.webMarks')
-connFile = gConn =  webmarksDB = '/home/angus/dcoda_net/cgi-bin/webMarks/cgi-bin/dcoda_acme.webMarks'
+#connFile = gConn =  webmarksDB = '/home/angus/dcoda_net/cgi-bin/webMarks/cgi-bin/dcoda_acme.webMarks'
+#connFile = gConn =  webmarksDB = '/home/angus/pyprojects/webMarksMicro/bottleMarks/dcoda_acme.webMarks'
 ########################################################################
 
 
@@ -127,11 +128,12 @@ def searchWebMark():
 
 @app.post("/insertMark")
 @authenticate
-def addWebMark(request=None):
-    user_id = request.get_cookie['wmUserID']	
+#def addWebMark(request=None):
+def addWebMark():
+    user_id = request.get_cookie('wmUserID')	
     title = request.params['mark_title']	
     url = request.params['mark_url']	
-    unix_epochs = time.time()
+    unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
     dateAdded = unix_epochs * (1000 * 1000)
 
@@ -139,9 +141,12 @@ def addWebMark(request=None):
     curs = conn.cursor()
 
     curs.execute("select max(BOOKMARK_ID) from WM_BOOKMARK")
-    tbl1MaxId = curs.fetchone()
+    (tbl1MaxId,) = curs.fetchone()
     curs.execute("select max(PLACE_ID) from WM_PLACE")
-    tbl2MaxId = curs.fetchone()
+    (tbl2MaxId,) = curs.fetchone()
+
+    print tbl1MaxId
+    print tbl2MaxId
 
     tbl1MaxId +=1
     tbl2MaxId +=1
@@ -150,19 +155,23 @@ def addWebMark(request=None):
     dup_check = curs.fetchone()
     
     if dup_check:
+        print "Duplicate"
         return renderMainView(user_id,Error(150))
     
     try:
-	    curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values (?,?,?)", (tbl2MaxId, url, title))
+        curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values (?,?,?)", (tbl2MaxId, url, title,))
     except:
+        print "Insert Error wmplace"
         return renderMainView(user_id,Error(2000))
-
 
     try:
-	    curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED) values (?,?,?,?)", (tbl1MaxId,user_id,tbl2MaxId,title,dateAdded,))
+        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED) values (?,?,?,?,?)", (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded,))
     except:
+        print "Insert Error Error Error wmboookmark"
         return renderMainView(user_id,Error(2000))
-
+    conn.commit()
+    conn.close()
+      
     return renderMainView()
 
 @app.post("/deltapass")
@@ -185,7 +194,8 @@ def authenCredFunc():
     if user_id:
         authorize(user_id,user_name)
     else:
-        return template('class_defaultpage', colorStyle="red", userName="",displayText="Failed Login")
+        return Marks().renderDefaultView(colorStyle="red",displayText="Failed Login")
+        #return template('class_defaultpage', colorStyle="red", userName="",displayText="Failed Login")
     return renderMainView(user_id)
 
 def validate_session():
@@ -213,29 +223,17 @@ def authorize(user_id,user_name):
 #    reponse.set_cookie('expires', None)
 #    reponse.set_cookie('domain', None)
 
-def renderMainView(user_id=None):
+def renderMainView(user_id=None,errObj=None):
+    user_id=None
+    user_name=None
     try:
         user_name = request.params['user_name']
     except:
         pass
-    if not user_id:
+    if not user_id or not user_name:
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
-    return exec_page(request,user_id,user_name)
-'''	
-def renderDefaultView():
-    colorStyle="red"
-    displayText =  ""
-    tab = 6
-    user_name = "aab"
-    return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle,
-                                     tab=tab, user_name=user_name)
-
-def renderRegistrationView():
-    errText = ""
-    return template('class_registration.html', errText=errText)
-'''
-
+    return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
 #        app.run(debug="True", host="0.0.0.0", port='8086')
