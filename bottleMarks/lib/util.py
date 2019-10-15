@@ -17,10 +17,10 @@ def storeSQL(sSQL):
     storeSessionObject(sessionObject) 
 
 def getStoredSQL():
-
     sessionObject = validateSession()
     storedSQL = sessionObject['SESSIONDATA']
     return storedSQL or "['Fake Object']" 
+
 def storeSessionObject(sessObj):
     return sessObj 
 
