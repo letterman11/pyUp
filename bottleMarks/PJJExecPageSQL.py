@@ -1,18 +1,17 @@
 from marks import *
 from SQLStrings import *
 from error import *
+from lib.util import *
 import globals as g
 from globals import *
 import sqlite3
 import re
-from lib.util import *
 ############################################
 ## Bottle Modified ExecPageSQL function #### 
 ## PJJExecPageSQL                       ####
 ## standalone CGI function to be required ##
 ############################################
 def exec_page(req,user_id,user_name,errObj):
-#    tabMap = {'tab_AE':1,'tab_FJ':2,'tab_KP':3,'tab_QU':4,'tab_VZ':5,'tab_SRCH_TITLE':6,'tab_SRCH_URL':7,'tab_SRCH_DATE':8,'tab_DATE':9,'searchBox':10}
     tabMap = g.tabMap
     print user_id + "Req Cookie  ID"
     searchboxTitle = unWrap(req,'searchbox')
@@ -59,11 +58,7 @@ def exec_page(req,user_id,user_name,errObj):
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
             qstr = " a.title like '%" + queri[0] + "%' "
-            skip=0
-            for q in queri:
-                skip+=1
-                if skip  == 1:
-                    continue    
+            for q in queri[1:]:
                 if searchTypeBool == "OR":
                     qstr += " or a.title like '%" + q + "%' " 
                 else:
@@ -81,11 +76,7 @@ def exec_page(req,user_id,user_name,errObj):
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
             qstr = " a.title like '%" + queri[0] + "%' "
-            skip=0
-            for q in queri:
-                skip+=1
-                if skip  == 1:
-                    continue    
+            for q in queri[1:]:
                 if searchTypeBool == "AND":
                     qstr += " and a.title like '%" + q + "%' " 
                 else:  
