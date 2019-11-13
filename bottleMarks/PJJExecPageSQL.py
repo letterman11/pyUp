@@ -17,7 +17,11 @@ def exec_page(req,user_id,user_name,errObj):
     searchboxTitle = unWrap(req,'searchbox')
     searchTypeBool = unWrap(req,'searchtype')
     tabtype = unWrap(req,'tab') or tabMap['tab_DATE']
-    sort_crit = unWrap(req,'sortCrit') or   1 
+    tabtype = int(tabtype)
+    sort_crit = unWrap(req,'sortCrit') 
+    if sort_crit != None and sort_crit != 'undefined':
+        sort_crit = int(sort_crit)
+
     searchboxURL = unWrap(req,'searchbox2')
     ORDER_BY_CRIT = ""
     sort_asc = 0
@@ -35,7 +39,7 @@ def exec_page(req,user_id,user_name,errObj):
 #############################################################################
     if sort_crit == 0:
         ORDER_BY_CRIT = ORDER_BY_TITLE
-        cort_ord = ' asc '    
+        sort_ord = ' asc '    
     elif sort_crit == 1:
         ORDER_BY_CRIT = ORDER_BY_TITLE
         sort_ord = ' desc '
@@ -120,6 +124,7 @@ def exec_page(req,user_id,user_name,errObj):
 # Start of Execution of SQL
 #########
     tabMap = {y:x for x,y in tabMap.iteritems()}
+    print sort_crit
     print "Exec webMark SQL " + executed_sql_str
     print str(tabtype) + " tab in play"
 #    conn = sqlite3.connect(g.connFile)
