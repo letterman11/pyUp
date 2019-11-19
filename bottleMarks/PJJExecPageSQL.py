@@ -67,9 +67,15 @@ def exec_page(req,user_id,user_name,errObj):
                     qstr += " or a.title like '%" + q + "%' " 
                 else:
                     qstr += " and a.title like '%" + q + "%' " 
-        exec_sql_str = main_sql_str + qstr  + " and b.url like '%" + searchboxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
+        ###########################################
+        # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
+        ##########################################
+        qstr +=  " and b.url like '%" + searchboxURL + "%' " 
+        exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
+        ##########################################
+        #exec_sql_str = main_sql_str + qstr  + " and b.url like '%" + searchboxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = main_sql_str + qstr 
-        storeSQL(storedSQLStr)
+        storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchboxTitle):
         print "Hit Title"
@@ -87,13 +93,13 @@ def exec_page(req,user_id,user_name,errObj):
                     qstr += " or a.title like '%" + q + "%' " 
         exec_sql_str = main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = main_sql_str + qstr 
-        storeSQL(storedSQLStr)
+        storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchboxURL):
         qstr = " b.url like '%" + searchboxURL + "%' "# sort_ord
         exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = main_sql_str + qstr 
-        storeSQL(storedSQLStr)
+        storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
 ##############################################################################################
 # End of logic branches for SrcBoxTitle + SrchBoxURL + Radio Button
@@ -115,7 +121,7 @@ def exec_page(req,user_id,user_name,errObj):
         elif tabtype == tabMap['tab_DATE']:
             exec_sql_str = date_sql_str + sort_ord + "limit 200 "
         elif tabtype == tabMap['tab_SRCH_TITLE']:
-            storedSQLStr = getStoredSQL()
+            storedSQLStr = getStoredSQL(req)
             exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
 ###################################
 ##################################
