@@ -2,25 +2,27 @@ from bottle import Bottle, template, run, route, request, response, static_file
 from datetime import datetime
 from marks import Marks
 from functools import wraps
-from  PJJExecPageSQL import *
+from  PJJExecPageSQL import exec_page
 import lib.util as util 
 import time
 import sqlite3
 from  globals import *
+from error import *
+#import globals as g
 
 app = Bottle()
 
 # static files ############################################
 @app.route('/public/css/<filename>')
-def server_static(filename):
+def server_static_css(filename):
     return static_file(filename, root="./public/css")
-
+     
 @app.route('/public/images/<filename>')
-def server_static(filename):
+def server_static_imgs(filename):
     return static_file(filename, root="./public/images")
 
 @app.route('/public/js/<filename>')
-def server_static(filename):
+def server_static_js(filename):
     return static_file(filename, root="./public/js")
 ###########################################################
 
@@ -34,7 +36,7 @@ def authenticate(f):
     return wrapper
 
 
-def pre_auth(connFile):
+def pre_auth(connFile): 
     usr_name = "" 
     usr_pass = ""
     old_usr_pass = ""
@@ -47,10 +49,10 @@ def pre_auth(connFile):
         pass        
     exec_sql_str = str()
 
-    if old_usr_pass:
-        exec_sql_str = "select user_id, user_name from WM_USER where user_passwd = '" + old_usr_pass +  "' and user_name ='"  + usr_name + "' "
+    if old_usr_pass: # for update
+        exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_passwd = '" + old_usr_pass +  "' and user_name ='"  + usr_name + "' "
     else:
-        exec_sql_str = "select user_id, user_name from WM_USER where user_passwd = '" + usr_pass + "' and user_name ='" + usr_name  + "' "
+        exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_passwd = '" + usr_pass + "' and user_name ='" + usr_name  + "' "
 
     ### error checking ????? ##############
     conn = sqlite3.connect(connFile)
@@ -66,8 +68,8 @@ def pre_auth(connFile):
         user_row= user_row[0]
         print user_row
         print "user row list above"
-        usr_id,usr_name = user_row[0],user_row[1]
-        return (usr_id,usr_name)
+        usr_id,usr_name,usr_pass = user_row[0],user_row[1],user_row[2]
+        return (usr_id,usr_name,usr_pass)
     else:
         return None
 
@@ -75,6 +77,10 @@ def pre_auth(connFile):
 def register():
     return Marks().renderRegistrationView()
 
+@app.route('/regAuth')
+def registerAuth():
+	pass
+#    return Marks().renderRegistrationView()
 
 @app.route('/default')
 def logIn():
@@ -98,7 +104,7 @@ def indexWB():
 
 @app.route("/tabView")
 @authenticate
-def index():
+def indexView():
     return renderMainView()
 
 @app.post("/searchMark")
@@ -156,11 +162,36 @@ def addWebMark():
       
     return renderMainView()
 
-@app.post("/deltapass")
+@app.post("/deltaPass")
 @authenticate
 def deltaPass():
-    pass
+    print connFile
+    try:
+        (user_id,user_name,user_pass) = pre_auth(connFile)
+    except:
+        return renderMainView(request.params['user_name'],Error(112))
+   
+    new_passwd = request.params['user_pass']
 
+    print "new pass " + new_passwd
+    print "user id " + user_id 
+    if not user_id:
+        return renderMainView(Error(user_id,112))
+    else:
+        try:
+            conn = sqlite3.connect(connFile)
+            curs = conn.cursor()
+            curs.execute("update WM_USER set USER_PASSWD = ?  where USER_NAME = ? ", (new_passwd,user_name));
+
+        except:
+            return renderMainView(user_id,Error(2000))
+        else:
+            conn.commit()
+        finally:
+            conn.close()
+    return renderMainView()
+
+######################################################################
 ## end authenticated routes via decorator ############################
 ######################################################################
 
@@ -173,7 +204,7 @@ def authenCredFunc():
     result_row = pre_auth(gConn)
     user_id = None
     if result_row:
-        (user_id,user_name) = result_row
+        (user_id,user_name,user_pass) = result_row
     #!!!additional logic for already present session needed
     ######################################################
     if user_id:
@@ -188,6 +219,9 @@ def validate_session():
     #print  "SessionID" +  " " + wmSID
     if not wmSID:
         return False
+
+def validate_session2(req):
+    return util.anotherValidateSession(req) 
 
 def authorize(user_id,user_name):
     print user_id[1] 
@@ -204,7 +238,8 @@ def authorize(user_id,user_name):
     response.set_cookie('Counter', str(init_count))
     response.set_cookie('tab_state', str(init_tab_state))
     response.set_cookie('dt_cnter', str(init_date_count))
-#    reponse.set_cookie('expires', None)
+    util.saveSession(sessionID)
+#    response.set_cookie('expires', 60*60)
 #    reponse.set_cookie('domain', None)
 
 def renderMainView(user_id=None,errObj=None):
@@ -222,6 +257,7 @@ def renderMainView(user_id=None,errObj=None):
 if __name__ ==  '__main__':
 #        app.run(debug="True", host="0.0.0.0", port='8086')
         app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+#        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
 '''
 def authenticate(f):
     @wraps(f)
