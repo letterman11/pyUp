@@ -8,7 +8,6 @@ import time
 import sqlite3
 from  globals import *
 from error import *
-#import globals as g
 
 app = Bottle()
 
@@ -30,7 +29,8 @@ def server_static_js(filename):
 def authenticate(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if validate_session() == False:
+        #if validate_session() == False:
+        if validate_session2(request) == False:
             return Marks().renderDefaultView()
         return f(*args, **kwargs)
     return wrapper
@@ -61,9 +61,6 @@ def pre_auth(connFile):
     user_row = curs.fetchall()
     conn.close()
 	
-    print usr_name  + "User Name"
-    print usr_pass + "User PASS"
-
     if user_row:
         user_row= user_row[0]
         print user_row
@@ -173,8 +170,6 @@ def deltaPass():
    
     new_passwd = request.params['user_pass']
 
-    print "new pass " + new_passwd
-    print "user id " + user_id 
     if not user_id:
         return renderMainView(Error(user_id,112))
     else:
@@ -216,18 +211,13 @@ def authenCredFunc():
 def validate_session():
     wmSID = request.get_cookie('wmSessionID')
     user_id = request.get_cookie('wmUserID')
-    #print  "SessionID" +  " " + wmSID
     if not wmSID:
         return False
 
 def validate_session2(req):
-    return util.anotherValidateSession(req) 
+    return util.validateSession2(req) 
 
 def authorize(user_id,user_name):
-    print user_id[1] 
-    print "Loot"
-    print user_id[0] 
-    print "Looter"
     sessionID = util.genSessionID()
     init_count = 0
     init_date_count = 0
@@ -243,7 +233,6 @@ def authorize(user_id,user_name):
 #    reponse.set_cookie('domain', None)
 
 def renderMainView(user_id=None,errObj=None):
-
     user_name=None
     try:
         user_name = request.params['user_name']
