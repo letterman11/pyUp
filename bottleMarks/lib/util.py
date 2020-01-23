@@ -2,10 +2,26 @@ from sessionObject import *
 import random
 import pickle
 import os
+import sys
 
-HOME = os.environ['HOME']
+extra_path_linux = '/pyprojects/webMarksMicro/bottleMarks/sessions'
+extra_path_win32 = '\\webMarksMicro\\bottleMarks\\sessions'
 
-session_dir = HOME + '/pyprojects/webMarksMicro/bottleMarks/sessions'
+if sys.platform == 'win32':
+
+    HOME = os.environ['HOMEPATH']  
+    extra_path = extra_path_win32
+
+elif sys.platform == 'linux2':
+
+    HOME = os.environ['HOME']  
+    extra_path = extra_path_linux
+
+else:
+
+    HOME = os.environ['HOME']  
+
+session_dir = HOME + extra_path 
 
 def genSessionID():
 	id_list = ('A','B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
