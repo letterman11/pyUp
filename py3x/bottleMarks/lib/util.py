@@ -23,6 +23,9 @@ else:
     HOME = os.environ['HOME']  
 
 session_dir = HOME + extra_path 
+working_dir =  os.getcwd()
+#session_dir = re.sub('lib$','sessions',working_dir)
+session_dir = working_dir
 
 def genSessionID():
 	id_list = ('A','B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
