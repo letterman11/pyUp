@@ -1,74 +1,91 @@
 from bottle import template
+import datetime
+import time
 
-class Marks:
+class Marks(object):
 
-	def __init__(self,tab=1, dbObject=1,rowCount=1, errObj=1):
-		self.tab = tab
-		self.dbObject = dbObject
-		self.rowCount = rowCount
-		self.errObj = errObj
+    def __init__(self,tab=None, dbObject=None,rowCount=None, errObj=None):
+        self.tab = tab
+        self.dbObject = dbObject
+        self.rowCount = rowCount
+        self.errObj = errObj
 
-	def renderMainView(self,user_id,sort_crit,tabMap):
-		
-		return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab)
+    def renderMainView(self,user_id,sort_crit,tabMap):
+        tabTable = self.genTabTable(sort_crit)        
+        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable)
 
+    def renderDefaultView(self,colorStyle="red",displayText=str()):
+        colorStyle="red"
+        tab = 6
+        user_name = "aab"
+        return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle,
+                                     tab=tab, user_name=user_name)
 
-	def renderDefaultView(self):
-		colorStyle="red"	
-		displayText =  ""
-		tab = 6
-		user_name = "aab" 
-		return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle, 
-										tab=tab, user_name=user_name) 
-
-	def renderRegistrationView(self):
-		self.errText = ""
-		return template('class_registration.html', errText=self.errText) 
+    def renderRegistrationView(self):
+        errText = ""
+        return template('class_registration.html', errText=errText)
 
 
-	def genTabTable(self):
 
-		sort_span_html_asc = "<span id=\"sort_span_date\">  &uarr; </span>"
-		sort_span_html_dsc = "<span id=\"sort_span_date\">  &darr; </span>"
 
-		if sort_crit == 2:
-			sort_sp_dt = sort_span_html_asc
-		elif sort_crit == 3:
-			sort_sp_dt = sort_span_html_dsc
-		else:
-			sort_sp_dt = " "
+    def genError(self):
+        errObj = self.errObj
+        errText = errObj.errText()
+        errOut = '''
+<div>
+  <ul>
+   <li style="font-size:16px; color:red"> ''' + errText + '''  </li>
+  </ul>
+</div>
+'''
+        return errOut
+
+
+    def genTabTable(self,sort_crit):
+
+        sort_span_html_asc = "<span id='sort_span_date'>  &uarr; </span>"
+        sort_span_html_dsc = "<span id='sort_span_date'>  &darr; </span>"
+
+        if sort_crit == 2:
+            sort_sp_dt = sort_span_html_asc
+        elif sort_crit == 3:
+            sort_sp_dt = sort_span_html_dsc
+        else:
+            sort_sp_dt = " "
   
 
-		tbl = ''' <table class='tab_table'>\n 
-				 <col width="50%">\n
-				 <col width="35%">\n
-				 <col width="auto">\n
-				'''
-		tbl += " <tr class='header_row'><th>Title</th><th>LINK</th><th style=background:red' "
-		+ " onClick='cgi_out('tab=11');'> Date Added " +  sort_sp_dt + "  </th></tr>\n "
+        tbl = '''<table class='tab_table'>\n 
+                 <col width='50%'>\n
+                 <col width='35%'>\n
+                 <col width='auto'>\n
+                '''    
 
-		## POTENTIAL ERROR SECTION ##
-		if self.ERROROBJ:
-			tbl += self.genError();
+        tbl += " <tr class='header_row'><th>Title</th><th>LINK</th><th style='background:red' " + " onClick='cgi_out('tab=11')> Date Added " +  sort_sp_dt  + "  </th></tr>\n "
+
+        ## POTENTIAL ERROR SECTION ##
+        if self.errObj:
+            tbl += self.genError()
   
 
-		## POTENTIAL ERROR SECTION ##
-		for row in self.dbObject:
-			(url,title,added) = (row[0],row[1],row[2])
-			added = convertTime(added)
-			i+=1
-			alt =  i % 2 or 1    
-			row_color = "row_color" + alt
-			tbl_row  += "<tr class=" + row_color +"> "
-			+ "<td class='title_cell'> <a href=" + url + " target='_blank'> "  +  title + " </a> </td>"
-			+ " <td class='url_cell'> " +  url + " </td> "
-			+ "<td class='date_cell'> "  + added + " </td>"
-			+ " </tr> \n "
+        ## POTENTIAL ERROR SECTION ##
+        i=0
+        tbl_row = str()
+        for row in self.dbObject:
+            (url,title,added) = (row[0],row[1],row[2])
+            added = self.convertTime(added)
+            i += 1
+            alt =  (i % 2) or 2    
+            row_color = "row_color" + str(alt)
+            tbl_row  += "<tr class=" + row_color +"> " + "<td class='title_cell'> <a href=" + url + " target='_blank'> "  +  title + " </a> </td>" \
+            + " <td class='url_cell'> " +  url + " </td> " \
+            + "<td class='date_cell'> "  + str(added) + " </td>" \
+            + " </tr> \n "
 
-			if tbl_row:
-				tbl += tbl_row 
-			tbl += "</table>\n"
+        if self.rowCount:
+           tbl += tbl_row  + "<!-- Row Count" + str(self.rowCount) + " -->"  + "</table>\n"
 
-		return tbl
+        return tbl
 
-
+    def convertTime(self, dateAdded):
+        dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
+        return dateAdded
