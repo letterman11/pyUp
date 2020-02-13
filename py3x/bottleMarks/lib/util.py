@@ -1,8 +1,8 @@
-from sessionObject import *
 import random
 import pickle
 import os
 import sys
+from  lib.sessionObject import *
 
 extra_path = '/pyprojects/webMarksMicro/py3x/bottleMarks/sessions'
 extra_path_linux = '/pyprojects/webMarksMicro/py3x/bottleMarks/sessions'
@@ -25,16 +25,18 @@ else:
 session_dir = HOME + extra_path 
 working_dir =  os.getcwd()
 #session_dir = re.sub('lib$','sessions',working_dir)
-session_dir = working_dir
+session_dir = working_dir + "/" +  "sessions"
+
+print ("Session Dir " + session_dir)
 
 def genSessionID():
-	id_list = ('A','B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
-				'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9') 
-	session_id  = str()
-	rand_list = random.sample(id_list, 17)
-	for i in rand_list:
-		session_id = session_id + i
-	return session_id
+    id_list = ('A','B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
+    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9') 
+    session_id  = str()
+    rand_list = random.sample(id_list, 17)
+    for i in rand_list:
+        session_id = session_id + i
+    return session_id
 
 def storeSQL(sSQL,req):
     sessionID = req.get_cookie('wmSessionID')

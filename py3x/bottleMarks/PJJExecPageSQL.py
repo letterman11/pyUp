@@ -1,7 +1,7 @@
 from marks import Marks
 from SQLStrings import *
 from error import *
-from lib.util import *
+import lib.util as util
 import globals as g 
 from globals import *
 import sqlite3
@@ -13,7 +13,7 @@ import re
 ############################################
 def exec_page(req,user_id,user_name,errObj):
     tabMap = g.tabMap
-    searchboxTitle = unWrap(req,'searchbox')
+    searchBoxTitle = unWrap(req,'searchBoxTitle')
     searchTypeBool = unWrap(req,'searchtype')
     tabtype = unWrap(req,'tab') or tabMap['tab_DATE']
     tabtype = int(tabtype)
@@ -21,7 +21,7 @@ def exec_page(req,user_id,user_name,errObj):
     if sort_crit !=  None and sort_crit != 'undefined':
         sort_crit = int(sort_crit)
 
-    searchboxURL = unWrap(req,'searchbox2')
+    searchBoxURL = unWrap(req,'searchBoxURL')
     ORDER_BY_CRIT = ""
     sort_asc = 0
     sort_desc = 1
@@ -51,11 +51,11 @@ def exec_page(req,user_id,user_name,errObj):
 ##########################################################
 # SearchBoxTitle + SearchBoxURL + AND/OR Radio Button
 ##########################################################
-    if searchTypeBool == "COMBO" and (isset(searchboxTitle)) and (isset(searchboxURL)):
+    if searchTypeBool == "COMBO" and isset(searchBoxTitle) and isset(searchBoxURL):
         #exit
-        queri = re.split(r'\s+',searchboxTitle)
+        queri = re.split(r'\s+',searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like '%" + searchboxTitle + "%'  and b.url like '%" + searchboxURL + "%' "# sort_ord
+            qstr = " a.title like '%" + searchBoxTitle + "%'  and b.url like '%" + searchBoxURL + "%' "# sort_ord
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
             qstr = " a.title like '%" + queri[0] + "%' "
@@ -67,20 +67,20 @@ def exec_page(req,user_id,user_name,errObj):
         ###########################################
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
-        qstr +=  " and b.url like '%" + searchboxURL + "%' " 
+        qstr +=  " and b.url like '%" + searchBoxURL + "%' " 
         exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
         ##########################################
         #exec_sql_str = main_sql_str + qstr  + " and b.url like '%" + searchboxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = main_sql_str + qstr 
-        storeSQL(storedSQLStr,req)
+        util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
-    elif isset(searchboxTitle):
+    elif isset(searchBoxTitle):
         print ("Hit Title")
           #ORDER_BY_CRIT 
-        queri = re.split(r'\s+',searchboxTitle)
+        queri = re.split(r'\s+',searchBoxTitle)
         print (queri)
         if len(queri) < 2:
-            qstr = " a.title like '%" + searchboxTitle + "%' "# sort_ord
+            qstr = " a.title like '%" + searchBoxTitle + "%' "# sort_ord
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
             qstr = " a.title like '%" + queri[0] + "%' "
@@ -91,13 +91,13 @@ def exec_page(req,user_id,user_name,errObj):
                     qstr += " or a.title like '%" + q + "%' " 
         exec_sql_str = main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = main_sql_str + qstr 
-        storeSQL(storedSQLStr,req)
+        util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
-    elif isset(searchboxURL):
-        qstr = " b.url like '%" + searchboxURL + "%' "# sort_ord
+    elif isset(searchBoxURL):
+        qstr = " b.url like '%" + searchBoxURL + "%' "# sort_ord
         exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = main_sql_str + qstr 
-        storeSQL(storedSQLStr,req)
+        util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
 ##############################################################################################
 # End of logic branches for SrcBoxTitle + SrchBoxURL + Radio Button
@@ -119,7 +119,7 @@ def exec_page(req,user_id,user_name,errObj):
         elif tabtype == tabMap['tab_DATE']:
             exec_sql_str = date_sql_str + sort_ord + "limit 200 "
         elif tabtype == tabMap['tab_SRCH_TITLE']:
-            storedSQLStr = getStoredSQL(req)
+            storedSQLStr = util.getStoredSQL(req)
             exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
 ###################################
 ##################################
@@ -159,6 +159,7 @@ except sqlite3.IntegrityError:
 # End of SQL Execution
 ###########
 def isset(string):
+    print("In function isset " + str(string))
     if (string != None) and len(string) == 0:
         print (string + " !RED")
         return False 

@@ -245,7 +245,7 @@ def renderMainView(user_id=None,errObj=None):
 
 if __name__ ==  '__main__':
 #        app.run(debug="True", host="0.0.0.0", port='8086')
-        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+        app.run(debug="True", host="0.0.0.0", port='8087', reloader=True, server='gunicorn', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
 '''
 def authenticate(f):
