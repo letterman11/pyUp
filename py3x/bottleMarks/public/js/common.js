@@ -103,7 +103,7 @@ function cgi_out(tab_parm)
 
 function setSearchTerms()
 {      
-       var searchTerms = parent.top.document.getElementById('searchBx');
+       var searchTerms = parent.top.document.getElementById('searchBoxTitle');
        //parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);
@@ -117,7 +117,7 @@ function getSearchTerms()
 
 function topOpToSearch(topOp)
 {      
-   var searchBox = parent.top.document.getElementById('searchBx');
+   var searchBox = parent.top.document.getElementById('searchBoxTitle');
    searchBox.value = topOp; 
 }
 
