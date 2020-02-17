@@ -1,6 +1,7 @@
 from bottle import template
 import datetime
 import time
+import gen_histo_gram_multi as hist
 
 class Marks(object):
 
@@ -12,7 +13,8 @@ class Marks(object):
 
     def renderMainView(self,user_id,sort_crit,tabMap):
         tabTable = self.genTabTable(sort_crit)        
-        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable)
+        optionTops=hist.gen_optionListDiv()
+        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
 
     def renderDefaultView(self,colorStyle="red",displayText=str()):
         colorStyle="red"
@@ -60,7 +62,7 @@ class Marks(object):
                  <col width='auto'>\n
                 '''    
 
-        tbl += " <tr class='header_row'><th>Title</th><th>LINK</th><th style='background:red' " + " onClick='cgi_out('tab=11')> Date Added " +  sort_sp_dt  + "  </th></tr>\n "
+        tbl += " <tr class='header_row'><th>Title</th><th>LINK</th><th style='background:red' " + " onClick=\"cgi_out('tab=11')\"> Date Added " +  sort_sp_dt  + "  </th></tr>\n "
 
         ## POTENTIAL ERROR SECTION ##
         if self.errObj:

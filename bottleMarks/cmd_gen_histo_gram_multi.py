@@ -56,11 +56,12 @@ def gen_histogram():
 
     new_list = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()),  key=lambda hist : hist[1] , reverse=True)
 
-
+#    print new_list[0:5]
     #markHistHiLo = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()), reverse=True)
     #new_list = sorted(old_list, key=f, cmp=lambda a,b:cmp(a[0],b[0]) or cmp(b[1],a[1]))
     #pretty =  new_list[1][1] < 100  and  "*" * (new_list[1][1]/100)  or  "#" * new_list[1][1]
     for line in new_list:
         pretty =  line[1] > 100  and  "*" * (line[1]/100)  or  "#" * line[1]
-        print line[0] + "\t\t\t\t" + pretty + " " + str(line[1])
+        print ("%-15s%5d %-50s") % (line[0],line[1],pretty)
+#        print line[0] + "\t\t\t\t" + pretty + " " + str(line[1])
 gen_histogram()

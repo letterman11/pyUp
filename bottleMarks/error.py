@@ -20,6 +20,7 @@ class Error(object):
             150 : "Duplicate Web Mark entry",
             151 : "Invalid Web Mark Submission",
             2000 : "Search Criteria Failure",
+            1 : "Testing",
             'ERRCOND' : None
     }
 
