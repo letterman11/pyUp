@@ -137,3 +137,86 @@ function logOut()
 	// vendor specific general Mojo cookie	
 	top.location = "/logout";
 }
+
+function goLink(url,title,bk_id)
+{
+
+  var checkRadio = document.querySelector('input[name="modlink"]:checked'); 
+
+  if (checkRadio != null) { 
+     switch(checkRadio.value) {
+		case 'UPD' :
+        checkRadio.checked = false;
+        displayUpdateLayer(url,title,bk_id)
+		break;
+		case 'DEL' :
+        checkRadio.checked = false;
+        displayDelLayer(url,title,bk_id)
+		break;
+        default:
+     }
+     //checkRadio.checked = false;
+  } else {
+    window.open(url, "_blank"); 
+ }
+
+}
+
+function displayUpdateLayer(url,title,bk_id)
+{
+     //layerUpdate
+     var lU = document.getElementById("updateL");
+	 lU.style.overflow = 'auto';
+     lU.style.display = 'block';
+	 var titleSet = lU.querySelector('input[name="title_update"]')
+	 var urlSet = lU.querySelector('textarea[name="url_update"]')
+	 var bk_idSet = lU.querySelector('input[name="bk_id"]')
+     titleSet.value = title;
+     urlSet.value = url;	
+     bk_idSet.value = bk_id
+
+     Array.from(document.querySelectorAll('td.title_cell'))
+      .find(el => el.textContent.trim() === title)
+      .style.border = "solid";
+}
+
+function displayDelLayer(url,title,bk_id)
+{
+   var delL = document.getElementById("delL")
+   delL.style.display = 'block'
+   var bk_idSet = delL.querySelector('input[name="bk_id"]')
+   bk_idSet.value = bk_id
+   var spDel = delL.getElementsByTagName('p')[0]
+   spDel.innerHTML = title; 
+
+   Array.from(document.querySelectorAll('td.title_cell'))
+    .find(el => el.textContent.trim() === title)
+    .style.border = "solid";
+}
+
+function closeLayer2(layer,del)
+{
+   var ll = document.getElementById(layer)
+   ll.style.display = 'none'; 
+   var title = ll.querySelector('input[name="title_update"]')
+   if (title == null)
+      title =  document.getElementById('spDel').innerHTML
+   else
+      title = title.value
+  
+   Array.from(document.querySelectorAll('td.title_cell'))
+    .find(el => el.textContent.trim() === title)
+    .style.border = "none";
+   
+   if(del == "YES")
+     window.document.formDelete.submit()
+
+}
+
+function closeLayerUpdate(layer)
+{
+   lU = document.getElementById(layer)
+   lU.style.display = 'none'; 
+   window.document.formUpdate.submit()
+
+}

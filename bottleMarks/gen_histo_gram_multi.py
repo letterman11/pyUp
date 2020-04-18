@@ -1,27 +1,30 @@
-hist_sql_all_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID "
+#hist_sql_all_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID "
+hist_sql_all_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = ? "
 import re
 import sqlite3
 import globals as g
 
 # elim2 = { "greenich" : { "url" : 'ht://loop', 'dateAdded': '2001-12-02' }, "santan" : { "url": 'ht://loas', 'dateAdded': '2001-12-03'} }  
-def gen_histogram():
+
+def gen_histogram(user_id):
     markHist = {}
     elimdups = {}
     histo_list = []
     (title,url,dateAdded) = (1,0,2)
 
     conn = sqlite3.connect(g.connFile)
-    conn.text_factory = bytes
-    #conn.text_factory = lambda x: x.decode("latin1")
+    #conn.text_factory = bytes
+    conn.text_factory = lambda x: x.decode("latin1")
     try:
         curs = conn.cursor()
-        curs.execute(hist_sql_all_str)
+        curs.execute(hist_sql_all_str,(user_id,))
         dbRows = curs.fetchall()
         print "RowCountWB " + str(len(dbRows))
         conn.close()
-    except:
-       print "Exception" 
-
+    except Exception as ex:
+       print "Exception" + ex 
+       raise ex
+ 
     for data in dbRows:
         if not data[title]:
             continue       
@@ -29,8 +32,6 @@ def gen_histogram():
             continue
         if  data[title].upper() in elimdups:
             continue
-            elimdups[title][url] = data[url]
-            elimdups[data][title][dateAdded] = data[dateAdded]
         else:
             elimdups[data[title].upper()] = { "url": data[url], "dateAdded": data[dateAdded] }
 
@@ -40,7 +41,7 @@ def gen_histogram():
         for word in words:
             if re.match(r'\b[:cntrl:]+\b',word):
                 continue
-            if re.match(r"(?:[-+|:'&]|\bsqft\b|\bof\b|\bThe\b|\bthe\b|\bto\b|\band\b|\b[0-9]\b)",word,re.I):
+            if re.match(r"(?:[-+|:'&]|\bsqft\b|\bof\b|\bWith\b|\bThe\b|\bthe\b|\bto\b|\band\b|\b[0-9]\b)",word,re.I):
                 continue
             if re.match(r"(?:\ba\b|\be\b)",word,re.I):
                 continue
@@ -60,10 +61,10 @@ def gen_histogram():
     HH = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()),  key=lambda hist : hist[1] , reverse=True)
     return HH
 
-def gen_optionListDiv():
-    HH = gen_histogram()
+def gen_optionListDiv(user_id):
+    HH = gen_histogram(user_id)
 
-    str0 = '''#\n\t<option value=" "> </option>''';
+    str0 = '''\n\t<option value=" "> </option>''';
     str1 = '''\n\t<option value=" "> </option>''';
     str2 = '''\n\t<option value=" "> </option>''';
     str3 = '''\n\t<option value=" "> </option>''';

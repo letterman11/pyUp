@@ -143,13 +143,13 @@ def addWebMark():
     
     try:
         curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values (?,?,?)", (tbl2MaxId, url, title,))
-    except:
+    except Exception as ex:
         print "Insert Error wmplace"
         return renderMainView(user_id,Error(2000))
 
     try:
         curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED) values (?,?,?,?,?)", (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded,))
-    except:
+    except Exception:
         print "Insert Error Error Error wmboookmark"
         return renderMainView(user_id,Error(2000))
     else:
@@ -158,6 +158,91 @@ def addWebMark():
         conn.close()
       
     return renderMainView()
+
+@app.post("/updateMark")
+@authenticate
+def updateMark():
+    user_id = request.get_cookie('wmUserID')
+    title = request.params['title_update']
+    url = request.params['url_update']
+    tblBookMarkId = request.params['bk_id']
+    print tblBookMarkId
+ 
+    unix_epochs = int(time.time())
+    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
+    dateAdded = unix_epochs * (1000 * 1000)
+
+    conn = sqlite3.connect(connFile)
+    curs = conn.cursor()
+
+    try:
+        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = ?", (tblBookMarkId,))
+
+    except Exception as ex:
+        print "error execute update"
+        raise ex
+        return renderMainView(user_id,Error(153))
+
+    (tblPlaceId,) = curs.fetchone()
+    print "PlaceID " + str(tblPlaceId)
+
+    try:
+        curs.execute("update WM_BOOKMARK set TITLE = ? where BOOKMARK_ID = ? ", (title, tblBookMarkId,))
+        curs.execute("update WM_PLACE set  URL = ? , TITLE = ? where PLACE_ID = ? ", (url, title,tblPlaceId,))
+    except Exception as ex:
+        raise ex
+        return renderMainView(user_id,Error(153))
+    else:
+        conn.commit()
+    finally:
+        conn.close()
+ 
+    return renderMainView()
+
+
+@app.post("/deleteMark")
+@authenticate
+def deleteMark():
+    user_id = request.get_cookie('wmUserID')
+    tblBookMarkId = request.params['bk_id']
+
+    unix_epochs = int(time.time())
+    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
+    dateAdded = unix_epochs * (1000 * 1000)
+    conn = sqlite3.connect(connFile)
+    curs = conn.cursor()
+
+    try:
+        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = ?", (tblBookMarkId,))
+
+    except Exception as ex:
+        print "error execute select in deleteMark"
+        raise ex
+        return renderMainView(user_id,Error(153))
+
+    (tblPlaceId,) = curs.fetchone()
+    print "PlaceID " + str(tblPlaceId)
+
+
+    conn = sqlite3.connect(connFile)
+    curs = conn.cursor()
+
+    try:
+        curs.execute("delete from  WM_PLACE  where PLACE_ID = ? ", (tblPlaceId,))
+        curs.execute("delete from  WM_BOOKMARK  where BOOKMARK_ID = ? ", (tblBookMarkId,))
+
+    except Exception as ex:
+        print "error execute delettion"
+        raise ex
+        return renderMainView(user_id,Error(153))
+
+    else:
+        conn.commit()
+    finally:
+        conn.close()
+ 
+    return renderMainView()
+
 
 @app.post("/deltaPass")
 @authenticate
@@ -245,7 +330,8 @@ def renderMainView(user_id=None,errObj=None):
 
 if __name__ ==  '__main__':
 #        app.run(debug="True", host="0.0.0.0", port='8086')
-        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+#        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='waitress', workers=3, clear_untrusted_proxy_headers=True)
 #        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
 '''
 def authenticate(f):

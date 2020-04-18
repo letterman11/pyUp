@@ -58,15 +58,15 @@ def exec_page(req,user_id,user_name,errObj):
         #exit
         queri = re.split("\s+",searchboxTitle)
         if len(queri) < 2:
-            qstr = " a.title like '%" + searchboxTitle + "%'  and b.url like '%" + searchboxURL + "%' "# sort_ord
+            qstr = " a.title like \"%" + searchboxTitle + "%\"  and b.url like '%" + searchboxURL + "%' "# sort_ord
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like '%" + queri[0] + "%' "
+            qstr = " a.title like \"%" + queri[0] + "%\" "
             for q in queri[1:]:
                 if searchTypeBool == "OR":
-                    qstr += " or a.title like '%" + q + "%' " 
+                    qstr += " or a.title like \"%" + q + "%\" " 
                 else:
-                    qstr += " and a.title like '%" + q + "%' " 
+                    qstr += " and a.title like \"%" + q + "%\" " 
         ###########################################
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
@@ -78,19 +78,20 @@ def exec_page(req,user_id,user_name,errObj):
         storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchboxTitle):
-        print "Hit Title"
+        print "Hit search" + searchboxTitle
           #ORDER_BY_CRIT 
         queri = re.split("\s*",searchboxTitle)
         if len(queri) < 2:
-            qstr = " a.title like '%" + searchboxTitle + "%' "# sort_ord
+            #qstr = " a.title like '%" + searchboxTitle + "%' "# sort_ord
+            qstr = " a.title like \"%" + searchboxTitle + "%\" "# sort_ord
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like '%" + queri[0] + "%' "
+            qstr = " a.title like \"%" + queri[0] + "%\" "
             for q in queri[1:]:
                 if searchTypeBool == "AND":
-                    qstr += " and a.title like '%" + q + "%' " 
+                    qstr += " and a.title like \"%" + q + "%\" " 
                 else:  
-                    qstr += " or a.title like '%" + q + "%' " 
+                    qstr += " or a.title like \"%" + q + "%\" " 
         exec_sql_str = main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = main_sql_str + qstr 
         storeSQL(storedSQLStr,req)
@@ -146,10 +147,12 @@ def exec_page(req,user_id,user_name,errObj):
     except Exception as inst:    
         print (inst)
         marks = Marks(tabMap[tabtype],None,None,Error(2000))
-        return marks.renderMainView(user_name,sort_crit,tabMap)
+        #return marks.renderMainView(user_name,sort_crit,tabMap)
+        return marks.renderMainView(user_id,sort_crit,tabMap)
 
     markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
-    return markObj.renderMainView(user_name,sort_crit,tabMap)
+    #return markObj.renderMainView(user_name,sort_crit,tabMap)
+    return markObj.renderMainView(user_id,sort_crit,tabMap)
 '''
 try:
     with con:

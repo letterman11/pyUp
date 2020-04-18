@@ -2,6 +2,7 @@ from bottle import template
 import datetime
 import time
 import gen_histo_gram_multi as hist
+import re
 
 class Marks(object):
 
@@ -13,7 +14,7 @@ class Marks(object):
 
     def renderMainView(self,user_id,sort_crit,tabMap):
         tabTable = self.genTabTable(sort_crit)        
-        optionTops=hist.gen_optionListDiv()
+        optionTops=hist.gen_optionListDiv(user_id)
         return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
 
     def renderDefaultView(self,colorStyle="red",displayText=str()):
@@ -70,15 +71,24 @@ class Marks(object):
   
 
         ## POTENTIAL ERROR SECTION ##
+        if not self.dbObject:
+            return tbl
+
         i=0
         tbl_row = str()
         for row in self.dbObject:
             (url,title,added) = (row[0],row[1],row[2])
+            bk_id = row[3]
             added = self.convertTime(added)
             i += 1
             alt =  (i % 2) or 2    
             row_color = "row_color" + str(alt)
-            tbl_row  += "<tr class=" + row_color +"> " + "<td class='title_cell'> <a href=" + url + " target='_blank'> "  +  title + " </a> </td>" \
+            #tbl_row  += "<tr class=" + row_color + "> " + "<td class='title_cell'> <a href=" + url + " target='_blank'> "  +  title + " </a> </td>" \
+
+            title = re.sub(r'"',r'\"',title)
+            title = re.sub(r"'",r"`",title) #workaround for single quotes use apostrophe to soothe js
+
+            tbl_row  += "<tr class=" + row_color + "> " + "<td class='title_cell'> <a href='javascript:goLink( \"" + url +"\", \"" + title + "\" , \"" + str(bk_id) + "\"  ) ' > "  +  title + " </a> </td>" \
             + " <td class='url_cell'> " +  url + " </td> " \
             + "<td class='date_cell'> "  + str(added) + " </td>" \
             + " </tr> \n "

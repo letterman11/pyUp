@@ -17,11 +17,11 @@ def gen_histogram():
         curs = conn.cursor()
         curs.execute(hist_sql_all_str)
         dbRows = curs.fetchall()
-        print "RowCountWB " + str(len(dbRows))
+        print ("RowCountWB " + str(len(dbRows)))
         conn.close()
-    except:
-       print "Exception" 
-
+    except Exception as ex:
+       print (str(ex)) 
+       raise ex
     for data in dbRows:
         if not data[title]:
             continue       
@@ -35,7 +35,7 @@ def gen_histogram():
             elimdups[data[title].upper()] = { "url": data[url], "dateAdded": data[dateAdded] }
 
     for title_str,v in elimdups.iteritems():
-        words = re.split('\s+', title_str)
+        words = re.split(r'\s+', title_str)
 
         for word in words:
             if re.match(r'\b[:cntrl:]+\b',word):
@@ -56,7 +56,6 @@ def gen_histogram():
 
     new_list = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()),  key=lambda hist : hist[1] , reverse=True)
 
-#    print new_list[0:5]
     #markHistHiLo = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()), reverse=True)
     #new_list = sorted(old_list, key=f, cmp=lambda a,b:cmp(a[0],b[0]) or cmp(b[1],a[1]))
     #pretty =  new_list[1][1] < 100  and  "*" * (new_list[1][1]/100)  or  "#" * new_list[1][1]

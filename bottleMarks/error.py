@@ -19,6 +19,9 @@ class Error(object):
             120 : "User Name already taken",
             150 : "Duplicate Web Mark entry",
             151 : "Invalid Web Mark Submission",
+            152 : " Submission",
+            153 : "Failed Update of WebMark",
+            154 : "Failed Deletion of WebMark",
             2000 : "Search Criteria Failure",
             1 : "Testing",
             'ERRCOND' : None

@@ -48,7 +48,8 @@ def getStoredSQL(req):
     sessFile = open(session_dir + '/' +  str(sessionID), 'rb')
     sessObj = pickle.load(sessFile)
     storedSQL = sessObj.SESSIONDATA
-    return storedSQL 
+    storedSQL = storedSQL or "No Session"
+    return storedSQL
 
 def storeSessionObject(sessObj):
     sessFile = open(session_dir +  '/' + str(sessObj.SESSIONID), 'wb')
