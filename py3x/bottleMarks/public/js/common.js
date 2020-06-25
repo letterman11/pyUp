@@ -8,7 +8,8 @@ function setCookie(name,value,days)
                 var expires = "; expires="+date.toGMTString();
         }
         else var expires = "";
-        document.cookie = name+"="+value+expires+"; path=/";
+        //document.cookie = name+"="+value+expires+"; path=/";
+        document.cookie = encodeURIComponent(name)+"="+ encodeURIComponent(value)+expires+"; path=/";
 }
 
 function getCookie(name,path)
@@ -23,7 +24,8 @@ function getCookie(name,path)
         if ( start == -1 ) return null;
                 var end = document.cookie.indexOf( ";", len );
         if ( end == -1 ) end = document.cookie.length;
-                return unescape( document.cookie.substring( len, end ) );
+                //return unescape( document.cookie.substring( len, end ) );
+                return decodeURIComponent(document.cookie.substring( len, end ) );
 
 }
 
@@ -103,10 +105,11 @@ function cgi_out(tab_parm)
 
 function setSearchTerms()
 {      
-       var searchTerms = parent.top.document.getElementById('searchBoxTitle');
-       //parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
+
+       var searchTerms = parent.top.document.getElementById('searchBxTitle');
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);
+
 }
 
 function getSearchTerms()
@@ -117,7 +120,7 @@ function getSearchTerms()
 
 function topOpToSearch(topOp)
 {      
-   var searchBox = parent.top.document.getElementById('searchBoxTitle');
+   var searchBox = parent.top.document.getElementById('searchBxTitle');
    searchBox.value = topOp; 
 }
 
@@ -126,6 +129,7 @@ function logOut()
 {
 	eraseCookie("wmSessionID");
 	eraseCookie("wmUserID");
+	eraseCookie("wmUserName");
 	eraseCookie("Counter");
 	eraseCookie("dt_cnter");
 	eraseCookie("tab_state");
