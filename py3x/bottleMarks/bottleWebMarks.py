@@ -1,3 +1,4 @@
+import bottle
 from bottle import Bottle, template, run, route, request, response, static_file
 from datetime import datetime
 from marks import Marks
@@ -9,7 +10,8 @@ import sqlite3
 from  globals import *
 from error import *
 
-app = Bottle()
+
+app = Bottle()  
 
 # static files ############################################
 @app.route('/public/css/<filename>')
@@ -29,7 +31,11 @@ def server_static_js(filename):
 def authenticate(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
+        print("In wrapper authen func")
         #if validate_session() == False:
+        aa = [ (k,v) for k,v in request.forms.allitems()]
+        print(aa)
+        print ("In wrapper... cookie wmSessionID " + request.cookies.wmSessionID)
         if validate_session2(request) == False:
             return Marks().renderDefaultView()
         return f(*args, **kwargs)
@@ -92,7 +98,6 @@ def logIn():
 @authenticate
 def index():
     return renderMainView()
-#    return Marks().renderMainView()
 
 @app.route("/webMarks")
 @authenticate
@@ -222,15 +227,14 @@ def authorize(user_id,user_name):
     init_count = 0
     init_date_count = 0
     init_tab_state = 0
-    response.set_cookie('wmSessionID',str(sessionID))
-    response.set_cookie('wmUserID',str(user_id))
-    response.set_cookie('wmUserName', str(user_name))
-    response.set_cookie('Counter', str(init_count))
-    response.set_cookie('tab_state', str(init_tab_state))
-    response.set_cookie('dt_cnter', str(init_date_count))
+    response.set_cookie('wmSessionID',str(sessionID), path='/')
+    response.set_cookie('wmUserID',str(user_id), path='/')
+    response.set_cookie('wmUserName', str(user_name), path='/')
+    response.set_cookie('Counter', str(init_count), path='/')
+    response.set_cookie('tab_state', str(init_tab_state), path='/')
+    response.set_cookie('dt_cnter', str(init_date_count), path='/')
     util.saveSession(sessionID)
 #    response.set_cookie('expires', 60*60)
-#    reponse.set_cookie('domain', None)
 
 def renderMainView(user_id=None,errObj=None):
     user_name=None
@@ -244,17 +248,17 @@ def renderMainView(user_id=None,errObj=None):
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-#        app.run(debug="True", host="0.0.0.0", port='8086')
+        #app.run(debug="True", host="0.0.0.0", port='8087', reloader=True, server='gunicorn', workers=3)
         app.run(debug="True", host="0.0.0.0", port='8087', reloader=True, server='gunicorn', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
 '''
 def authenticate(f):
     @wraps(f)
-    def wrapper(*args, **kwargs):
+    def wrbottleer(*args, **kwargs):
         auth = request.authorization
         if not auth.username or not auth.password or not valid_credentials(auth.username, auth.password):
             return Response('Login!', 401, {'WWW-Authenticate': 'Basic realm="Login!"'})
         return f(*args, **kwargs)
-    return wrapper
+    return wrbottleer
 
 '''
