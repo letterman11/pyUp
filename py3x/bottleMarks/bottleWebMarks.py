@@ -82,8 +82,42 @@ def register():
 
 @app.route('/regAuth')
 def registerAuth():
-	pass
+    pass
+
+    user_name = request.params['user_name']
+    user_pass  = request.params['user_passwd']
+    email_address  = request.params['email_address']
+
+    ##########################################################
+    #util.validate_registration(request)
+    ##########################################################    
+
+    part_id = util.genSessionID()
+    user_id = user_name[0:5]
+    part_id = part_id[0:5]
+
+    user_id = user_id+"_"+part_id
+
+    ########################################
+    conn = sqlite3.connect(connFile)
+    curs = conn.cursor()
+    ########################################
+    
+    insert_sql_str = "INSERT INTO WM_USER (USER_ID,USER_NAME,USER_PASSWD,EMAIL_ADDRESS) VALUES (?,?,?,?)"
+
+    try:
+        curs.execute(insert_sql_str, (user_id, user_name, user_pass, email_address,))
+    except Exception:
+        print ("Insert Error Error Error wm_user")
+        return renderMainView(user_id,Error(2000))
+    else:
+        conn.commit()
+    finally:
+        conn.close()
+
+
 #    return Marks().renderRegistrationView()
+#    return Marks().renderDefaultView()
 
 @app.route('/default')
 def logIn():
