@@ -1,5 +1,7 @@
 from bottle import template
 import datetime
+import gen_histo_gram_multi as hist
+import re
 import time
 
 class Marks(object):
@@ -12,7 +14,9 @@ class Marks(object):
 
     def renderMainView(self,user_id,sort_crit,tabMap):
         tabTable = self.genTabTable(sort_crit)        
-        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable)
+        optionTops=hist.gen_optionListDiv(user_id)
+        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
+
 
     def renderDefaultView(self,colorStyle="red",displayText=str()):
         colorStyle="red"
@@ -68,6 +72,9 @@ class Marks(object):
   
 
         ## POTENTIAL ERROR SECTION ##
+        if not self.dbObject:
+            return tbl
+
         i=0
         tbl_row = str()
         for row in self.dbObject:

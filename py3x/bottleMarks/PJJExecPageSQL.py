@@ -1,8 +1,8 @@
-from marks import Marks
+from marks import *
 from SQLStrings import *
 from error import *
 import lib.util as util
-import globals as g 
+import globals as g
 from globals import *
 import sqlite3
 import re
@@ -13,12 +13,15 @@ import re
 ############################################
 def exec_page(req,user_id,user_name,errObj):
     tabMap = g.tabMap
+    print (user_id + "Req Cookie  ID")
+
     searchBoxTitle = unWrap(req,'searchBoxTitle')
     searchTypeBool = unWrap(req,'searchtype')
+
     tabtype = unWrap(req,'tab') or tabMap['tab_DATE']
     tabtype = int(tabtype)
     sort_crit = unWrap(req,'sortCrit') 
-    if sort_crit !=  None and sort_crit != 'undefined':
+    if sort_crit != None and sort_crit != 'undefined':
         sort_crit = int(sort_crit)
 
     searchBoxURL = unWrap(req,'searchBoxURL')
@@ -30,6 +33,8 @@ def exec_page(req,user_id,user_name,errObj):
     storedSQLStr = ""
     sort_ord  = "" 
     exec_sql_str = ""
+    print (str(searchBoxTitle)   + " searchBoxTitle")
+    print (str(searchTypeBool)  + " searchBool")
 
 #############################################################################
 #Sort Criteria setting of ORDER_BY_CRITERIA
@@ -51,44 +56,45 @@ def exec_page(req,user_id,user_name,errObj):
 ##########################################################
 # SearchBoxTitle + SearchBoxURL + AND/OR Radio Button
 ##########################################################
-    if searchTypeBool == "COMBO" and isset(searchBoxTitle) and isset(searchBoxURL):
+    if searchTypeBool == "COMBO" and (isset(searchBoxTitle)) and (isset(searchBoxURL)):
         #exit
-        queri = re.split(r'\s+',searchBoxTitle)
+        queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like '%" + searchBoxTitle + "%'  and b.url like '%" + searchBoxURL + "%' "# sort_ord
+            qstr = " a.title like \"%" + searchBoxTitle + "%\"  and b.url like '%" + searchBoxURL + "%' "# sort_ord
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like '%" + queri[0] + "%' "
+            qstr = " a.title like \"%" + queri[0] + "%\" "
             for q in queri[1:]:
                 if searchTypeBool == "OR":
-                    qstr += " or a.title like '%" + q + "%' " 
+                    qstr += " or a.title like \"%" + q + "%\" " 
                 else:
-                    qstr += " and a.title like '%" + q + "%' " 
+                    qstr += " and a.title like \"%" + q + "%\" " 
         ###########################################
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
         qstr +=  " and b.url like '%" + searchBoxURL + "%' " 
         exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
         ##########################################
-        #exec_sql_str = main_sql_str + qstr  + " and b.url like '%" + searchboxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
+        #exec_sql_str = main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchBoxTitle):
-        print ("Hit Title")
+        print ("Hit search" + searchBoxTitle)
           #ORDER_BY_CRIT 
-        queri = re.split(r'\s+',searchBoxTitle)
-        print (queri)
+        #queri = re.split("\s*",searchBoxTitle)
+        queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like '%" + searchBoxTitle + "%' "# sort_ord
+            #qstr = " a.title like '%" + searchBoxTitle + "%' "# sort_ord
+            qstr = " a.title like \"%" + searchBoxTitle + "%\" "# sort_ord
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like '%" + queri[0] + "%' "
+            qstr = " a.title like \"%" + queri[0] + "%\" "
             for q in queri[1:]:
                 if searchTypeBool == "AND":
-                    qstr += " and a.title like '%" + q + "%' " 
+                    qstr += " and a.title like \"%" + q + "%\" " 
                 else:  
-                    qstr += " or a.title like '%" + q + "%' " 
+                    qstr += " or a.title like \"%" + q + "%\" " 
         exec_sql_str = main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
@@ -120,13 +126,17 @@ def exec_page(req,user_id,user_name,errObj):
             exec_sql_str = date_sql_str + sort_ord + "limit 200 "
         elif tabtype == tabMap['tab_SRCH_TITLE']:
             storedSQLStr = util.getStoredSQL(req)
-            exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
+            if not storedSQLStr:
+                exec_sql_str = date_sql_str + sort_ord + "limit 200 "
+            else:
+                exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
 ###################################
 ##################################
     executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else date_sql_str + sort_ord + " limit 200 "
 ##########
 # Start of Execution of SQL
 #########
+    #tabMap = {y:x for x,y in tabMap.iteritems()}
     tabMap = {y:x for x,y in tabMap.items()}
     print (sort_crit)
     print ("Exec webMark SQL " + executed_sql_str)
@@ -144,10 +154,12 @@ def exec_page(req,user_id,user_name,errObj):
     except Exception as inst:    
         print (inst)
         marks = Marks(tabMap[tabtype],None,None,Error(2000))
-        return marks.renderMainView(user_name,sort_crit,tabMap)
+        #return marks.renderMainView(user_name,sort_crit,tabMap)
+        return marks.renderMainView(user_id,sort_crit,tabMap)
 
     markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
-    return markObj.renderMainView(user_name,sort_crit,tabMap)
+    #return markObj.renderMainView(user_name,sort_crit,tabMap)
+    return markObj.renderMainView(user_id,sort_crit,tabMap)
 '''
 try:
     with con:
@@ -159,17 +171,16 @@ except sqlite3.IntegrityError:
 # End of SQL Execution
 ###########
 def isset(string):
-    print("In function isset " + str(string))
     if (string != None) and len(string) == 0:
         print (string + " !RED")
         return False 
     elif string == None:
         print (str(string) + " REDDER")
         return False
-    elif re.match(r'^\s+$', string):
+    elif re.match(r"\s+$", string):
         return False
     else:
-        print (str(string) +  " " + str(len(string)) + " TRUE")
+        print (str(string) + str(len(string)) + "TRUE?")
         return True 
 
 def unWrap(req,reqObj):
