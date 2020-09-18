@@ -94,5 +94,8 @@ class Marks(object):
         return tbl
 
     def convertTime(self, dateAdded):
-        dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
+#        dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
+        (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded/(1000 * 1000))[0:6]
+        dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
+
         return dateAdded
