@@ -83,8 +83,8 @@ class Marks(object):
             i += 1
             alt =  (i % 2) or 2    
             row_color = "row_color" + str(alt)
-            tbl_row  += "<tr class=" + row_color +"> " + "<td class='title_cell'> <a href=" + url + " target='_blank'> "  +  title + " </a> </td>" \
-            + " <td class='url_cell'> " +  url + " </td> " \
+            tbl_row  += "<tr class=" + row_color +"> " + "<td class='title_cell'> <a href=" + str(url) + " target='_blank'> "  +  str(title) + " </a> </td>" \
+            + " <td class='url_cell'> " +  str(url) + " </td> " \
             + "<td class='date_cell'> "  + str(added) + " </td>" \
             + " </tr> \n "
 
