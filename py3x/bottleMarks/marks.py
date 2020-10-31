@@ -1,7 +1,5 @@
 from bottle import template
-import datetime
 import gen_histo_gram_multi as hist
-import re
 import time
 
 class Marks(object):
@@ -28,8 +26,6 @@ class Marks(object):
     def renderRegistrationView(self):
         errText = ""
         return template('class_registration.html', errText=errText)
-
-
 
 
     def genError(self):
@@ -94,8 +90,6 @@ class Marks(object):
         return tbl
 
     def convertTime(self, dateAdded):
-#        dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
         (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded/(1000 * 1000))[0:6]
         dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
-
         return dateAdded
