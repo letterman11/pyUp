@@ -19,6 +19,7 @@ elif sys.platform == 'linux':
 
     HOME = os.environ['HOME']  
     extra_path = extra_path_linux
+    dir_sep = '/'
 
 else:
 
