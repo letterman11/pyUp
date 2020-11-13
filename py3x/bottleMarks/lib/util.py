@@ -10,6 +10,8 @@ extra_path_win32 = '\\webMarksMicro\\py3x\\bottleMarks\\sessions'
 
 if sys.platform == 'win32':
 
+    dir_sep = '\\'
+
     HOME = os.environ['HOMEPATH']  
     extra_path = extra_path_win32
 
@@ -21,6 +23,7 @@ elif sys.platform == 'linux':
 else:
 
     HOME = os.environ['HOME']  
+    dir_sep = '/'
 
 session_dir = HOME + extra_path 
 working_dir =  os.getcwd()
@@ -51,13 +54,13 @@ def storeSQL(sSQL,req):
 def getStoredSQL(req):
     sessObj = validateSession()
     sessionID = req.get_cookie('wmSessionID')
-    sessFile = open(session_dir + '/' +  str(sessionID), 'rb')
+    sessFile = open(session_dir + dir_sep +  str(sessionID), 'rb')
     sessObj = pickle.load(sessFile)
     storedSQL = sessObj.SESSIONDATA
     return storedSQL 
 
 def storeSessionObject(sessObj):
-    sessFile = open(session_dir +  '/' + str(sessObj.SESSIONID), 'wb')
+    sessFile = open(session_dir +  dir_sep + str(sessObj.SESSIONID), 'wb')
     pickle.dump(sessObj,sessFile)
     sessFile.close()
     return sessObj 
@@ -71,7 +74,7 @@ def validateSession2(req):
     sessionID = req.get_cookie('wmSessionID')
     
     try:
-        sessFile = open(session_dir + '/' + str(sessionID), 'rb')  
+        sessFile = open(session_dir + dir_sep + str(sessionID), 'rb')  
         sessFile.close()
     except:
         return False 
@@ -79,6 +82,6 @@ def validateSession2(req):
 
 def saveSession(sessionID):
     sessObj = SessionObject(sessionID)
-    sessFile = open(session_dir + '/' + str(sessionID), 'wb')
+    sessFile = open(session_dir + dir_sep + str(sessionID), 'wb')
     pickle.dump(sessObj,sessFile)
     sessFile.close()
