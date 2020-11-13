@@ -26,9 +26,10 @@ else:
     dir_sep = '/'
 
 session_dir = HOME + extra_path 
+
 working_dir =  os.getcwd()
-#session_dir = re.sub('lib$','sessions',working_dir)
-session_dir = working_dir + "/" +  "sessions"
+
+session_dir = working_dir + dir_sep +  "sessions"
 
 print ("Session Dir " + session_dir)
 
