@@ -57,7 +57,6 @@ def exec_page(req,user_id,user_name,errObj):
 # SearchBoxTitle + SearchBoxURL + AND/OR Radio Button
 ##########################################################
     if searchTypeBool == "COMBO" and (isset(searchBoxTitle)) and (isset(searchBoxURL)):
-        #exit
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
             qstr = " a.title like \"%" + searchBoxTitle + "%\"  and b.url like '%" + searchBoxURL + "%' "# sort_ord
@@ -85,7 +84,6 @@ def exec_page(req,user_id,user_name,errObj):
         #queri = re.split("\s*",searchBoxTitle)
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            #qstr = " a.title like '%" + searchBoxTitle + "%' "# sort_ord
             qstr = " a.title like \"%" + searchBoxTitle + "%\" "# sort_ord
             exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
