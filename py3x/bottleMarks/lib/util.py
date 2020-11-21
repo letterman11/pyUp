@@ -72,15 +72,18 @@ def validateSession():
     return SessionObject()
 
 def validateSession2(req):
-    #more error checks
+
     sessionID = req.get_cookie('wmSessionID')
-    
+ 
     try:
         sessFile = open(session_dir + dir_sep + str(sessionID), 'rb')  
-        sessFile.close()
     except:
-        return False 
-    return True
+        status = False
+    else:
+        status = True
+        sessFile.close()
+
+    return status
 
 def saveSession(sessionID):
     sessObj = SessionObject(sessionID)
