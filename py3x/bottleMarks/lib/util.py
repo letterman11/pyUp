@@ -26,35 +26,34 @@ else:
     HOME = os.environ['HOME']  
     dir_sep = '/'
 
-session_dir = HOME + extra_path 
-
 working_dir =  os.getcwd()
-
 session_dir = working_dir + dir_sep +  "sessions"
-
 print ("Session Dir " + session_dir)
 
 def genSessionID():
+
     id_list = ('A','B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9') 
     session_id  = str()
     rand_list = random.sample(id_list, 17)
+
     for i in rand_list:
         session_id = session_id + i
     return session_id
 
 def storeSQL(sSQL,req):
+
     sessionID = req.get_cookie('wmSessionID')
     USERID = req.get_cookie('wmUserID')
-    sessObject = validateSession()
+    sessObject = SessionObject()
     sessObject.SESSIONDATA = sSQL
     sessObject.SESSIONID = sessionID
     sessObject.USERID = USERID
     storeSessionObject(sessObject) 
-'''
-'''
+
 def getStoredSQL(req):
-    sessObj = validateSession()
+
+    sessObj = SessionObject()
     sessionID = req.get_cookie('wmSessionID')
     sessFile = open(session_dir + dir_sep +  str(sessionID), 'rb')
     sessObj = pickle.load(sessFile)
@@ -67,14 +66,9 @@ def storeSessionObject(sessObj):
     sessFile.close()
     return sessObj 
 
-
-def validateSession():
-    return SessionObject()
-
 def validateSession2(req):
-
     sessionID = req.get_cookie('wmSessionID')
- 
+
     try:
         sessFile = open(session_dir + dir_sep + str(sessionID), 'rb')  
     except:
