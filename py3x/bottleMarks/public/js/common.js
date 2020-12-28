@@ -113,5 +113,5 @@ function logOut()
 	eraseCookie("searchTerms");
 	eraseCookie("search_submission");
 	
-	top.location = "/cgi-bin/webMarks/cgi-bin/wm_app.cgi";
+	top.location = "/pyWebMarks/logout";
 }
