@@ -79,7 +79,7 @@ function cgi_out(tab_parm)
 	}
 
 
-	top.location = "/cgi-bin/webMarks/cgi-bin/wm_app.cgi?" + tab_parm + "&sortCrit=" + sortCrit;
+	top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 }
 
 function setSearchTerms()
