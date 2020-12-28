@@ -60,7 +60,7 @@ class Marks(object):
                  <col width='auto'>\n
                 '''    
 
-        tbl += " <tr class='header_row'><th>Title</th><th>LINK</th><th style='background:red' " + " onClick='cgi_out('tab=11')> Date Added " +  sort_sp_dt  + "  </th></tr>\n "
+        tbl += " <tr class='header_row'><th>Title</th><th>LINK</th><th style='background:red' " + " onClick=\"cgi_out('tab=11')\"> Date Added " +  sort_sp_dt  + "  </th></tr>\n "
 
         ## POTENTIAL ERROR SECTION ##
         if self.errObj:
