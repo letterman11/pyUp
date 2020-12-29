@@ -79,13 +79,16 @@ function cgi_out(tab_parm)
 	}
 
 
-	top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	// deploy url##
+	//top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	//	
 }
 
 function setSearchTerms()
 {      
-       var searchTerms = parent.top.document.getElementById('searchBx');
-       //parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
+       var searchTerms = parent.top.document.getElementById('searchBxTitle');
+       parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);
 }
@@ -98,7 +101,7 @@ function getSearchTerms()
 
 function topOpToSearch(topOp)
 {      
-   var searchBox = parent.top.document.getElementById('searchBx');
+   var searchBox = parent.top.document.getElementById('searchBxTitle');
    searchBox.value = topOp; 
 }
 
@@ -113,5 +116,8 @@ function logOut()
 	eraseCookie("searchTerms");
 	eraseCookie("search_submission");
 	
-	top.location = "/pyWebMarks/logout";
+	top.location = "/logout";
+	// deploy url
+	//top.location = "/pyWebMarks/logout";
+	//
 }
