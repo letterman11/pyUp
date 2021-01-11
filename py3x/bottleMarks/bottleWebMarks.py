@@ -1,4 +1,3 @@
-import bottle
 from bottle import Bottle, template, run, route, request, response, static_file
 from datetime import datetime
 from marks import Marks
@@ -14,6 +13,8 @@ from error import *
 app = Bottle()  
 
 # static files ############################################
+# served by bottle -- ideally would be served by static 
+# server like Apache or Nginx
 @app.route('/public/css/<filename>')
 def server_static_css(filename):
     return static_file(filename, root="./public/css")
@@ -31,11 +32,9 @@ def server_static_js(filename):
 def authenticate(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        print("In wrapper authen func")
         #if validate_session() == False:
         aa = [ (k,v) for k,v in request.forms.allitems()]
         print(aa)
-        print ("In wrapper... cookie wmSessionID " + request.cookies.wmSessionID)
         if validate_session2(request) == False:
             return Marks().renderDefaultView()
         return f(*args, **kwargs)
@@ -158,6 +157,10 @@ def addWebMark():
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
     dateAdded = unix_epochs * (1000 * 1000)
+    date_Added = unix_epochs # for new datetime column
+    (year, mon, day, hour, mins, secs)  = time.localtime(date_Added)[0:6]
+    date_Added = ('{}-{}-{} {}:{}:{}').format(year,mon,day,hour,mins,secs)
+
 
     conn = sqlite3.connect(connFile)
     curs = conn.cursor()
@@ -187,7 +190,8 @@ def addWebMark():
         return renderMainView(user_id,Error(2000))
 
     try:
-        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED) values (?,?,?,?,?)", (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded,))
+        #curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED) values (?,?,?,?,?)", (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded,))
+        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values (?,?,?,?,?,?)", (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
     except:
         print ("Insert Error Error Error wmboookmark")
         return renderMainView(user_id,Error(2000))
