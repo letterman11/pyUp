@@ -154,6 +154,10 @@ def addWebMark():
     title = request.params['mark_title']	
     url = request.params['mark_url']	
 
+
+    if not util.isset(title) or not util.isset(url):
+        return renderMainView(user_id,Error(151))
+
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
     dateAdded = unix_epochs * (1000 * 1000)

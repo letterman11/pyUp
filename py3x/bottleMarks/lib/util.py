@@ -2,6 +2,7 @@ import random
 import pickle
 import os
 import sys
+import re
 from  lib.sessionObject import *
 
 extra_path = '/pyprojects/webMarksMicro/py3x/bottleMarks/sessions'
@@ -84,3 +85,17 @@ def saveSession(sessionID):
     sessFile = open(session_dir + dir_sep + str(sessionID), 'wb')
     pickle.dump(sessObj,sessFile)
     sessFile.close()
+
+def isset(string):
+    if (string != None) and len(string) == 0:
+        print (string + " !RED")
+        return False
+    elif string == None:
+        print (str(string) + " REDDER")
+        return False
+    elif re.match(r"\s+$", string):
+        return False
+    else:
+        print (str(string) + str(len(string)) + "TRUE?")
+        return True
+
