@@ -1,3 +1,5 @@
+//appending "PY" to some cookies to differentiate from perl webMarks
+// may cause some irregularities between share platform  of perl and python webMarks
 var search_submission = 6;	
 
 function setCookie(name,value,days)
@@ -23,7 +25,8 @@ function getCookie(name,path)
         if ( start == -1 ) return null;
                 var end = document.cookie.indexOf( ";", len );
         if ( end == -1 ) end = document.cookie.length;
-                return unescape( document.cookie.substring( len, end ) );
+//                return unescape( document.cookie.substring( len, end ) );
+                return decodeURIComponent(document.cookie.substring( len, end ) );
 
 }
 
@@ -79,9 +82,9 @@ function cgi_out(tab_parm)
 	}
 
 
-	top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+//	top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	// deploy url##
-	//top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	//	
 }
 
@@ -108,16 +111,17 @@ function topOpToSearch(topOp)
 
 function logOut()
 {
-	eraseCookie("wmSessionID");
-	eraseCookie("wmUserID");
+	//appending "PY" to some cookie parameters to differentiate from regular webMarks perl
+	eraseCookie("PYwmSessionID");
+	eraseCookie("PYwmUserID");
 	eraseCookie("Counter");
 	eraseCookie("dt_cnter");
 	eraseCookie("tab_state");
 	eraseCookie("searchTerms");
 	eraseCookie("search_submission");
 	
-	top.location = "/logout";
+//	top.location = "/logout";
 	// deploy url
-	//top.location = "/pyWebMarks/logout";
+	top.location = "/pyWebMarks/logout";
 	//
 }
