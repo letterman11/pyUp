@@ -150,7 +150,7 @@ def searchWebMark():
 @app.post("/insertMark")
 @authenticate
 def addWebMark():
-    user_id = request.get_cookie('wmUserID')	
+    user_id = request.get_cookie('PYwmUserID')	
     title = request.params['mark_title']	
     url = request.params['mark_url']	
 
@@ -269,9 +269,9 @@ def authorize(user_id,user_name):
     init_count = 0
     init_date_count = 0
     init_tab_state = 0
-    response.set_cookie('wmSessionID',str(sessionID), path='/')
-    response.set_cookie('wmUserID',str(user_id), path='/')
-    response.set_cookie('wmUserName', str(user_name), path='/')
+    response.set_cookie('PYwmSessionID',str(sessionID), path='/')
+    response.set_cookie('PYwmUserID',str(user_id), path='/')
+    response.set_cookie('PYwmUserName', str(user_name), path='/')
     response.set_cookie('Counter', str(init_count), path='/')
     response.set_cookie('tab_state', str(init_tab_state), path='/')
     response.set_cookie('dt_cnter', str(init_date_count), path='/')
@@ -285,8 +285,8 @@ def renderMainView(user_id=None,errObj=None):
     except:
         pass
     if not user_id or not user_name:
-        user_id = request.get_cookie('wmUserID')
-        user_name = request.get_cookie('wmUserName')
+        user_id = request.get_cookie('PYwmUserID')
+        user_name = request.get_cookie('PYwmUserName')
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
