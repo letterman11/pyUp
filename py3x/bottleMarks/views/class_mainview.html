@@ -85,7 +85,8 @@ end
    </script>
 
    <div class="search_div">
-     <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark">
+     <!-- <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark"> -->
+     <form  name="search_form" class="search_form" method="POST" action="/searchMark">
        <ul>
 
        <li> Enter Search Term(s)  </li>
@@ -108,7 +109,8 @@ end
    </div>
 
   <div class="new_mark">
-   <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark">
+   <!-- <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark"> -->
+   <form name="newMark" id="new_mark" method="POST" action="/insertMark">
     <ul>
     <!-- <li> Enter Title </li> -->
     <li> Enter Title <input name="mark_title" type="text" size="100"> </li>
@@ -120,7 +122,8 @@ end
   </div>
 
   <div class="delta_pass">
-   <form name="deltaPass" id="delta_pass" method="POST" action="/pyWebMarks/deltaPass">
+  <!--  <form name="deltaPass" id="delta_pass" method="POST" action="/pyWebMarks/deltaPass"> -->
+   <form name="deltaPass" id="delta_pass" method="POST" action="/deltaPass">
     <ul>
     <li onclick="logOut();"> LOGOUT {{ user_id }} </li>
     <li> Change Pass Word ? </li>
