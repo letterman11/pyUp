@@ -83,10 +83,6 @@ def register():
 @app.post('/regAuth')
 def registerAuth():
 
-    ##########################################################
-    #util.validate_registration(request)
-
-
     try:
         user_name = request.params['user_name']
         user_pass1  = request.params['new_user_pass1']
@@ -96,6 +92,10 @@ def registerAuth():
     except KeyError:
         return Marks().renderRegistrationView(Error(112).errText()) 
          
+
+    if (re.match(r'^$',user_name) or re.match(r'^$',user_pass1) or re.match(r'^$',user_pass2)):
+        return Marks().renderRegistrationView(Error(107).errText()) 
+    
     if (user_pass1 !=  user_pass2):
         return Marks().renderRegistrationView(Error(113).errText()) 
 
@@ -131,7 +131,7 @@ def registerAuth():
     finally:
         conn.close()
 
-    return Marks().renderDefaultView("red", "Successfully Registered" + user_name)
+    return Marks().renderDefaultView("red", "Successfully Registered " + user_name)
 
 @app.route('/default')
 def logIn():
@@ -209,8 +209,8 @@ def addWebMark():
         return renderMainView(user_id,Error(2000))
 
     try:
-        #curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED) values (?,?,?,?,?)", (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded,))
-        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values (?,?,?,?,?,?)", (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
+        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values (?,?,?,?,?,?)", 
+				(tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
     except:
         print ("Insert Error Error Error wmboookmark")
         return renderMainView(user_id,Error(2000))
