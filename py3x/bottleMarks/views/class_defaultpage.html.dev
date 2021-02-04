@@ -11,7 +11,7 @@
 <body>
 <div id="main">
  <div id="header">
-  <a href="/"> <img class="banner_image_left" alt="webmarks logo" src="/public/images/webmarks_yellow.png" /> </a> 
+  <a href="/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/public/images/webmarks_yellow.png" /> </a> 
   <a href="/"> <img class="banner_image" alt="dcoda logo" src="/public/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
  </div>
  <div class="landing">
