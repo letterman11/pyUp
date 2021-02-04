@@ -21,7 +21,7 @@
 		<li style="font-size:24px;"> USER NAME: <input valign="top" name="user_name" type="text"> </li>
 		<li style="font-size:24px;"> PASSWORD: <input  name="user_pass" type="password"> </li>
 		<li style="padding:10px 0px 0px 5px;font-size:12px;"> Not Registered ? 
-			<a style="text-decoration:underline" onclick="document.location = '/registration' "> Register </a> </li> -
+			<a style="text-decoration:underline" onclick="document.location = '/registration' "> Register </a> </li> 
 		<li style="float:right; font-size:18px; color: {{ colorStyle }};"> {{ displayText }} </li>
 		<li style="position:absolute; top:140px; right:5px; padding-top:30px; padding-left:10px;"> 
 			<input name="submit" type="submit" value="Submit" style="font-size:10pt;"> </li>

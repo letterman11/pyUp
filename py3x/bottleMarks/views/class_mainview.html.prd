@@ -57,7 +57,7 @@ end
 <div id="main">
  <div id="header">
     <a href="/pyWebMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
-    <a href="http://dcoda.net"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
+    <a href="/"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
  </div>
  <div class="tab_divs" id='{{ tab }}' >
   <div class="tab_header">
@@ -83,22 +83,21 @@ end
    <div class="search_div">
       <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark"> 
        <ul>
-
        <li> Enter Search Term(s)  </li>
         <li style="display:inline; padding-left:3px;"> 
-          <input name="searchtype" type="radio"  value="OR"> OR
+          <input name="searchtype" type="radio"  value="OR" > OR
           <input name="searchtype" checked="true" type="radio"  value="AND"> AND 
           <input name="searchtype" type="radio" value="COMBO"> COMBO 
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
-              <input onclick="setSearchTerms();" name="submit" type="submit" value="Search"> 
+            <!--  <input onclick="setSearchTerms();" name="submit" type="submit" value="Search">  -->
+              <input name="submit" type="submit" value="Search"> 
         </li>  
          {{ !optionTops }}
         <li style="padding-left:3px; width:100%">
            title <input id="searchBxTitle" name="searchBoxTitle" type="text" size="25">  
            url <input id="searchBxURL" name="searchBoxURL" type="text" size="25"> 
         </li> 
-
        </ul>
      </form>
    </div>
