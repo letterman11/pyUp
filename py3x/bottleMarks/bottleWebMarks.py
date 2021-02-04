@@ -8,7 +8,7 @@ import time
 import sqlite3
 from  globals import *
 from error import *
-
+import re
 
 app = Bottle()  
 
@@ -79,16 +79,33 @@ def pre_auth(connFile):
 def register():
     return Marks().renderRegistrationView()
 
-@app.route('/regAuth')
-def registerAuth():
-    pass
 
-    user_name = request.params['user_name']
-    user_pass  = request.params['user_passwd']
-    email_address  = request.params['email_address']
+@app.post('/regAuth')
+def registerAuth():
 
     ##########################################################
     #util.validate_registration(request)
+
+
+    try:
+        user_name = request.params['user_name']
+        user_pass1  = request.params['new_user_pass1']
+        user_pass2  = request.params['new_user_pass2']
+        email_address  = request.params['email_address']
+
+    except KeyError:
+        return Marks().renderRegistrationView(Error(112).errText()) 
+         
+    if (user_pass1 !=  user_pass2):
+        return Marks().renderRegistrationView(Error(113).errText()) 
+
+    if len(user_pass1) < 6:
+        return Marks().renderRegistrationView(Error(111).errText())
+
+    if not re.match(r"^[a-zA-z0-9\.]+\@[a-zA-Z0-9\.]+",email_address):
+        return Marks().renderRegistrationView(Error(119).errText())
+   
+
     ##########################################################    
 
     part_id = util.genSessionID()
@@ -105,18 +122,16 @@ def registerAuth():
     insert_sql_str = "INSERT INTO WM_USER (USER_ID,USER_NAME,USER_PASSWD,EMAIL_ADDRESS) VALUES (?,?,?,?)"
 
     try:
-        curs.execute(insert_sql_str, (user_id, user_name, user_pass, email_address,))
+        curs.execute(insert_sql_str, (user_id, user_name, user_pass1, email_address,))
     except Exception:
         print ("Insert Error Error Error wm_user")
-        return renderMainView(user_id,Error(2000))
+        return Marks().renderRegistrationView(Error(2000).errText())
     else:
         conn.commit()
     finally:
         conn.close()
 
-
-#    return Marks().renderRegistrationView()
-#    return Marks().renderDefaultView()
+    return Marks().renderDefaultView("red", "Successfully Registered" + user_name)
 
 @app.route('/default')
 def logIn():
@@ -290,8 +305,8 @@ def renderMainView(user_id=None,errObj=None):
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-        #app.run(debug="True", host="0.0.0.0", port='8087', reloader=True, server='gunicorn', workers=3)
         app.run(debug="True", host="0.0.0.0", port='8087', reloader=True, server='gunicorn', workers=3)
+        #app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
 '''
 def authenticate(f):
