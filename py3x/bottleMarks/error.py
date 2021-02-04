@@ -8,7 +8,7 @@ class Error(object):
             104 : "No Session Exists for ID",
             105 : "No Object exists for Session",
             106 : "User Name is must be at least 6 characters",
-            107 : None,
+            107 : "User Name or Password cannot be blank",
             108 : None,
             109 : None,
             110 : None,
