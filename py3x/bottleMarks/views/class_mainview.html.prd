@@ -48,20 +48,18 @@ end
 <title> WebMarks Application </title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-<link rel="shortcut icon" href="/public/images/dc.ico">
-<link rel="icon" href="/public/images/dc.ico">
-<link rel="stylesheet" href="/public/css/style.css" type="text/css">
-<script type="text/javascript" src="/public/js/common.js"> </script>
+<link rel="shortcut icon" href="/static/images/dc.ico">
+<link rel="short icon" href="/static/images/dc.ico"> 
+<link rel="stylesheet" href="/static/css/style.css" type="text/css"> 
+<script type="text/javascript" src="/static/js/common.js"> </script> 
 </head>
 <body onLoad="getSearchTerms()">
 <div id="main">
  <div id="header">
-  <!-- <h1 class="left"> <a href="/webMarks"> WEBMARKS </a></h1> -->
-  <a href="/"> <img class="banner_image_left" alt="webmarks logo" src="/public/images/webmarks_yellow.png" /> </a>
-  <!-- <h3>angus</h3> -->
-  <a href="/"> <img class="banner_image" alt="dcoda logo" src="/public/images/DCBANNER_CROP2_219_31_2.jpg" /> </a>
+    <a href="/pyWebMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
+    <a href="http://dcoda.net"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
  </div>
-<div class="tab_divs" id='{{ tab }}' >
+ <div class="tab_divs" id='{{ tab }}' >
   <div class="tab_header">
     <span onclick="cgi_out('tab=1');" class="tab_spans" id="sp_AE"> A-E {{ !sort_sp_ae }} </span>
     <span onclick="cgi_out('tab=2');" class="tab_spans" id="sp_FJ"> F-J {{ !sort_sp_fj}}  </span>
@@ -69,11 +67,9 @@ end
     <span onclick="cgi_out('tab=4');" class="tab_spans" id="sp_QU"> Q-U {{ !sort_sp_qu }} </span>
     <span onclick="cgi_out('tab=5');" class="tab_spans" id="sp_VZ"> V-Z {{ !sort_sp_vz }} </span>
     <span onclick="cgi_out('tab=9');" class="tab_spans" id="sp_DATE"> DATE {{ !sort_sp_date }} </span>
-<!--    <span class="tab_spans" id="sp_SRCH"> SEARCH </span>  -->
- <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
-    <!-- <span class="tab_spans" id="sp_SRCH"> SEARCH </span> -->
+	 <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
   </div>
-{{ !tabTable }}
+	{{ !tabTable }}
    </div>
 
    <script language="Javascript" type="text/javascript">
@@ -85,8 +81,7 @@ end
    </script>
 
    <div class="search_div">
-     <!-- <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark"> -->
-     <form  name="search_form" class="search_form" method="POST" action="/searchMark">
+      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark"> 
        <ul>
 
        <li> Enter Search Term(s)  </li>
@@ -109,8 +104,7 @@ end
    </div>
 
   <div class="new_mark">
-   <!-- <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark"> -->
-   <form name="newMark" id="new_mark" method="POST" action="/insertMark">
+   <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark"> 
     <ul>
     <!-- <li> Enter Title </li> -->
     <li> Enter Title <input name="mark_title" type="text" size="100"> </li>
@@ -122,8 +116,7 @@ end
   </div>
 
   <div class="delta_pass">
-  <!--  <form name="deltaPass" id="delta_pass" method="POST" action="/pyWebMarks/deltaPass"> -->
-   <form name="deltaPass" id="delta_pass" method="POST" action="/deltaPass">
+    <form name="deltaPass" id="delta_pass" method="POST" action="/pyWebMarks/deltaPass"> 
     <ul>
     <li onclick="logOut();"> LOGOUT {{ user_id }} </li>
     <li> Change Pass Word ? </li>

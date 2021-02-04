@@ -1,0 +1,138 @@
+<% 
+import itertools
+(sort_sp_ae,sort_sp_fj,sort_sp_kp,sort_sp_qu,sort_sp_vz,sort_sp_date,sort_sp_search) =  itertools.repeat(" ",7) 
+sort_span_html_asc = "<span style='font-size:13pt; font-weight:bold' id='sort_span'> &uarr; </span>"
+
+sort_span_html_dsc = "<span style='font-size:13pt; font-weight:bold' id='sort_span'> &darr; </span>" 
+
+tabMap = {y:x for x,y in tabMap.items()}
+
+if sort_crit == 0:
+	if tabMap[tab] == 1:
+	  	sort_sp_ae = sort_span_html_asc 
+	elif tabMap[tab] == 2:  
+			sort_sp_fj = sort_span_html_asc 
+	elif tabMap[tab] == 3: 
+			sort_sp_kp = sort_span_html_asc 
+	elif tabMap[tab] == 4: 
+			sort_sp_qu = sort_span_html_asc
+	elif tabMap[tab] == 5: 
+			sort_sp_vz = sort_span_html_asc 
+	elif tabMap[tab] == 9: 
+			sort_sp_date = sort_span_html_asc 
+	elif tabMap[tab] == 6: 
+			sort_sp_search = sort_span_html_asc 
+	end
+elif sort_crit == 1:
+	if tabMap[tab] == 1: 
+		sort_sp_ae = sort_span_html_dsc 
+	elif tabMap[tab] == 2: 
+		sort_sp_fj = sort_span_html_dsc 
+	elif tabMap[tab] == 3: 
+		sort_sp_kp = sort_span_html_dsc 
+	elif tabMap[tab] == 4: 
+		sort_sp_qu = sort_span_html_dsc 
+	elif tabMap[tab] == 5: 
+		sort_sp_vz = sort_span_html_dsc 
+	elif tabMap[tab] == 9: 
+		sort_sp_date = sort_span_html_dsc 
+	elif tabMap[tab] == 6: 
+		sort_sp_search = sort_span_html_dsc
+	end
+end
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> WebMarks Application </title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<link rel="shortcut icon" href="/public/images/dc.ico"> 
+<link rel="icon" href="/public/images/dc.ico"> 
+<link rel="stylesheet" href="/public/css/style.css" type="text/css"> 
+<script type="text/javascript" src="/public/js/common.js"> </script> 
+</head>
+<body onLoad="getSearchTerms()">
+<div id="main">
+<div id="header">
+  <a href="/"> <img class="banner_image_left" alt="webmarks logo" src="/public/images/webmarks_yellow.png" /> </a> 
+  <a href="/"> <img class="banner_image" alt="dcoda logo" src="/public/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
+ </div>
+<div class="tab_divs" id='{{ tab }}' >
+  <div class="tab_header">
+    <span onclick="cgi_out('tab=1');" class="tab_spans" id="sp_AE"> A-E {{ !sort_sp_ae }} </span>
+    <span onclick="cgi_out('tab=2');" class="tab_spans" id="sp_FJ"> F-J {{ !sort_sp_fj}}  </span>
+    <span onclick="cgi_out('tab=3');" class="tab_spans" id="sp_KP"> K-P {{ !sort_sp_kp }} </span>
+    <span onclick="cgi_out('tab=4');" class="tab_spans" id="sp_QU"> Q-U {{ !sort_sp_qu }} </span>
+    <span onclick="cgi_out('tab=5');" class="tab_spans" id="sp_VZ"> V-Z {{ !sort_sp_vz }} </span>
+    <span onclick="cgi_out('tab=9');" class="tab_spans" id="sp_DATE"> DATE {{ !sort_sp_date }} </span>
+	<!--    <span class="tab_spans" id="sp_SRCH"> SEARCH </span>  -->
+	 <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
+    <!-- <span class="tab_spans" id="sp_SRCH"> SEARCH </span> -->
+  </div>
+{{ !tabTable }}
+   </div>
+
+   <script language="Javascript" type="text/javascript">
+    if (window.screen.width <= 640) {
+       document.write( ' <div>  <span width="125px" style="font-size:13pt; font-weight:bold" id="searchTerms">  </span>  </div> ');
+    } else {
+     document.write( ' <div> <span width="125px" style="font-size:7pt; font-weight:bold" id="searchTerms">  </span>  </div> ');
+   }
+   </script>
+
+   <div class="search_div">
+     <form  name="search_form" class="search_form" method="POST" action="/searchMark">
+       <ul>
+
+       <li> Enter Search Term(s)  </li>
+        <li style="display:inline; padding-left:3px;"> 
+          <input name="searchtype" type="radio"  value="OR"> OR
+          <input name="searchtype" checked="true" type="radio"  value="AND"> AND 
+          <input name="searchtype" type="radio" value="COMBO"> COMBO 
+       </li>
+        <li style="position:absolute; top:20px; right:5px;"> 
+              <input onclick="setSearchTerms();" name="submit" type="submit" value="Search"> 
+        </li>  
+         {{ !optionTops }}
+        <li style="padding-left:3px; width:100%">
+           title <input id="searchBxTitle" name="searchBoxTitle" type="text" size="25">  
+           url <input id="searchBxURL" name="searchBoxURL" type="text" size="25"> 
+        </li> 
+
+       </ul>
+     </form>
+   </div>
+
+  <div class="new_mark">
+   <form name="newMark" id="new_mark" method="POST" action="/insertMark">
+    <ul>
+    <li> Enter Title <input name="mark_title" type="text" size="100"> </li>
+     <li>Enter URL  <input name="mark_url" type="text" size="100"> </li>
+    <li> <input name="submit" type="submit" value="Submit"> </li>
+    </ul>
+   </form>
+  </div>
+
+  <div class="delta_pass">
+   <form name="deltaPass" id="delta_pass" method="POST" action="/deltaPass">
+    <ul>
+    <li onclick="logOut();"> LOGOUT {{ user_id }} </li>
+    <li> Change Pass Word ? </li>
+    <li> Enter User Name </li>
+    <li> <input name="user_name" type="text" size="25"> </li>
+    <li> Enter Old Pass Word </li>
+    <li> <input name="old_user_pass" type="password" size="25"> </li>
+    <li> Enter New Pass Word </li>
+    <li> <input name="user_pass" type="password" size="25"> </li>
+    <li> <input name="submit" type="submit" value="Submit"> </li>
+    </ul>
+   </form>
+  </div>
+
+
+ </div>
+</body>
+</html>
+
