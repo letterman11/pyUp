@@ -10,7 +10,8 @@ function setCookie(name,value,days)
                 var expires = "; expires="+date.toGMTString();
         }
         else var expires = "";
-        document.cookie = name+"="+value+expires+"; path=/";
+        //document.cookie = name+"="+value+expires+"; path=/";
+        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/";
 }
 
 function getCookie(name,path)
@@ -25,7 +26,7 @@ function getCookie(name,path)
         if ( start == -1 ) return null;
                 var end = document.cookie.indexOf( ";", len );
         if ( end == -1 ) end = document.cookie.length;
-//                return unescape( document.cookie.substring( len, end ) );
+				//return unescape( document.cookie.substring( len, end ) );
                 return decodeURIComponent(document.cookie.substring( len, end ) );
 
 }
@@ -90,8 +91,8 @@ function cgi_out(tab_parm)
 
 function setSearchTerms()
 {      
-       var searchTerms = parent.top.document.getElementById('searchBxTitle');
-       parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
+      // var searchTerms = parent.top.document.getElementById('searchBxTitle');
+      // parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);
 }
@@ -113,10 +114,12 @@ function logOut()
 {
 	//appending "PY" to some cookie parameters to differentiate from regular webMarks perl
 	eraseCookie("PYwmSessionID");
+	eraseCookie("PYwmUserName");
 	eraseCookie("PYwmUserID");
 	eraseCookie("Counter");
 	eraseCookie("dt_cnter");
 	eraseCookie("tab_state");
+	eraseCookie("tab");
 	eraseCookie("searchTerms");
 	eraseCookie("search_submission");
 	
