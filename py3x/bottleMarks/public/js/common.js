@@ -91,8 +91,8 @@ function cgi_out(tab_parm)
 
 function setSearchTerms()
 {      
-      // var searchTerms = parent.top.document.getElementById('searchBxTitle');
-      // parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
+       var searchTerms = parent.top.document.getElementById('searchBxTitle');
+       parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);
 }
