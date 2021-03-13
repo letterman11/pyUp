@@ -18,6 +18,9 @@ def exec_page(req,user_id,user_name,errObj):
     searchBoxTitle = unWrap(req,'searchBoxTitle')
     searchTypeBool = unWrap(req,'searchtype')
 
+    searchDateStart = unWrap(req,'searchDateStart')
+    searchDateEnd = unWrap(req,'searchDateEnd')
+
     tabtype = unWrap(req,'tab') or tabMap['tab_DATE']
     tabtype = int(tabtype)
     sort_crit = unWrap(req,'sortCrit') 
@@ -103,6 +106,19 @@ def exec_page(req,user_id,user_name,errObj):
         storedSQLStr = main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
+    elif isset(searchDateStart) and isset(searchDateEnd):
+        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
+        exec_sql_str = main_sql_str + qstr + " ) "
+        storedSQLStr = main_sql_str + qstr 
+        util.storeSQL(storedSQLStr,req)
+        tabtype = tabMap['tab_SRCH_DATE']
+    elif isset(searchDateStart):
+        dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
+        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
+        exec_sql_str = main_sql_str + qstr + " ) "
+        storedSQLStr = main_sql_str + qstr 
+        util.storeSQL(storedSQLStr,req)
+        tabtype = tabMap['tab_SRCH_DATE']
 ##############################################################################################
 # End of logic branches for SrcBoxTitle + SrchBoxURL + Radio Button
 ##############################################################################################
@@ -187,4 +203,5 @@ def unWrap(req,reqObj):
     except:
         return None
     return parmval 
+
 
