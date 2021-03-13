@@ -5,7 +5,7 @@ from functools import wraps
 from  PJJExecPageSQL import exec_page
 import lib.util as util 
 import time
-import sqlite3
+import connection_factory as db
 from  globals import *
 from error import *
 import re
@@ -60,7 +60,7 @@ def pre_auth(connFile):
         exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_passwd = '" + usr_pass + "' and user_name ='" + usr_name  + "' "
 
     ### error checking ????? ##############
-    conn = sqlite3.connect(connFile)
+    conn = db.db_factory().connect()
     curs = conn.cursor()
     curs.execute(exec_sql_str)
     user_row = curs.fetchall()
@@ -115,11 +115,13 @@ def registerAuth():
     user_id = user_id+"_"+part_id
 
     ########################################
-    conn = sqlite3.connect(connFile)
+    conn = db.db_factory().connect()
     curs = conn.cursor()
+    place = db.db_factory.place
     ########################################
     
-    insert_sql_str = "INSERT INTO WM_USER (USER_ID,USER_NAME,USER_PASSWD,EMAIL_ADDRESS) VALUES (?,?,?,?)"
+    
+    insert_sql_str = "INSERT INTO WM_USER (USER_ID,USER_NAME,USER_PASSWD,EMAIL_ADDRESS) VALUES ({},{},{},{})".format(place,place,place,place)
 
     try:
         curs.execute(insert_sql_str, (user_id, user_name, user_pass1, email_address,))
@@ -168,12 +170,14 @@ def addWebMark():
     user_id = request.get_cookie('PYwmUserID')	
     title = request.params['mark_title']	
     url = request.params['mark_url']	
-
+    #time.daylight
 
     if not util.isset(title) or not util.isset(url):
         return renderMainView(user_id,Error(151))
 
+    #unix_epochs = int(time.time()) - time.timezone
     unix_epochs = int(time.time())
+
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
     dateAdded = unix_epochs * (1000 * 1000)
     date_Added = unix_epochs # for new datetime column
@@ -181,8 +185,9 @@ def addWebMark():
     date_Added = ('{}-{}-{} {}:{}:{}').format(year,mon,day,hour,mins,secs)
 
 
-    conn = sqlite3.connect(connFile)
+    conn = db.db_factory().connect()
     curs = conn.cursor()
+    place = db.db_factory.place
 
     curs.execute("select max(BOOKMARK_ID) from WM_BOOKMARK")
     (tbl1MaxId,) = curs.fetchone()
@@ -195,7 +200,7 @@ def addWebMark():
     tbl1MaxId +=1
     tbl2MaxId +=1
 
-    curs.execute("select b.url from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = ? and b.URL =  ? ", (user_id, url))
+    curs.execute("select b.url from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and b.URL =  {} ".format(place,place), (user_id, url))
     dup_check = curs.fetchone()
     
     if dup_check:
@@ -203,14 +208,14 @@ def addWebMark():
         return renderMainView(user_id,Error(150))
     
     try:
-        curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values (?,?,?)", (tbl2MaxId, url, title,))
+        curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values ({},{},{})".format(place,place,place), (tbl2MaxId, url, title,))
     except:
         print ("Insert Error wmplace")
         return renderMainView(user_id,Error(2000))
 
     try:
-        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values (?,?,?,?,?,?)", 
-				(tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
+        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values ({},{},{},{},{},{})".format(place
+                                ,place,place,place,place,place), (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
     except:
         print ("Insert Error Error Error wmboookmark")
         return renderMainView(user_id,Error(2000))
@@ -236,9 +241,10 @@ def deltaPass():
         return renderMainView(Error(user_id,112))
     else:
         try:
-            conn = sqlite3.connect(connFile)
+            conn = db.db_factory().connect()
             curs = conn.cursor()
-            curs.execute("update WM_USER set USER_PASSWD = ?  where USER_NAME = ? ", (new_passwd,user_name));
+            place = db.db_factory.place
+            curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_passwd,user_name));
 
         except:
             return renderMainView(user_id,Error(2000))
@@ -305,7 +311,7 @@ def renderMainView(user_id=None,errObj=None):
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-        app.run(debug="True", host="0.0.0.0", port='8087', reloader=True, server='gunicorn', workers=3)
+        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='waitress', workers=3)
         #app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
 '''

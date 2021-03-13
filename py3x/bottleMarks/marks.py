@@ -1,5 +1,6 @@
 from bottle import template
-import gen_histo_gram_multi as hist
+#import gen_histo_gram_multi as hist
+import gen_histo_gram_multi___ as hist
 import time
 
 class Marks(object):
@@ -90,5 +91,18 @@ class Marks(object):
 
     def convertTime(self, dateAdded):
         (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded/(1000 * 1000))[0:6]
+        curr_date_tuple  = time.localtime( dateAdded/(1000 * 1000))
+        day_of_week = time.strftime("%a",curr_date_tuple)
         dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
+        #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
         return dateAdded
+
+    def convertDateEpoch(self, humanDate):
+        res = re.match(r'([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})',humanDate)
+        year = res.group(1) 
+        month = res.group(2) 
+        day = res.group(3)
+        dateAdded = datetime.datetime(year,month,day,0,0).strftime('%s')
+        dateAdded = dateAdded * (1000 * 1000);
+        return dateAdded
+        #datetime.datetime(2012,4,1,0,0).timestamp()

@@ -1,10 +1,11 @@
 from marks import *
-from SQLStrings import *
+from SQLStrings___ import *
 from error import *
 import lib.util as util
 import globals as g
 from globals import *
-import sqlite3
+#import sqlite3
+import connection_factory as db
 import re
 ############################################
 ## Bottle Modified ExecPageSQL function #### 
@@ -39,6 +40,11 @@ def exec_page(req,user_id,user_name,errObj):
     print (str(searchBoxTitle)   + " searchBoxTitle")
     print (str(searchTypeBool)  + " searchBool")
 
+    conn = db.db_factory().connect()
+
+    g_main_sql_str = main_sql_str.format(db.db_factory.place)
+    g_date_sql_str = date_sql_str.format(db.db_factory.place)
+
 #############################################################################
 #Sort Criteria setting of ORDER_BY_CRITERIA
 #############################################################################
@@ -63,7 +69,7 @@ def exec_page(req,user_id,user_name,errObj):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
             qstr = " a.title like \"%" + searchBoxTitle + "%\"  and b.url like '%" + searchBoxURL + "%' "# sort_ord
-            exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
+            exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
             qstr = " a.title like \"%" + queri[0] + "%\" "
             for q in queri[1:]:
@@ -75,10 +81,10 @@ def exec_page(req,user_id,user_name,errObj):
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
         qstr +=  " and b.url like '%" + searchBoxURL + "%' " 
-        exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
+        exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
         ##########################################
-        #exec_sql_str = main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
-        storedSQLStr = main_sql_str + qstr 
+        #exec_sql_str = g_main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
+        storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchBoxTitle):
@@ -88,7 +94,7 @@ def exec_page(req,user_id,user_name,errObj):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
             qstr = " a.title like \"%" + searchBoxTitle + "%\" "# sort_ord
-            exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
+            exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
             qstr = " a.title like \"%" + queri[0] + "%\" "
             for q in queri[1:]:
@@ -96,27 +102,27 @@ def exec_page(req,user_id,user_name,errObj):
                     qstr += " and a.title like \"%" + q + "%\" " 
                 else:  
                     qstr += " or a.title like \"%" + q + "%\" " 
-        exec_sql_str = main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
-        storedSQLStr = main_sql_str + qstr 
+        exec_sql_str = g_main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
+        storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchBoxURL):
         qstr = " b.url like '%" + searchBoxURL + "%' "# sort_ord
-        exec_sql_str = main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
-        storedSQLStr = main_sql_str + qstr 
+        exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
+        storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchDateStart) and isset(searchDateEnd):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
-        exec_sql_str = main_sql_str + qstr + " ) "
-        storedSQLStr = main_sql_str + qstr 
+        exec_sql_str = g_main_sql_str + qstr + " ) "
+        storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
     elif isset(searchDateStart):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
-        exec_sql_str = main_sql_str + qstr + " ) "
-        storedSQLStr = main_sql_str + qstr 
+        exec_sql_str = g_main_sql_str + qstr + " ) "
+        storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
 ##############################################################################################
@@ -127,26 +133,26 @@ def exec_page(req,user_id,user_name,errObj):
 ##for entry of tabs
 #############################
         if tabtype == tabMap['tab_AE']:
-            exec_sql_str = main_sql_str + AE_str + ORDER_BY_CRIT + sort_ord
+            exec_sql_str = g_main_sql_str + AE_str + ORDER_BY_CRIT + sort_ord
         elif tabtype == tabMap['tab_FJ']:
-            exec_sql_str = main_sql_str + FJ_str + ORDER_BY_CRIT + sort_ord
+            exec_sql_str = g_main_sql_str + FJ_str + ORDER_BY_CRIT + sort_ord
         elif tabtype == tabMap['tab_KP']:
-            exec_sql_str = main_sql_str + KP_str + ORDER_BY_CRIT + sort_ord
+            exec_sql_str = g_main_sql_str + KP_str + ORDER_BY_CRIT + sort_ord
         elif tabtype == tabMap['tab_QU']:
-            exec_sql_str = main_sql_str + QU_str + ORDER_BY_CRIT + sort_ord
+            exec_sql_str = g_main_sql_str + QU_str + ORDER_BY_CRIT + sort_ord
         elif tabtype == tabMap['tab_VZ']:
-            exec_sql_str = main_sql_str + VZ_str + ORDER_BY_CRIT + sort_ord
+            exec_sql_str = g_main_sql_str + VZ_str + ORDER_BY_CRIT + sort_ord
         elif tabtype == tabMap['tab_DATE']:
-            exec_sql_str = date_sql_str + sort_ord + "limit 200 "
+            exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
         elif tabtype == tabMap['tab_SRCH_TITLE']:
             storedSQLStr = util.getStoredSQL(req)
             if not storedSQLStr:
-                exec_sql_str = date_sql_str + sort_ord + "limit 200 "
+                exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
             else:
                 exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
 ###################################
 ##################################
-    executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else date_sql_str + sort_ord + " limit 200 "
+    executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord + " limit 200 "
 ##########
 # Start of Execution of SQL
 #########
@@ -155,8 +161,8 @@ def exec_page(req,user_id,user_name,errObj):
     print (sort_crit)
     print ("Exec webMark SQL " + executed_sql_str)
     print (str(tabtype) + " tab in play")
-#    conn = sqlite3.connect(g.connFile)
-    conn = sqlite3.connect(connFile)
+    #conn = sqlite3.connect(connFile)
+    conn = db.db_factory().connect()
     #conn.text_factory = bytes
     conn.text_factory = lambda x: x.decode("latin1")
     try:
