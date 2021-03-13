@@ -91,10 +91,12 @@ end
           <input name="searchtype" type="radio"  value="OR"> OR
           <input name="searchtype" checked="true" type="radio"  value="AND"> AND 
           <input name="searchtype" type="radio" value="COMBO"> COMBO 
+	  <input name="searchDateStart" type="text" size=11>
+	  <input name="searchDateEnd" type="text" size=11>
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
-            <!--  <input name="submit" type="submit" value="Search"> -->
-              <input onclick="setSearchTerms();" name="submit" type="submit" value="Search"> 
+		<!-- <input name="submit" type="submit" value="Search"> --> 
+               <input onclick="setSearchTerms();" name="submit" type="submit" value="Search">  
         </li>  
          {{ !optionTops }}
         <li style="padding-left:3px; width:100%">
