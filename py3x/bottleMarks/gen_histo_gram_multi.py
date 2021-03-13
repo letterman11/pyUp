@@ -1,6 +1,7 @@
-hist_sql_all_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = ? "
+hist_sql_all_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} "
 import re
-import sqlite3
+#import sqlite3
+import connection_factory as db
 import globals as g
 
 def gen_histogram(user_id):
@@ -9,12 +10,13 @@ def gen_histogram(user_id):
     histo_list = []
     (title,url,dateAdded) = (1,0,2)
 
-    conn = sqlite3.connect(g.connFile)
+    #conn = sqlite3.connect(g.connFile)
+    conn = db.db_factory().connect()
     #conn.text_factory = bytes
     conn.text_factory = lambda x: x.decode("latin1")
     try:
         curs = conn.cursor()
-        curs.execute(hist_sql_all_str,(user_id,))
+        curs.execute(hist_sql_all_str.format(db.db_factory.place),(user_id,))
         dbRows = curs.fetchall()
         print ("RowCountWB " + str(len(dbRows)))
         conn.close()
