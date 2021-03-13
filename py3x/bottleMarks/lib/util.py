@@ -1,3 +1,4 @@
+import datetime
 import random
 import pickle
 import os
@@ -99,3 +100,24 @@ def isset(string):
         print (str(string) + str(len(string)) + "TRUE?")
         return True
 
+def convertDateEpoch(humanDate):
+
+    res1 = re.match(r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})',humanDate)
+
+    res = re.match(r'([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})',humanDate)
+
+    if res1:
+        print(res1)
+        month = res1.group(1) 
+        day = res1.group(2) 
+        year = res1.group(3)
+    elif res:
+        print(res)
+        year = res.group(1) 
+        month = res.group(2) 
+        day = res.group(3)
+
+    dateAdded = datetime.datetime(int(year),int(month),int(day),0,0).timestamp()
+    dateAdded = int(dateAdded) * (1000 * 1000);
+
+    return dateAdded
