@@ -1,5 +1,5 @@
 from marks import *
-from SQLStrings___ import *
+from SQLStrings import *
 from error import *
 import lib.util as util
 import globals as g
