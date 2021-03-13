@@ -1,6 +1,6 @@
 from bottle import template
 #import gen_histo_gram_multi as hist
-import gen_histo_gram_multi___ as hist
+import gen_histo_gram_multi as hist
 import time
 
 class Marks(object):
