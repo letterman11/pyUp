@@ -31,7 +31,7 @@ class db_factory(object):
             if  re.match(r'^#',line):
                 continue
 
-            res = re.match(r'([A-Za-z_0-9]+)=([A-Za-z_0-9\.\:\\]+)',line)
+            res = re.match(r'([A-Za-z_0-9]+)=([A-Za-z_0-9\-\/\.\:\\]+)',line)
 
             if res: 
                 (key,value) = (res.group(1), res.group(2))
