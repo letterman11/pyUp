@@ -172,6 +172,16 @@ h1 a {
 /*	height:10px; */
 }
 
+#searchDateStart {
+	background-color:lightblue;
+}
+
+
+#searchDateEnd {
+	background-color:lightblue;
+}
+
+
 .search_div ul {
 	width:100%;
 	font-size:18px;
