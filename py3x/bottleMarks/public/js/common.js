@@ -1,6 +1,31 @@
 //appending "PY" to some cookies to differentiate from perl webMarks
 // may cause some irregularities between share platform  of perl and python webMarks
 var search_submission = 6;	
+var stateOfBlur = 0;
+
+var startDate = parent.top.document.getElementById("searchDateStart")
+var endDate = parent.top.document.getElementById("searchDateEnd")
+
+function init()
+{
+  var startDate = parent.top.document.getElementById("searchDateStart")
+  var endDate = parent.top.document.getElementById("searchDateEnd")
+
+}
+
+
+function blurDates()
+{
+	var startDate = parent.top.document.getElementById("searchDateStart")
+	var endDate = parent.top.document.getElementById("searchDateEnd")
+	if(!stateOfBlur) {
+	startDate.value = "";
+	endDate.value = "";
+	stateOfBlur=1;
+
+	}
+}
+
 
 function setCookie(name,value,days)
 {
@@ -83,9 +108,9 @@ function cgi_out(tab_parm)
 	}
 
 
-	top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	//top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	// deploy url##
-	//top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	//	
 }
 
@@ -95,12 +120,22 @@ function setSearchTerms()
        parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);
+
+	var startDate = parent.top.document.getElementById("searchDateStart")
+	var endDate = parent.top.document.getElementById("searchDateEnd")
+
+	if(stateOfBlur == 0) 
+	{
+		startDate.value="";
+		endDate.value="";
+	}
 }
 
 function getSearchTerms()
 {      
        var searchTerms = getCookie('searchTerms');
        parent.top.document.getElementById('searchTerms').innerHTML = searchTerms;
+
 }
 
 function topOpToSearch(topOp)
@@ -123,8 +158,8 @@ function logOut()
 	eraseCookie("searchTerms");
 	eraseCookie("search_submission");
 	
-	top.location = "/logout";
+	//top.location = "/logout";
 	// deploy url
-//	top.location = "/pyWebMarks/logout";
+	top.location = "/pyWebMarks/logout";
 	//
 }
