@@ -4,7 +4,7 @@ import re
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-dbConf = "stockDbconfig.dat" #@@@@@@@
+dbConf = "stockDbConfig.dat" #@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 config_hash = {}
 
