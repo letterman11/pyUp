@@ -131,6 +131,20 @@ function setSearchTerms()
 	}
 }
 
+function validateFields(sDate,eDate)
+{
+	re_1 =	'/([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})/';
+	re_2 =	'/([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})/';
+/*
+	if((re_1.test(sDate.value) || (re_2.test(sDate.value))
+		return true;	
+
+	if((re_1.test(eDate.value) || (re_2.test(eDate.value) || (eDate.value == "")))
+		return true;	
+*/
+}
+
+
 function getSearchTerms()
 {      
        var searchTerms = getCookie('searchTerms');
@@ -143,6 +157,7 @@ function topOpToSearch(topOp)
    var searchBox = parent.top.document.getElementById('searchBxTitle');
    searchBox.value = topOp; 
 }
+
 
 
 function logOut()
