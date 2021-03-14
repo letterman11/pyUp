@@ -43,6 +43,7 @@ def exec_page(req,user_id,user_name,errObj):
 
     tabMap2 = {y:x for x,y in tabMap.items()}
 
+
     #temporary code
     if util.isset(searchDateStart):
         print(searchDateStart)
@@ -94,12 +95,12 @@ def exec_page(req,user_id,user_name,errObj):
             qstr = " a.title like \"%" + searchBoxTitle + "%\"  and b.url like '%" + searchBoxURL + "%' "# sort_ord
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like \"%" + queri[0] + "%\" "
+            qstr = " a.title like \"%" + re.sub(r'^s','S',queri[0]) + "%\" "
             for q in queri[1:]:
                 if searchTypeBool == "OR":
-                    qstr += " or a.title like \"%" + q + "%\" " 
+                    qstr += " or a.title like \"%" + re.sub(r'^s','S',q) + "%\" " 
                 else:
-                    qstr += " and a.title like \"%" + q + "%\" " 
+                    qstr += " and a.title like \"%" + re.sub(r'^s','S',q) + "%\" " 
         ###########################################
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
@@ -116,15 +117,15 @@ def exec_page(req,user_id,user_name,errObj):
         #queri = re.split("\s*",searchBoxTitle)
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like \"%" + searchBoxTitle + "%\" "# sort_ord
+            qstr = " a.title like \"%" + re.sub(r'^s','S',searchBoxTitle) + "%\" "# sort_ord
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like \"%" + queri[0] + "%\" "
+            qstr = " a.title like \"%" +   re.sub(r'^s','S',queri[0])+ "%\" "
             for q in queri[1:]:
                 if searchTypeBool == "AND":
-                    qstr += " and a.title like \"%" + q + "%\" " 
+                    qstr += " and a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
                 else:  
-                    qstr += " or a.title like \"%" + q + "%\" " 
+                    qstr += " or a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
         exec_sql_str = g_main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
