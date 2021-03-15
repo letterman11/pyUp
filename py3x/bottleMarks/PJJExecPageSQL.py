@@ -92,7 +92,7 @@ def exec_page(req,user_id,user_name,errObj):
     if searchTypeBool == "COMBO" and (isset(searchBoxTitle)) and (isset(searchBoxURL)):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like \"%" + searchBoxTitle + "%\"  and b.url like '%" + searchBoxURL + "%' "# sort_ord
+            qstr = " a.title like \"%" + re.sub(r'^s','S',searchBoxTitle) + "%\"  and b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
             qstr = " a.title like \"%" + re.sub(r'^s','S',queri[0]) + "%\" "
@@ -131,7 +131,7 @@ def exec_page(req,user_id,user_name,errObj):
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif isset(searchBoxURL):
-        qstr = " b.url like '%" + searchBoxURL + "%' "# sort_ord
+        qstr = " b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
