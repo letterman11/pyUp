@@ -46,23 +46,28 @@ def exec_page(req,user_id,user_name,errObj):
 
     #temporary code
     if util.isset(searchDateStart):
-        print(searchDateStart)
-        res_start_1 = re.match(r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})|([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})',searchDateStart)
-#        res_start_2 = re.match(r'([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})',searchDateStart)
+        res_start_1 = re.match(r'(([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4}))|(([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2}))|(([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2}))',searchDateStart)
 
         if not res_start_1:
             marks = Marks(tabMap2[tabtype],None,None,Error(151))
             return marks.renderMainView(user_id,sort_crit,tabMap)
+
+        if len(searchDateStart) <= 8:
+            res_sub_1 = re.match(r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2})',searchDateStart)
+            searchDateStart = res_sub_1.group(1) + "-" + res_sub_1.group(2) + "-" + "20" +res_sub_1.group(3)
    
     if util.isset(searchDateEnd):
 
-        res_end_1 = re.match(r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})|([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})',searchDateEnd)
-#        res_end_2 = re.match(r'([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})',searchDateEnd)
+        res_end_1 = re.match(r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})|([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})|([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2})',searchDateEnd)
 
         if not res_end_1:
             marks = Marks(tabMap2[tabtype],None,None,Error(151))
             return marks.renderMainView(user_id,sort_crit,tabMap)
 
+        if len(searchDateEnd) <= 8:
+            res_sub_1 = re.match(r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2})',searchDateEnd)
+            searchDateEnd = res_sub_1.group(1) + "-" + res_sub_1.group(2) + "-" + "20" +res_sub_1.group(3)
+   
 
     conn = db.db_factory().connect()
 
