@@ -174,11 +174,13 @@ h1 a {
 
 #searchDateStart {
 	background-color:lightblue;
+	font-weight:bold;
 }
 
 
 #searchDateEnd {
 	background-color:lightblue;
+	font-weight:bold;
 }
 
 
