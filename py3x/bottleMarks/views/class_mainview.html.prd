@@ -53,7 +53,7 @@ end
 <link rel="stylesheet" href="/static/css/style.css" type="text/css"> 
 <script type="text/javascript" src="/static/js/common.js"> </script> 
 </head>
-<body onLoad="getSearchTerms()">
+<body onLoad="getSearchTerms();init();">
 <div id="main">
  <div id="header">
     <a href="/pyWebMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
@@ -81,13 +81,15 @@ end
    </script>
 
    <div class="search_div">
-      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark"> 
+      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick""> 
        <ul>
        <li> Enter Search Term(s)  </li>
         <li style="display:inline; padding-left:3px;"> 
           <input name="searchtype" type="radio"  value="OR" > OR
           <input name="searchtype" checked="true" type="radio"  value="AND"> AND 
           <input name="searchtype" type="radio" value="COMBO"> COMBO 
+	  <input name="searchDateStart" type="text" size=11 id="searchDateStart" value="Ex: 1-1-2021" onFocus="blurDates();">
+	  <input name="searchDateEnd" type="text" size=11 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
               <input onclick="setSearchTerms();" name="submit" type="submit" value="Search">  
