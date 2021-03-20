@@ -43,8 +43,8 @@ def exec_page(req,user_id,user_name,errObj):
 
     tabMap2 = {y:x for x,y in tabMap.items()}
 
-    multiDate = r'(([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4}))|(([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2}))|(([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2}))'
-    shortDate = r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2})'
+    multiDate = r'(([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4}))|(([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2}))|(\b([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2})\b)'
+    shortDate = r'\b([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{2})\b'
 
     regMultiDate = re.compile(multiDate)
     regShortDate = re.compile(shortDate)
@@ -57,8 +57,8 @@ def exec_page(req,user_id,user_name,errObj):
             marks = Marks(tabMap2[tabtype],None,None,Error(151))
             return marks.renderMainView(user_id,sort_crit,tabMap)
 
-        if len(searchDateStart) <= 8:
-            res_sub_1 = re.match(regShortDate,searchDateStart)
+        res_sub_1 = re.match(regShortDate,searchDateStart)
+        if res_sub_1:
             searchDateStart = res_sub_1.group(1) + "-" + res_sub_1.group(2) + "-" + "20" +res_sub_1.group(3)
    
     if util.isset(searchDateEnd):
@@ -69,8 +69,8 @@ def exec_page(req,user_id,user_name,errObj):
             marks = Marks(tabMap2[tabtype],None,None,Error(151))
             return marks.renderMainView(user_id,sort_crit,tabMap)
 
-        if len(searchDateEnd) <= 8:
-            res_sub_1 = re.match(regShortDate,searchDateEnd)
+        res_sub_1 = re.match(regShortDate,searchDateEnd)
+        if res_sub_1:
             searchDateEnd = res_sub_1.group(1) + "-" + res_sub_1.group(2) + "-" + "20" +res_sub_1.group(3)
    
 
