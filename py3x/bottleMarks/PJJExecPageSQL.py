@@ -114,7 +114,8 @@ def exec_page(req,user_id,user_name,errObj):
         ###########################################
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
-        qstr +=  " and b.url like '%" + searchBoxURL + "%' " 
+        if len(queri) >= 2:
+            qstr +=  " and b.url like '%" + re.sub(r'^s', 'S', searchBoxURL) + "%' " 
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
         ##########################################
         #exec_sql_str = g_main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
