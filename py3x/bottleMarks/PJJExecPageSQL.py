@@ -74,7 +74,7 @@ def exec_page(req,user_id,user_name,errObj):
             searchDateEnd = res_sub_1.group(1) + "-" + res_sub_1.group(2) + "-" + "20" +res_sub_1.group(3)
    
 
-    conn = db.db_factory().connect()
+    conn = db.db_factory()
 
     g_main_sql_str = main_sql_str.format(db.db_factory.place)
     g_date_sql_str = date_sql_str.format(db.db_factory.place)
@@ -196,8 +196,8 @@ def exec_page(req,user_id,user_name,errObj):
     print (sort_crit)
     print ("Exec webMark SQL " + executed_sql_str)
     print (str(tabtype) + " tab in play")
-    #conn = sqlite3.connect(connFile)
-    conn = db.db_factory().connect()
+    #conn = db.db_factory().connect()
+    conn = conn.connect()
     #conn.text_factory = bytes
     conn.text_factory = lambda x: x.decode("latin1")
     try:

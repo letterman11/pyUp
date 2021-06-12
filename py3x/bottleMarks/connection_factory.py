@@ -14,6 +14,7 @@ class db_factory(object):
 
     def __init__(self, config_file=None):
         self.config_file = config_file
+        self.parse_config()
 
     def parse_config(self):
 
@@ -56,7 +57,7 @@ class db_factory(object):
         return config_hash['driver']
 
     def connect(self):
-        self.parse_config()
+#        self.parse_config()
 
         if re.match(r'sqlite3', self.db_driver()):
             db_factory.place = "?"
