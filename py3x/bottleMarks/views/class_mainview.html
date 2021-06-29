@@ -48,16 +48,16 @@ end
 <title> WebMarks Application </title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-<link rel="shortcut icon" href="/public/images/dc.ico">
-<link rel="short icon" href="/public/images/dc.ico"> 
-<link rel="stylesheet" href="/public/css/style.css" type="text/css"> 
-<script type="text/javascript" src="/public/js/common.js"> </script> 
+<link rel="shortcut icon" href="/static/images/dc.ico">
+<link rel="short icon" href="/static/images/dc.ico"> 
+<link rel="stylesheet" href="/static/css/style.css" type="text/css"> 
+<script type="text/javascript" src="/static/js/common.js"> </script> 
 </head>
 <body onLoad="getSearchTerms();init();">
 <div id="main">
  <div id="header">
-    <a href="/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/public/images/webmarks_yellow.png" /> </a> 
-    <a href="/"> <img class="banner_image" alt="dcoda logo" src="/public/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
+    <a href="/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
+    <a href="/"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
  </div>
  <div class="tab_divs" id='{{ tab }}' >
   <div class="tab_header">
@@ -85,11 +85,11 @@ end
        <ul>
        <li> Enter Search Term(s)  </li>
         <li style="display:inline; padding-left:3px;"> 
-        OR <input name="searchtype" type="radio"  value="OR"> 
-       AND <input name="searchtype" checked="true" type="radio"  value="AND">  
-     COMBO <input name="searchtype" type="radio" value="COMBO"> 
- 	   <input name="searchDateStart" type="text" size=11 id="searchDateStart" value="Ex: 1-1-2021" onFocus="blurDates();">
-	   <input name="searchDateEnd" type="text" size=11 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">
+          OR <input name="searchtype" type="radio"  value="OR" > 
+         AND <input name="searchtype" checked="true" type="radio"  value="AND"> 
+       COMBO <input name="searchtype" type="radio" value="COMBO"> 
+	     <input name="searchDateStart" type="text" size=11 id="searchDateStart" value="Ex: 1-1-2021" onFocus="blurDates();">
+	     <input name="searchDateEnd" type="text" size=11 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
               <input onclick="setSearchTerms();" name="submit" type="submit" value="Search">  

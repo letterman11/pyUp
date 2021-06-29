@@ -1,4 +1,3 @@
-#!/usr/bin/bash
 
 c_to_prod()
 {
