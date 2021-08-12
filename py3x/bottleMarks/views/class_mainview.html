@@ -47,10 +47,12 @@ end
 <head>
 <title> WebMarks Application </title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=.65">
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 <link rel="shortcut icon" href="/static/images/dc.ico">
 <link rel="short icon" href="/static/images/dc.ico"> 
-<link rel="stylesheet" href="/static/css/style.css" type="text/css"> 
+<link rel="stylesheet" media="screen and (min-device-width:800px)" href="/static/css/style.css" type="text/css" />
+<link rel="stylesheet" media="screen and (max-device-width:600px)" href="/static/css/mobile_style.css" type="text/css" />
 <script type="text/javascript" src="/static/js/common.js"> </script> 
 </head>
 <body onLoad="getSearchTerms();init();">
@@ -61,16 +63,26 @@ end
  </div>
  <div class="tab_divs" id='{{ tab }}' >
   <div class="tab_header">
+	 
+   <div class="tab_top">
     <span onclick="cgi_out('tab=1');" class="tab_spans" id="sp_AE"> A-E {{ !sort_sp_ae }} </span>
     <span onclick="cgi_out('tab=2');" class="tab_spans" id="sp_FJ"> F-J {{ !sort_sp_fj}}  </span>
     <span onclick="cgi_out('tab=3');" class="tab_spans" id="sp_KP"> K-P {{ !sort_sp_kp }} </span>
+   </div> <!-- end big1 -->
+
+   <div class="tab_bottom">
     <span onclick="cgi_out('tab=4');" class="tab_spans" id="sp_QU"> Q-U {{ !sort_sp_qu }} </span>
     <span onclick="cgi_out('tab=5');" class="tab_spans" id="sp_VZ"> V-Z {{ !sort_sp_vz }} </span>
     <span onclick="cgi_out('tab=9');" class="tab_spans" id="sp_DATE"> DATE {{ !sort_sp_date }} </span>
-	 <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
-  </div>
+    </div>  <!-- end big2 -->
+
+   <div class="tab_bottom_search">
+    <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
+    </div> <!-- end big3 -->
+
+  </div> 
 	{{ !tabTable }}
-   </div>
+ </div>
 
    <script language="Javascript" type="text/javascript">
     if (window.screen.width <= 640) {
