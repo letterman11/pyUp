@@ -15,15 +15,18 @@ app = Bottle()
 # static files ############################################
 # served by bottle -- ideally would be served by static 
 # server like Apache or Nginx
-@app.route('/public/css/<filename>')
+#@app.route('/public/css/<filename>')
+@app.route('/static/css/<filename>')
 def server_static_css(filename):
     return static_file(filename, root="./public/css")
      
-@app.route('/public/images/<filename>')
+#@app.route('/public/images/<filename>')
+@app.route('/static/images/<filename>')
 def server_static_imgs(filename):
     return static_file(filename, root="./public/images")
 
-@app.route('/public/js/<filename>')
+#@app.route('/public/js/<filename>')
+@app.route('/static/js/<filename>')
 def server_static_js(filename):
     return static_file(filename, root="./public/js")
 ###########################################################
@@ -75,11 +78,13 @@ def pre_auth(connFile):
     else:
         return None
 
+@app.route("/pyWebMarks/registration")
 @app.route('/registration')
 def register():
     return Marks().renderRegistrationView()
 
 
+@app.route("/pyWebMarks/regAuth")
 @app.post('/regAuth')
 def registerAuth():
 
@@ -135,6 +140,7 @@ def registerAuth():
 
     return Marks().renderDefaultView("red", "Successfully Registered " + user_name)
 
+@app.route("/pyWebMarks/default")
 @app.route('/default')
 def logIn():
     return Marks().renderDefaultView()
@@ -144,26 +150,31 @@ def logIn():
 ###  --  Authenticated routes -- via authenticate decorator -- ###
 ##################################################################
 
+@app.route("/pyWebMarks")
 @app.route("/")
 @authenticate
 def index():
     return renderMainView()
 
+@app.route("/pyWebMarks/webMarks")
 @app.route("/webMarks")
 @authenticate
 def indexWB():
     return renderMainView()
 
+@app.route("/pyWebMarks/tabView")
 @app.route("/tabView")
 @authenticate
 def indexView():
     return renderMainView()
 
+@app.route("/pyWebMarks/searchMark")
 @app.post("/searchMark")
 @authenticate
 def searchWebMark():
     return renderMainView()
 
+@app.route("/pyWebMarks/insertMark")
 @app.post("/insertMark")
 @authenticate
 def addWebMark():
@@ -218,6 +229,7 @@ def addWebMark():
                                 ,place,place,place,place,place), (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
     except:
         print ("Insert Error Error Error wmboookmark")
+        conn.rollback()
         return renderMainView(user_id,Error(2000))
     else:
         conn.commit()
@@ -226,6 +238,7 @@ def addWebMark():
       
     return renderMainView()
 
+@app.route("/pyWebMarks/deltaPass")
 @app.post("/deltaPass")
 @authenticate
 def deltaPass():
@@ -258,10 +271,12 @@ def deltaPass():
 ## end authenticated routes via decorator ############################
 ######################################################################
 
+@app.post("/pyWebMarks/logout")
 @app.route("/logout")
 def logOut():
     return Marks().renderDefaultView()
 
+@app.post("/pyWebMarks/authenCred")
 @app.post("/authenCred")
 def authenCredFunc():
     result_row = pre_auth(gConn)
@@ -288,14 +303,10 @@ def validate_session2(req):
 def authorize(user_id,user_name):
     sessionID = util.genSessionID()
     init_count = 0
-    init_date_count = 0
-    init_tab_state = 0
     response.set_cookie('PYwmSessionID',str(sessionID), path='/')
     response.set_cookie('PYwmUserID',str(user_id), path='/')
     response.set_cookie('PYwmUserName', str(user_name), path='/')
     response.set_cookie('Counter', str(init_count), path='/')
-    response.set_cookie('tab_state', str(init_tab_state), path='/')
-    response.set_cookie('dt_cnter', str(init_date_count), path='/')
     util.saveSession(sessionID)
 #    response.set_cookie('expires', 60*60)
 
@@ -311,9 +322,9 @@ def renderMainView(user_id=None,errObj=None):
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='waitress', workers=3)
+    #    app.run(debug="True", host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
         #app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
-#        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
+        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
 '''
 def authenticate(f):
     @wraps(f)
