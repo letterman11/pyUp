@@ -341,3 +341,12 @@ form.newMark {
 	margin:0px;
 	padding:0px;
 }
+
+#logout {
+        font-size:18px;
+        font-weight:bold;
+	width:8em;
+	color:white;
+	background-color:black;
+}
+
