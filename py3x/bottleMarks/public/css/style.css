@@ -69,6 +69,22 @@ h1 a {
 .tab_header {
 	margin:0px;
 	padding:0px;
+//	border:solid;
+}
+
+.tab_top  {
+	//display:inline-block;	
+	float:left;
+}
+
+.tab_bottom  {
+	//display:inline-block;	
+	float:left;
+}
+
+.tab_bottom_search {
+	//display:inline-block;	
+	float:left;
 }
 
 #tab_AE #sp_AE {
