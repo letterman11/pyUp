@@ -183,8 +183,8 @@ def indexView():
 def searchWebMark():
     return renderMainView()
 
-@app.route("/pyWebMarks/insertMark")
-@app.route("/insertMark")
+@app.route("/pyWebMarks/insertMark", methods=['POST'] )
+@app.route("/insertMark", methods=['POST'])
 @authenticate
 def addWebMark():
     user_id = session['wmUserID']	
