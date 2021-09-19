@@ -13,6 +13,7 @@ class Marks(object):
     def renderMainView(self,user_id,sort_crit,tabMap):
         tabTable = self.genTabTable(sort_crit)        
         optionTops=hist.gen_optionListDiv(user_id)
+        tabMap = {y:x for x,y in tabMap.items()}
         return render_template('class_mainview.html', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
 
 
