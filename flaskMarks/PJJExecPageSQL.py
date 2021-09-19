@@ -22,9 +22,13 @@ def exec_page(req,sess,user_id,user_name,errObj):
     searchDateStart = unWrap(req,'searchDateStart')
     searchDateEnd = unWrap(req,'searchDateEnd')
 
-    tabtype = unWrap(req,'tab') or tabMap['tab_DATE']
+    #tabtype = unWrap(req,'tab') 
+    tabtype = req.args.get('tab') or tabMap['tab_DATE']
+    print("tab server " + str(tabtype))
+
     tabtype = int(tabtype)
-    sort_crit = unWrap(req,'sortCrit') 
+    sort_crit = req.args.get('sortCrit') 
+
     if sort_crit != None and sort_crit != 'undefined':
         sort_crit = int(sort_crit)
 
@@ -241,7 +245,9 @@ def isset(string):
 
 def unWrap(req,reqObj):
     try:
+        print(reqObj)
         parmval = req.form[reqObj]
+        print (parmval)
     except:
         return None
     return parmval 
