@@ -2,11 +2,11 @@ from bottle import Bottle, template, run, route, request, response, static_file
 from datetime import datetime
 from marks import Marks
 from functools import wraps
-from  PJJExecPageSQL import exec_page
+from PJJExecPageSQL import exec_page
 import lib.util as util 
 import time
 import connection_factory as db
-from  globals import *
+from globals import *
 from error import *
 import re
 
@@ -44,17 +44,12 @@ def authenticate(f):
     return wrapper
 
 
-def pre_auth(connFile): 
-    usr_name = "" 
-    usr_pass = ""
-    old_usr_pass = ""
-    usr_id = ""
-    try:
-        usr_name = request.params['user_name'] 
-        usr_pass = request.params['user_pass'] 
-        old_usr_pass = request.params['old_user_pass']  
-    except:
-        pass        
+def pre_auth(): 
+    
+    usr_name = util.unWrap(request, 'user_name') 
+    usr_pass = util.unWrap(request, 'user_pass')
+    old_usr_pass = util.unWrap(request, 'old_user_pass')
+    
     exec_sql_str = str()
 
     if old_usr_pass: # for update
@@ -74,7 +69,9 @@ def pre_auth(connFile):
         print (user_row)
         print ("user row list above")
         usr_id,usr_name,usr_pass = user_row[0],user_row[1],user_row[2]
+       
         return (usr_id,usr_name,usr_pass)
+
     else:
         return None
 
@@ -84,15 +81,15 @@ def register():
     return Marks().renderRegistrationView()
 
 
-@app.route("/pyWebMarks/regAuth")
+@app.post("/pyWebMarks/regAuth")
 @app.post('/regAuth')
 def registerAuth():
 
     try:
         user_name = request.params['user_name']
-        user_pass1  = request.params['new_user_pass1']
-        user_pass2  = request.params['new_user_pass2']
-        email_address  = request.params['email_address']
+        user_pass1 = request.params['new_user_pass1']
+        user_pass2 = request.params['new_user_pass2']
+        email_address = request.params['email_address']
 
     except KeyError:
         return Marks().renderRegistrationView(Error(112).errText()) 
@@ -222,13 +219,14 @@ def addWebMark():
         curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values ({},{},{})".format(place,place,place), (tbl2MaxId, url, title,))
     except:
         print ("Insert Error wmplace")
+        conn.rollback()
         return renderMainView(user_id,Error(2000))
 
     try:
         curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values ({},{},{},{},{},{})".format(place
                                 ,place,place,place,place,place), (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
     except:
-        print ("Insert Error Error Error wmboookmark")
+        print ("Insert Error wmbookmark")
         conn.rollback()
         return renderMainView(user_id,Error(2000))
     else:
@@ -238,13 +236,13 @@ def addWebMark():
       
     return renderMainView()
 
-@app.route("/pyWebMarks/deltaPass")
+@app.post("/pyWebMarks/deltaPass")
 @app.post("/deltaPass")
 @authenticate
 def deltaPass():
     print (connFile)
     try:
-        (user_id,user_name,user_pass) = pre_auth(connFile)
+        (user_id,user_name,user_pass) = pre_auth()
     except:
         return renderMainView(request.params['user_name'],Error(112))
    
@@ -271,7 +269,7 @@ def deltaPass():
 ## end authenticated routes via decorator ############################
 ######################################################################
 
-@app.post("/pyWebMarks/logout")
+@app.route("/pyWebMarks/logout")
 @app.route("/logout")
 def logOut():
     return Marks().renderDefaultView()
@@ -279,16 +277,14 @@ def logOut():
 @app.post("/pyWebMarks/authenCred")
 @app.post("/authenCred")
 def authenCredFunc():
-    result_row = pre_auth(gConn)
-    user_id = None
-    if result_row:
-        (user_id,user_name,user_pass) = result_row
-    #!!!additional logic for already present session needed
-    ######################################################
+
+    (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+
     if user_id:
         authorize(user_id,user_name)
     else:
         return Marks().renderDefaultView(colorStyle="red",displayText="Incorrect User ID/Password")
+    
     return renderMainView(user_id)
 
 def validate_session():
@@ -308,7 +304,7 @@ def authorize(user_id,user_name):
     response.set_cookie('PYwmUserName', str(user_name), path='/')
     response.set_cookie('Counter', str(init_count), path='/')
     util.saveSession(sessionID)
-#    response.set_cookie('expires', 60*60)
+#   response.set_cookie('expires', 60*60)
 
 def renderMainView(user_id=None,errObj=None):
     user_name=None
@@ -319,20 +315,10 @@ def renderMainView(user_id=None,errObj=None):
     if not user_id or not user_name:
         user_id = request.get_cookie('PYwmUserID')
         user_name = request.get_cookie('PYwmUserName')
+
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
         app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
         #app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
-'''
-def authenticate(f):
-    @wraps(f)
-    def wrbottleer(*args, **kwargs):
-        auth = request.authorization
-        if not auth.username or not auth.password or not valid_credentials(auth.username, auth.password):
-            return Response('Login!', 401, {'WWW-Authenticate': 'Basic realm="Login!"'})
-        return f(*args, **kwargs)
-    return wrbottleer
-
-'''
