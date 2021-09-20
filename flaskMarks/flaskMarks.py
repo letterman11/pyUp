@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, session, url_for
+from flask import Flask, render_template, request, session
 from datetime import datetime
 from marks import Marks
 from functools import wraps
-from  PJJExecPageSQL import exec_page
+from PJJExecPageSQL import exec_page
 import lib.util as util 
 import time
 import connection_factory as db
-from  globals import *
+from globals import *
 from error import *
 import re
 
@@ -15,24 +15,8 @@ app = Flask(__name__)
 app.secret_key = b"r\xb5\x96@|\xcd~\x96\xb1\x86\xb6'\xcd\x9b\x8c\xcd"
 
 # static files ############################################
-# served by bottle -- ideally would be served by static 
-# server like Apache or Nginx
-'''
-#@app.route('/public/css/<filename>')
-@app.route('/static/css/<filename>')
-def server_static_css(filename):
-    return url_for('static', filename=filename)
-     
-#@app.route('/public/images/<filename>')
-@app.route('/static/images/<filename>')
-def server_static_imgs(filename):
-    return url_for('static', filename=filename)
-
-#@app.route('/public/js/<filename>')
-@app.route('/static/js/<filename>')
-def server_static_js(filename):
-    return url_for('static', filename=filename)
-'''
+# served by Flask  local static dir-- 
+# ideally would be served by static server like Apache or Nginx
 ###########################################################
 
 ### decorator functions
@@ -42,7 +26,6 @@ def server_static_js(filename):
 def authenticate(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        #if validate_session() == False:
         aa = [ (k) for k in request.form]
         print ("Here")
         print(aa, "")
@@ -53,17 +36,12 @@ def authenticate(f):
     return wrapper
 
 
-def pre_auth(connFile): 
-    usr_name = "" 
-    usr_pass = ""
-    old_usr_pass = ""
-    usr_id = ""
-    try:
-        usr_name = request.form['user_name'] 
-        usr_pass = request.form['user_pass'] 
-        old_usr_pass = request.form['old_user_pass']  
-    except:
-        pass        
+def pre_auth(): 
+    
+    usr_name = util.unWrap(request, 'user_name') 
+    usr_pass = util.unWrap(request, 'user_pass')
+    old_usr_pass = util.unWrap(request, 'old_user_pass')
+    
     exec_sql_str = str()
 
     if old_usr_pass: # for update
@@ -121,7 +99,6 @@ def registerAuth():
    
 
     ##########################################################    
-
     part_id = util.genSessionID()
     user_id = user_name[0:5]
     part_id = part_id[0:5]
@@ -147,7 +124,7 @@ def registerAuth():
     finally:
         conn.close()
 
-    return Marks().renderDefaultView("red", "Successfully Registered " + user_name)
+    return Marks().renderDefaultView("grey", "Successfully Registered " + user_name)
 
 @app.route("/pyWebMarks/default")
 @app.route('/default')
@@ -177,8 +154,8 @@ def indexWB():
 def indexView():
     return renderMainView()
 
-@app.route("/pyWebMarks/searchMark", methods=['GET','POST'])
-@app.route("/searchMark", methods=['GET','POST'])
+@app.route("/pyWebMarks/searchMark", methods=['POST'])
+@app.route("/searchMark", methods=['POST'])
 @authenticate
 def searchWebMark():
     return renderMainView()
@@ -231,13 +208,14 @@ def addWebMark():
         curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values ({},{},{})".format(place,place,place), (tbl2MaxId, url, title,))
     except:
         print ("Insert Error wmplace")
+        conn.rollback()
         return renderMainView(user_id,Error(2000))
 
     try:
         curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values ({},{},{},{},{},{})".format(place
                                 ,place,place,place,place,place), (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
     except:
-        print ("Insert Error Error Error wmboookmark")
+        print ("Insert Error Error wmbookmark")
         conn.rollback()
         return renderMainView(user_id,Error(2000))
     else:
@@ -247,13 +225,13 @@ def addWebMark():
       
     return renderMainView()
 
-@app.route("/pyWebMarks/deltaPass")
-@app.post("/deltaPass")
+@app.route("/pyWebMarks/deltaPass", methods=['POST'])
+@app.route("/deltaPass", methods=['POST'])
 @authenticate
 def deltaPass():
-    print (connFile)
+    
     try:
-        (user_id,user_name,user_pass) = pre_auth(connFile)
+        (user_id,user_name,user_pass) = pre_auth()
     except:
         return renderMainView(request.form['user_name'],Error(112))
    
@@ -286,62 +264,59 @@ def logOut():
     session.clear()
     return Marks().renderDefaultView()
 
-@app.post("/pyWebMarks/authenCred")
-@app.post("/authenCred")
+@app.route("/pyWebMarks/authenCred", methods=['POST'])
+@app.route("/authenCred", methods=['POST'])
 def authenCredFunc():
-    result_row = pre_auth(gConn)
-    user_id = None
-    if result_row:
-        (user_id,user_name,user_pass) = result_row
-    #!!!additional logic for already present session needed
-    ######################################################
+     
+    (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+
     if user_id:
         authorize(user_id,user_name)
+
     else:
         return Marks().renderDefaultView(colorStyle="red",displayText="Incorrect User ID/Password")
+
     return renderMainView(user_id)
 
 def validate_session(session):
-
-    wmSID = None
-    userID = None
-    #print (get_cookie_name(app))
+   
     try:
 
        wmSID = session['wmSessionID']
        userID = session['wmUserID']
 
     except:
-        return False
 
-    if not wmSID:
         return False
     
-    return validate_session2(session) 
-  
-
-def validate_session2(req):
     return util.validateSession2(session) 
+
 
 def authorize(user_id,user_name):
 
     sessionID = util.genSessionID()
+    
     session['wmSessionID'] = sessionID
     session['wmUserID'] = user_id
     session['wmUserName'] = user_name
     session['expires'] = None
     session['domain'] = None
+
     util.saveSession(sessionID)
 
 def renderMainView(user_id=None,errObj=None):
-    user_name=None
-    try:
-        user_name = request.form['user_name']
-    except:
-        pass
-    if not user_id or not user_name:
-        user_id = session['wmUserID']
-        user_name = session['wmUserName']
+#   user_name=None
+#
+#    try:
+#
+#        user_name = request.form['user_name']
+#   except:
+#
+#        pass
+#    if not user_id or not user_name:
+    user_id = session['wmUserID']
+    user_name = session['wmUserName']
+
     return exec_page(request,session,user_id,user_name,errObj)
     #return exec_page(request,user_id,user_name,errObj)
 

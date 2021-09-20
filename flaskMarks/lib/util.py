@@ -27,6 +27,7 @@ else:
 
 working_dir =  os.getcwd()
 session_dir = working_dir + dir_sep +  "sessions"
+
 print ("Session Dir " + session_dir)
 
 def genSessionID():
@@ -70,7 +71,6 @@ def validateSession2(sess):
     try:
 
         sessionID = sess['wmSessionID']
-    #try:
         sessFile = open(session_dir + dir_sep + str(sessionID), 'rb')  
     except:
         status = False
@@ -86,18 +86,6 @@ def saveSession(sessionID):
     pickle.dump(sessObj,sessFile)
     sessFile.close()
 
-def isset(string):
-    if (string != None) and len(string) == 0:
-        print (string + " !RED")
-        return False
-    elif string == None:
-        print (str(string) + " REDDER")
-        return False
-    elif re.match(r"\s+$", string):
-        return False
-    else:
-        print (str(string) + str(len(string)) + "TRUE?")
-        return True
 
 def convertDateEpoch(humanDate):
 
@@ -120,3 +108,25 @@ def convertDateEpoch(humanDate):
     dateAdded = int(dateAdded) * (1000 * 1000);
 
     return dateAdded
+
+def isset(string):
+    if (string != None) and len(string) == 0:
+        return False
+
+    elif string == None:
+        return False
+
+    elif re.match(r"\s+$", string):
+        return False
+
+    else:
+        return True
+
+def unWrap(req,reqObj):
+    try:
+        print(reqObj)
+        parmval = req.form[reqObj]
+
+    except:
+        return None
+    return parmval 

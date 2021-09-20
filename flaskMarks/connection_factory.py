@@ -27,6 +27,7 @@ class db_factory(object):
         except Exception:
             pass
 
+
         for line in config_file:
 
             if  re.match(r'^#',line):
@@ -39,6 +40,13 @@ class db_factory(object):
                 #print(value)
                 config_hash[key] = value  
         config_file.close()
+
+        if re.match(r'sqlite3', self.db_driver()):
+            db_factory.place = "?"
+
+        elif re.match(r'mysql', self.db_driver()):
+            db_factory.place = "%s"
+
         return config_hash
 
     def db_user(self):

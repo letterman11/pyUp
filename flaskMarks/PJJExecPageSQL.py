@@ -7,24 +7,24 @@ from globals import *
 import connection_factory as db
 import re
 ############################################
-## Bottle Modified ExecPageSQL function #### 
+## Flask Modified ExecPageSQL function #### 
 ## PJJExecPageSQL                       ####
 ## standalone CGI function to be required ##
 ############################################
 #def exec_page(req,user_id,user_name,errObj):
 def exec_page(req,sess,user_id,user_name,errObj):
+    
     tabMap = g.tabMap
-    print (user_id + "Req Cookie  ID")
+    
+    searchBoxTitle = util.unWrap(req,'searchBoxTitle')
+    searchTypeBool = util.unWrap(req,'searchtype')
 
-    searchBoxTitle = unWrap(req,'searchBoxTitle')
-    searchTypeBool = unWrap(req,'searchtype')
+    searchDateStart = util.unWrap(req,'searchDateStart')
+    searchDateEnd = util.unWrap(req,'searchDateEnd')
 
-    searchDateStart = unWrap(req,'searchDateStart')
-    searchDateEnd = unWrap(req,'searchDateEnd')
-
-    #tabtype = unWrap(req,'tab') 
+    
     tabtype = req.args.get('tab') or tabMap['tab_DATE']
-    print("tab server " + str(tabtype))
+    
 
     tabtype = int(tabtype)
     sort_crit = req.args.get('sortCrit') 
@@ -32,16 +32,17 @@ def exec_page(req,sess,user_id,user_name,errObj):
     if sort_crit != None and sort_crit != 'undefined':
         sort_crit = int(sort_crit)
 
-    searchBoxURL = unWrap(req,'searchBoxURL')
+    searchBoxURL = util.unWrap(req,'searchBoxURL')
+
     ORDER_BY_CRIT = ""
     sort_asc = 0
     sort_desc = 1
     sort_date_asc = 2
     sort_date_desc = 3
     storedSQLStr = ""
-    storedSQLStr = ""
-    sort_ord  = "" 
+    sort_ord = "" 
     exec_sql_str = ""
+    
     print (str(searchBoxTitle)   + " searchBoxTitle")
     print (str(searchTypeBool)  + " searchBool")
 
@@ -104,7 +105,7 @@ def exec_page(req,sess,user_id,user_name,errObj):
 ##########################################################
 # SearchBoxTitle + SearchBoxURL + AND/OR Radio Button
 ##########################################################
-    if searchTypeBool == "COMBO" and (isset(searchBoxTitle)) and (isset(searchBoxURL)):
+    if searchTypeBool == "COMBO" and (util.isset(searchBoxTitle)) and (util.isset(searchBoxURL)):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
             qstr = " a.title like \"%" + re.sub(r'^s','S',searchBoxTitle) + "%\"  and b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
@@ -127,7 +128,7 @@ def exec_page(req,sess,user_id,user_name,errObj):
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_TITLE']
-    elif isset(searchBoxTitle):
+    elif util.isset(searchBoxTitle):
         #print ("Hit search" + searchBoxTitle)
           #ORDER_BY_CRIT 
         #queri = re.split("\s*",searchBoxTitle)
@@ -146,19 +147,19 @@ def exec_page(req,sess,user_id,user_name,errObj):
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_TITLE']
-    elif isset(searchBoxURL):
+    elif util.isset(searchBoxURL):
         qstr = " b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_TITLE']
-    elif isset(searchDateStart) and isset(searchDateEnd):
+    elif util.isset(searchDateStart) and util.isset(searchDateEnd):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_DATE']
-    elif isset(searchDateStart):
+    elif util.isset(searchDateStart):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
@@ -230,26 +231,6 @@ except sqlite3.IntegrityError:
 ############
 # End of SQL Execution
 ###########
-def isset(string):
-    if (string != None) and len(string) == 0:
-        print (string + " !RED")
-        return False 
-    elif string == None:
-        print (str(string) + " REDDER")
-        return False
-    elif re.match(r"\s+$", string):
-        return False
-    else:
-        print (str(string) + str(len(string)) + "TRUE?")
-        return True 
 
-def unWrap(req,reqObj):
-    try:
-        print(reqObj)
-        parmval = req.form[reqObj]
-        print (parmval)
-    except:
-        return None
-    return parmval 
 
 
