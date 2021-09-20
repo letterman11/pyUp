@@ -6,27 +6,20 @@ import sys
 import re
 from  lib.sessionObject import *
 
-extra_path = '/pyprojects/webMarksMicro/py3x/bottleMarks/sessions'
-extra_path_linux = '/pyprojects/webMarksMicro/py3x/bottleMarks/sessions'
-extra_path_win32 = '\\webMarksMicro\\py3x\\bottleMarks\\sessions'
-
 if sys.platform == 'win32':
 
     dir_sep = '\\'
-
     HOME = os.environ['HOMEPATH']  
-    extra_path = extra_path_win32
 
 elif sys.platform == 'linux':
 
     HOME = os.environ['HOME']  
-    extra_path = extra_path_linux
     dir_sep = '/'
 
 else:
 
     HOME = os.environ['HOME']  
-    dir_sep = '/'
+    dir_sep = '\\'
 
 working_dir =  os.getcwd()
 session_dir = working_dir + dir_sep +  "sessions"
@@ -87,18 +80,7 @@ def saveSession(sessionID):
     pickle.dump(sessObj,sessFile)
     sessFile.close()
 
-def isset(string):
-    if (string != None) and len(string) == 0:
-        print (string + " !RED")
-        return False
-    elif string == None:
-        print (str(string) + " REDDER")
-        return False
-    elif re.match(r"\s+$", string):
-        return False
-    else:
-        print (str(string) + str(len(string)) + "TRUE?")
-        return True
+
 
 def convertDateEpoch(humanDate):
 
@@ -121,3 +103,24 @@ def convertDateEpoch(humanDate):
     dateAdded = int(dateAdded) * (1000 * 1000);
 
     return dateAdded
+
+
+def isset(string):
+    if (string != None) and len(string) == 0:
+        print (string + " !RED")
+        return False 
+    elif string == None:
+        print (str(string) + " REDDER")
+        return False
+    elif re.match(r"\s+$", string):
+        return False
+    else:
+        print (str(string) + str(len(string)) + "TRUE?")
+        return True 
+
+def unWrap(req,reqObj):
+    try:
+        parmval = req.params[reqObj]
+    except:
+        return None
+    return parmval 

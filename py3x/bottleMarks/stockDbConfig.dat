@@ -5,17 +5,18 @@
 #---------------------------------------------------
 # SQLite3 database
 #---------------------------------------------
-#hostname=
-#user=
-#password=
-###database=dcoda_acme
-#dbdriver=dbi:SQLite:dbname
+hostname=
+user=
+password=
+#database=dcoda_acme
 ##database=/home/angus/dcoda_net/cgi-bin/webMarks/cgi-bin/dcoda_acme.webMarks_test
 ##database=/home/angus/dcoda_net/cgi-bin/webMarks/cgi-bin/dcoda_acme.webMarks_test
 ##database=C:/Users/angus/pyProjects/webMarksMicro/py3x/bottleMarks/dcoda_acme.webMarks
 #database=C:/Users/angus/pyProjects/webMarksMicro/py3x/bottleMarks/dcoda_acme.webMarks
 #database=C:/Users/angus/dcoda_net/cgi-bin/dcoda_acme.webMarks
 #database=C:/Users/angus/dcoda_net/db/dcoda_acme.webMarks
+
+
 driver=sqlite3
 database=c:\\Users\\angus\\dcoda_net\\db\\dcoda_acme.webMarks
 
@@ -25,7 +26,7 @@ database=c:\\Users\\angus\\dcoda_net\\db\\dcoda_acme.webMarks
 #user=flagwing
 #password=allflags
 #database=dcoda_acme
-#driver=mysql.connector
+##driver=mysql.connector
 #
 #
 #Legacy Mysql database
@@ -37,9 +38,9 @@ database=c:\\Users\\angus\\dcoda_net\\db\\dcoda_acme.webMarks
 
 # Mysql laptop
 #--------------------------------------
-#hostname=localhost
-#user=dococt
-#password=dococt
-#database=dcoda_acme
-#driver=mysql.connector
-#port=3306
+hostname=localhost
+user=dococt
+password=dococt
+database=dcoda_acme
+driver=mysql.connector
+port=3306

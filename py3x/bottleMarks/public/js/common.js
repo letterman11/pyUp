@@ -71,7 +71,7 @@ function cgi_out(tab_parm)
 	var sort_date_indicator = 11;	
 	var sortCrit; 
 	var counter;
-    var prevTab;
+	var prevTab;
 	var date_flag;
 	var currTab;
 
@@ -93,9 +93,8 @@ function cgi_out(tab_parm)
 		sortCrit = sort_date_asc	
 		setCookie('date_flag',1)
 		tab_parm = "tab=" + prevTab
-	} else 
-   	
-	if(currTab != prevTab) {
+
+	} else if(currTab != prevTab) {
 	//	alert("C")
 		sortCrit = sort_asc;
 		setCookie('tab', currTab);
@@ -108,9 +107,9 @@ function cgi_out(tab_parm)
 	}
 
 
-	//top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	// deploy url##
-	top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	//top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	//	
 }
 
@@ -173,8 +172,8 @@ function logOut()
 	eraseCookie("searchTerms");
 	eraseCookie("search_submission");
 	
-	//top.location = "/logout";
+	top.location = "/logout";
 	// deploy url
-	top.location = "/pyWebMarks/logout";
+	//top.location = "/pyWebMarks/logout";
 	//
 }
