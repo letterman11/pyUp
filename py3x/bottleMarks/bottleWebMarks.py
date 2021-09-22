@@ -165,13 +165,13 @@ def indexWB():
 def indexView():
     return renderMainView()
 
-@app.route("/pyWebMarks/searchMark")
+@app.post("/pyWebMarks/searchMark")
 @app.post("/searchMark")
 @authenticate
 def searchWebMark():
     return renderMainView()
 
-@app.route("/pyWebMarks/insertMark")
+@app.post("/pyWebMarks/insertMark")
 @app.post("/insertMark")
 @authenticate
 def addWebMark():
@@ -240,16 +240,16 @@ def addWebMark():
 @app.post("/deltaPass")
 @authenticate
 def deltaPass():
-    print (connFile)
+    
     try:
-        (user_id,user_name,user_pass) = pre_auth()
+        (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
     except:
         return renderMainView(request.params['user_name'],Error(112))
    
     new_passwd = request.params['user_pass']
 
     if not user_id:
-        return renderMainView(Error(user_id,112))
+        return renderMainView(user_id,Error(112))
     else:
         try:
             conn = db.db_factory().connect()

@@ -229,10 +229,10 @@ h1 a {
 }
 
 .delta_pass {
-	margin:0 auto;
+	margin:15px auto;
 	padding:0 0 0 10px;
 	width:225px;
-	height:155px;
+	height:175px;
 	background-color:grey;
 	border:solid 2px black;
 }
