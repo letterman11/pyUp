@@ -6,7 +6,8 @@ import re
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 dbConf = "stockDbConfig.dat" #@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-config_hash = {}
+config_hash = {} #@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 class db_factory(object):
     
@@ -36,7 +37,7 @@ class db_factory(object):
 
             if res: 
                 (key,value) = (res.group(1), res.group(2))
-                #print(value)
+
                 config_hash[key] = value  
         config_file.close()
 
@@ -64,7 +65,6 @@ class db_factory(object):
         return config_hash['driver']
 
     def connect(self):
-#        self.parse_config()
 
         if re.match(r'sqlite3', self.db_driver()):
             db_factory.place = "?"
