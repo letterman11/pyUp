@@ -1,4 +1,4 @@
-from bottle import Bottle, template, run, route, request, response, static_file
+from bottle import Bottle, run, route, request, response, static_file
 from datetime import datetime
 from marks import Marks
 from functools import wraps
@@ -319,6 +319,6 @@ def renderMainView(user_id=None,errObj=None):
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
-        #app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
-#        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3, daemon=True)
+#        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+#        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
+        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
