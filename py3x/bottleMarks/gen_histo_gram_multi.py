@@ -43,7 +43,7 @@ def gen_histogram(user_id):
                 continue
             if re.match(r"(?:\ba\b|\be\b)",word,re.I):
                 continue
-            if len(word) < 3 :
+            if len(word) < 3 and re.match(r'\d',word):
                 continue
             if not re.match(r'[\x00-\x7f]',word):
                 continue 
