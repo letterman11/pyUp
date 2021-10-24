@@ -195,14 +195,16 @@ def exec_page(req,user_id,user_name,errObj):
 #########
     #tabMap = {y:x for x,y in tabMap.iteritems()}
     tabMap = {y:x for x,y in tabMap.items()}
+
     print (sort_crit)
     print ("Exec webMark SQL " + executed_sql_str)
     print (str(tabtype) + " tab in play")
-    #conn = db.db_factory().connect()
+
     conn = conn.connect()
     conn.text_factory = bytes
-    #conn.text_factory = lambda x: x.decode("latin1")
     conn.text_factory = lambda x: x.decode("utf-8")
+    conn.text_factory = lambda b: b.decode(errors = 'ignore')
+
     try:
         curs = conn.cursor()
         curs.execute(executed_sql_str, (user_id,))
