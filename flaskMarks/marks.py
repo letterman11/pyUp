@@ -1,7 +1,6 @@
-from bottle import template
+from flask import render_template
 import gen_histo_gram_multi as hist
 import time
-import io
 
 class Marks(object):
 
@@ -14,18 +13,19 @@ class Marks(object):
     def renderMainView(self,user_id,sort_crit,tabMap):
         tabTable = self.genTabTable(sort_crit)        
         optionTops=hist.gen_optionListDiv(user_id)
-        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
+        tabMap = {y:x for x,y in tabMap.items()}
+        return render_template('class_mainview.html', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
 
 
     def renderDefaultView(self,colorStyle="red",displayText=str()):
         colorStyle="red"
         tab = 6
         user_name = "aab"
-        return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle,
+        return render_template('class_defaultpage.html', displayText=displayText, colorStyle=colorStyle,
                                      tab=tab, user_name=user_name)
 
     def renderRegistrationView(self,errText=""):
-        return template('class_registration.html', errText=errText)
+        return render_template('class_registration.html', errText=errText)
 
 
     def genError(self):

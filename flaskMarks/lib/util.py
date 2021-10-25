@@ -6,23 +6,28 @@ import sys
 import re
 from  lib.sessionObject import *
 
+
 if sys.platform == 'win32':
 
     dir_sep = '\\'
+
     HOME = os.environ['HOMEPATH']  
+    #extra_path = extra_path_win32
 
 elif sys.platform == 'linux':
 
     HOME = os.environ['HOME']  
+    #extra_path = extra_path_linux
     dir_sep = '/'
 
 else:
 
     HOME = os.environ['HOME']  
-    dir_sep = '\\'
+    dir_sep = '/'
 
 working_dir =  os.getcwd()
 session_dir = working_dir + dir_sep +  "sessions"
+
 print ("Session Dir " + session_dir)
 
 def genSessionID():
@@ -36,20 +41,20 @@ def genSessionID():
         session_id = session_id + i
     return session_id
 
-def storeSQL(sSQL,req):
+def storeSQL(sSQL,sess):
 
-    sessionID = req.get_cookie('PYwmSessionID')
-    USERID = req.get_cookie('PYwmUserID')
+    sessionID = sess['wmSessionID']
+    USERID = sess['wmUserID']
     sessObject = SessionObject()
     sessObject.SESSIONDATA = sSQL
     sessObject.SESSIONID = sessionID
     sessObject.USERID = USERID
     storeSessionObject(sessObject) 
 
-def getStoredSQL(req):
+def getStoredSQL(sess):
 
     sessObj = SessionObject()
-    sessionID = req.get_cookie('PYwmSessionID')
+    sessionID = sess['wmSessionID']
     sessFile = open(session_dir + dir_sep +  str(sessionID), 'rb')
     sessObj = pickle.load(sessFile)
     storedSQL = sessObj.SESSIONDATA
@@ -61,10 +66,11 @@ def storeSessionObject(sessObj):
     sessFile.close()
     return sessObj 
 
-def validateSession2(req):
-    sessionID = req.get_cookie('PYwmSessionID')
+def validateSession2(sess):
 
     try:
+
+        sessionID = sess['wmSessionID']
         sessFile = open(session_dir + dir_sep + str(sessionID), 'rb')  
     except:
         status = False
@@ -79,7 +85,6 @@ def saveSession(sessionID):
     sessFile = open(session_dir + dir_sep + str(sessionID), 'wb')
     pickle.dump(sessObj,sessFile)
     sessFile.close()
-
 
 
 def convertDateEpoch(humanDate):
@@ -104,23 +109,24 @@ def convertDateEpoch(humanDate):
 
     return dateAdded
 
-
 def isset(string):
     if (string != None) and len(string) == 0:
-        print (string + " !RED")
-        return False 
-    elif string == None:
-        print (str(string) + " REDDER")
         return False
+
+    elif string == None:
+        return False
+
     elif re.match(r"\s+$", string):
         return False
+
     else:
-        print (str(string) + str(len(string)) + "TRUE?")
-        return True 
+        return True
 
 def unWrap(req,reqObj):
     try:
-        parmval = req.params[reqObj]
+        print(reqObj)
+        parmval = req.form[reqObj]
+
     except:
         return None
     return parmval 

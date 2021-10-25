@@ -61,7 +61,8 @@ h1 a {
 	height:450px;
 	/* border:solid #003399 2px;  */
 	border:solid #aaaaaa 2px;  
-	padding:1px 0px 0px 0px;;
+	//padding:1px 0px 0px 0px;;
+	padding:0px 0px 0px 0px;;
 	overflow:auto; 
 
 }
@@ -69,22 +70,28 @@ h1 a {
 .tab_header {
 	margin:0px;
 	padding:0px;
-//	border:solid;
 }
 
 .tab_top  {
-	//display:inline-block;	
 	float:left;
+	width:auto;
 }
 
 .tab_bottom  {
-	//display:inline-block;	
 	float:left;
+	width:auto;
 }
 
 .tab_bottom_search {
 	//display:inline-block;	
 	float:left;
+	width: inherit;
+}
+
+.tab_header .tab_bottom_search .tab_spans {
+	//display:inline-block;	
+	width:auto;
+	color:red;
 }
 
 #tab_AE #sp_AE {
@@ -117,8 +124,9 @@ h1 a {
 
 .tab_divs #sp_SRCH {
 	padding:1px 25px 1px 25px;
+//	padding:1px 25px 1px auto;
+	width:auto;
 }
-
 
 .row_color1 {
 	background-color:#D0D0D0;
@@ -221,10 +229,10 @@ h1 a {
 }
 
 .delta_pass {
-	margin:0 auto;
+	margin:15px auto;
 	padding:0 0 0 10px;
 	width:225px;
-	height:155px;
+	height:175px;
 	background-color:grey;
 	border:solid 2px black;
 }

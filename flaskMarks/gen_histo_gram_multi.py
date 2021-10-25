@@ -1,5 +1,6 @@
 hist_sql_all_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} "
 import re
+#import sqlite3
 import connection_factory as db
 import globals as g
 
@@ -43,7 +44,7 @@ def gen_histogram(user_id):
                 continue
             if re.match(r"(?:\ba\b|\be\b)",word,re.I):
                 continue
-            if len(word) < 3 and re.match(r'\d',word):
+            if len(word) < 3 :
                 continue
             if not re.match(r'[\x00-\x7f]',word):
                 continue 
@@ -60,7 +61,6 @@ def gen_histogram(user_id):
         map(lambda x: [x, markHist[x]['count']],markHist.keys()),  
             key=lambda hist : hist[1], 
                 reverse=True)
-    print (HH[15:30])
 
     return HH
 
