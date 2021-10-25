@@ -176,8 +176,12 @@ def searchWebMark():
 @authenticate
 def addWebMark():
     user_id = request.get_cookie('PYwmUserID')	
-    title = request.params['mark_title']	
-    url = request.params['mark_url']	
+
+    #utf-8 decoded-presented bottle forms post version
+    title = request.forms.mark_title
+    #utf-8 decoded-presented bottle forms post version
+    url = request.forms.mark_url
+
     #time.daylight
 
     if not util.isset(title) or not util.isset(url):
