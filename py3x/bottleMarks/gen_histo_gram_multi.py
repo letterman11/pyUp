@@ -9,16 +9,17 @@ def gen_histogram(user_id):
     histo_list = []
     (title,url,dateAdded) = (1,0,2)
 
-    #conn = sqlite3.connect(g.connFile)
     conn = db.db_factory().connect()
     #conn.text_factory = bytes
     conn.text_factory = lambda x: x.decode("latin1")
+
     try:
         curs = conn.cursor()
         curs.execute(hist_sql_all_str.format(db.db_factory.place),(user_id,))
         dbRows = curs.fetchall()
         print ("RowCountWB " + str(len(dbRows)))
         conn.close()
+
     except Exception as ex:
        print ("Exception" + ex)
        raise ex
@@ -37,16 +38,22 @@ def gen_histogram(user_id):
         words = re.split('\s+', title_str)
 
         for word in words:
+
             if re.match(r'\b[:cntrl:]+\b',word):
                 continue
+
             if re.match(r"(?:[-+|:'&]|\bsqft\b|\bof\b|\bWith\b|\bThe\b|\bthe\b|\bto\b|\band\b|\b[0-9]\b)",word,re.I):
                 continue
+
             if re.match(r"(?:\ba\b|\be\b)",word,re.I):
                 continue
+
             if len(word) < 3 and re.match(r'\d',word):
                 continue
+
             if not re.match(r'[\x00-\x7f]',word):
                 continue 
+
             word = re.sub(r'\s+$','',word)
             word = re.sub(r'^\s+','',word)
 
@@ -55,11 +62,8 @@ def gen_histogram(user_id):
             else:
                 markHist[word] =  { 'count' : 1 }
 
-    #new_list = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()),  key=lambda hist : hist[1] , reverse=True)
-    HH = sorted( 
-        map(lambda x: [x, markHist[x]['count']],markHist.keys()),  
-            key=lambda hist : hist[1], 
-                reverse=True)
+    HH = sorted( map( lambda x: [x, markHist[x]['count']],markHist.keys()),  key=lambda hist : hist[1], reverse=True)
+
     print (HH[15:30])
 
     return HH
