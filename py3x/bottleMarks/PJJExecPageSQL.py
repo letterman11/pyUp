@@ -202,8 +202,7 @@ def exec_page(req,user_id,user_name,errObj):
 
     conn = conn.connect()
     conn.text_factory = bytes
-    conn.text_factory = lambda x: x.decode("utf-8")
-    conn.text_factory = lambda b: b.decode(errors = 'ignore')
+    conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
 
     try:
         curs = conn.cursor()
