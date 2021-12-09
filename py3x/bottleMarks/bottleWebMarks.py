@@ -12,6 +12,8 @@ import re
 
 app = Bottle()  
 
+place = db.db_factory().place
+
 # static files ############################################
 # served by bottle -- ideally would be served by static 
 # server like Apache or Nginx
@@ -30,6 +32,8 @@ def server_static_imgs(filename):
 def server_static_js(filename):
     return static_file(filename, root="./public/js")
 ###########################################################
+
+
 
 ### decorator functions
 def authenticate(f):
@@ -248,9 +252,9 @@ def updateMark():
     user_id = request.get_cookie('PYwmUserID')	
 
     #utf-8 decoded-presented bottle forms post version
-    title = request.forms.mark_title
+    title = request.forms.title_update
     #utf-8 decoded-presented bottle forms post version
-    url = request.forms.mark_url
+    url = request.forms.url_update
 
 
     tblBookMarkId = request.params['bk_id']
@@ -264,7 +268,7 @@ def updateMark():
     curs = conn.cursor()
 
     try:
-        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = ?", (tblBookMarkId,))
+        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place) , (tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute update")
@@ -275,8 +279,8 @@ def updateMark():
     print ("PlaceID " + str(tblPlaceId))
 
     try:
-        curs.execute("update WM_BOOKMARK set TITLE = ? where BOOKMARK_ID = ? ", (title, tblBookMarkId,))
-        curs.execute("update WM_PLACE set  URL = ? , TITLE = ? where PLACE_ID = ? ", (url, title,tblPlaceId,))
+        curs.execute("update WM_BOOKMARK set TITLE = {} where BOOKMARK_ID = {} ".format(place,place), (title, tblBookMarkId,))
+        curs.execute("update WM_PLACE set  URL = {} , TITLE = {} where PLACE_ID = {} ".format(place,place,place), (url, title,tblPlaceId,))
     except Exception as ex:
         raise ex
         return renderMainView(user_id,Error(153))
@@ -302,7 +306,7 @@ def deleteMark():
     curs = conn.cursor()
 
     try:
-        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = ?", (tblBookMarkId,))
+        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place), (tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute select in deleteMark")
@@ -315,8 +319,8 @@ def deleteMark():
 
 
     try:
-        curs.execute("delete from  WM_PLACE  where PLACE_ID = ? ", (tblPlaceId,))
-        curs.execute("delete from  WM_BOOKMARK  where BOOKMARK_ID = ? ", (tblBookMarkId,))
+        curs.execute("delete from  WM_PLACE  where PLACE_ID = {} ".format(place), (tblPlaceId,))
+        curs.execute("delete from  WM_BOOKMARK  where BOOKMARK_ID = {} ".format(place),(tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute delettion")
@@ -412,6 +416,6 @@ def renderMainView(user_id=None,errObj=None):
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-#        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
-        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
+#        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)

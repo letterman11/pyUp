@@ -73,6 +73,7 @@ class Marks(object):
 
         ## POTENTIAL ERROR SECTION ##
         if not self.dbObject:
+            tbl += "<tr id=\"NoResults\"><td> No Results for Query </td></tr> \n </table>"
             return tbl
 
         i=0
