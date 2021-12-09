@@ -81,7 +81,30 @@ end
     </div> <!-- end big3 -->
 
   </div> 
+
+   <div class="updateLayer" id="updateL">
+     <!--  <h1> <a href="javascript:closeLayer('updateL')" > update </a> <a href="javascript:void 0" onclick= "document.getElementById('updateL').style.display='none'"> close </a></h1>  -->
+       <h1> <a href="javascript:closeLayerUpdate('updateL')" > update </a> <a href="javascript:closeLayer2('updateL')"> close </a></h1> 
+       <form name="formUpdate" id="formUpdate" method="POST" action="/updateMark">
+        <input type="text" name="title_update" id="title_update" size="70">
+        <!--<input type="text" rows="3" name="url_update" id="url_update" size="150"> -->
+        <textarea rows="3" name="url_update" id="url_update" cols="70">
+        </textarea>
+        <input type="hidden" name="bk_id" id="bk_id" size="15">
+       </form>
+   </div>
+
+   <div class="delLayer" id="delL" name="delL">
+       <h1> delete ? <a href="javascript:closeLayer2('delL')" > NO </a>  <a href="javascript:closeLayer2('delL','YES')"> YES </a> </h1> 
+       <form name="formDelete" id="formDelete" method="POST" action="/deleteMark">
+        <input type="hidden" name="bk_id" id="bk_id" size="15">
+       </form>
+       <h2><p id="spDel" name="spDel"> LLC  </p> </h2>
+   </div>
+
+
 	{{ !tabTable }}
+
  </div>
 
    <script language="Javascript" type="text/javascript">
@@ -100,14 +123,23 @@ end
           OR <input name="searchtype" type="radio"  value="OR" > 
          AND <input name="searchtype" checked="true" type="radio"  value="AND"> 
        COMBO <input name="searchtype" type="radio" value="COMBO"> 
+      </li>
+       <li id="selDates" style="display:none">
 	     <input name="searchDateStart" type="text" size=11 id="searchDateStart" value="Ex: 1-1-2021" onFocus="blurDates();">
-	     <input name="searchDateEnd" type="text" size=11 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">
+	     <input name="searchDateEnd" type="text" size=11 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">  
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
               <input onclick="setSearchTerms();" name="submit" type="submit" value="Search">  
-            <!--  <input name="submit" type="submit" value="Search"> -->
         </li>  
+
+     <li id="selUpdates" style="display:inline; padding:1px; border: thin grey dashed; background-color:azure;">  
+          <input name="modlink" type="radio" value="UPD"> UPDATE <input name="modlink" type="radio" value="DEL">DEL 
+     </li>
+
+      <p id="selMods" style="display:inline;background-color:green;" onClick="swapSearchLayer();" > &nbsp;MOD </p>
+
          {{ !optionTops }}
+
         <li style="padding-left:3px; width:100%">
            title <input id="searchBxTitle" name="searchBoxTitle" type="text" size="25">  
            url <input id="searchBxURL" name="searchBoxURL" type="text" size="25"> 

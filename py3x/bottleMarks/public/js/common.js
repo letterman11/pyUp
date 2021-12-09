@@ -1,10 +1,6 @@
-//appending "PY" to some cookies to differentiate from perl webMarks
-// may cause some irregularities between share platform  of perl and python webMarks
-var search_submission = 6;	
+var search_submission = 6;
 var stateOfBlur = 0;
-
-var startDate = parent.top.document.getElementById("searchDateStart")
-var endDate = parent.top.document.getElementById("searchDateEnd")
+var searchLayerSwitch = 0;
 
 function init()
 {
@@ -13,11 +9,11 @@ function init()
 
 }
 
-
 function blurDates()
 {
 	var startDate = parent.top.document.getElementById("searchDateStart")
 	var endDate = parent.top.document.getElementById("searchDateEnd")
+
 	if(!stateOfBlur) {
 	startDate.value = "";
 	endDate.value = "";
@@ -35,8 +31,7 @@ function setCookie(name,value,days)
                 var expires = "; expires="+date.toGMTString();
         }
         else var expires = "";
-        //document.cookie = name+"="+value+expires+"; path=/";
-        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/";
+        document.cookie = name+"="+value+expires+"; path=/";
 }
 
 function getCookie(name,path)
@@ -51,8 +46,7 @@ function getCookie(name,path)
         if ( start == -1 ) return null;
                 var end = document.cookie.indexOf( ";", len );
         if ( end == -1 ) end = document.cookie.length;
-				//return unescape( document.cookie.substring( len, end ) );
-                return decodeURIComponent(document.cookie.substring( len, end ) );
+                return unescape( document.cookie.substring( len, end ) );
 
 }
 
@@ -116,39 +110,24 @@ function cgi_out(tab_parm)
 function setSearchTerms()
 {      
        var searchTerms = parent.top.document.getElementById('searchBxTitle');
-       parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
+       //parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);
+      var startDate = parent.top.document.getElementById("searchDateStart")
+      var endDate = parent.top.document.getElementById("searchDateEnd")
 
-	var startDate = parent.top.document.getElementById("searchDateStart")
-	var endDate = parent.top.document.getElementById("searchDateEnd")
+    if(stateOfBlur == 0)
+    {
+        startDate.value="";
+        endDate.value="";
+    }
 
-	if(stateOfBlur == 0) 
-	{
-		startDate.value="";
-		endDate.value="";
-	}
 }
-
-function validateFields(sDate,eDate)
-{
-	re_1 =	'/([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})/';
-	re_2 =	'/([0-9]{4})[-/]([0-9]{1,2})[-/]([0-9]{1,2})/';
-/*
-	if((re_1.test(sDate.value) || (re_2.test(sDate.value))
-		return true;	
-
-	if((re_1.test(eDate.value) || (re_2.test(eDate.value) || (eDate.value == "")))
-		return true;	
-*/
-}
-
 
 function getSearchTerms()
 {      
        var searchTerms = getCookie('searchTerms');
        parent.top.document.getElementById('searchTerms').innerHTML = searchTerms;
-
 }
 
 function topOpToSearch(topOp)
@@ -158,22 +137,129 @@ function topOpToSearch(topOp)
 }
 
 
-
 function logOut()
 {
-	//appending "PY" to some cookie parameters to differentiate from regular webMarks perl
 	eraseCookie("PYwmSessionID");
-	eraseCookie("PYwmUserName");
 	eraseCookie("PYwmUserID");
 	eraseCookie("Counter");
 	eraseCookie("dt_cnter");
 	eraseCookie("tab_state");
-	eraseCookie("tab");
 	eraseCookie("searchTerms");
 	eraseCookie("search_submission");
-	
-	//top.location = "/logout";
-	// deploy url
-	top.location = "/pyWebMarks/logout";
-	//
+
+	// vendor specific general Mojo cookie
+	eraseCookie("mojolicious");
+	// vendor specific general Mojo cookie	
+	top.location = "/logout";
+}
+
+//function goLink(url,title,bk_id)
+function goLink(title,bk_id)
+{
+
+  var checkRadio = document.querySelector('input[name="modlink"]:checked'); 
+
+  if (checkRadio != null) { 
+     switch(checkRadio.value) {
+		case 'UPD' :
+        checkRadio.checked = false;
+        //displayUpdateLaye(url,title,bk_id)
+        displayUpdateLayer(title,bk_id)
+		break;
+		case 'DEL' :
+        checkRadio.checked = false;
+        //displayDelLayer(url,title,bk_id)
+        displayDelLayer(title,bk_id)
+		break;
+        default:
+     }
+     //checkRadio.checked = false;
+  } else {
+     var url =  Array .from(document.querySelectorAll('td.title_cell')) .find(el => el.textContent.trim() === title).nextSibling.nextSibling.textContent 
+     window.open(url, "_blank"); 
+ }
+
+}
+
+//function displayUpdateLayer(url,title,bk_id)
+function displayUpdateLayer(title,bk_id)
+{
+     //layerUpdate
+     var lU = document.getElementById("updateL");
+
+	 lU.style.overflow = 'auto';
+     lU.style.display = 'block';
+
+	 var titleSet = lU.querySelector('input[name="title_update"]')
+	 var urlSet = lU.querySelector('textarea[name="url_update"]')
+	 var bk_idSet = lU.querySelector('input[name="bk_id"]')
+
+     titleSet.value = title;
+     bk_idSet.value = bk_id
+
+     urlSet.value =  Array .from(document.querySelectorAll('td.title_cell')) .find(el => el.textContent.trim() === title).nextSibling.nextSibling.textContent 
+
+     Array.from(document.querySelectorAll('td.title_cell'))
+      .find(el => el.textContent.trim() === title)
+      .style.border = "solid";
+
+
+}
+
+//function displayDelLayer(url,title,bk_id)
+function displayDelLayer(title,bk_id)
+{
+   var delL = document.getElementById("delL")
+   delL.style.display = 'block'
+   var bk_idSet = delL.querySelector('input[name="bk_id"]')
+   //bk_idSet.value = bk_id
+  // Array.from(document.querySelectorAll('td.title_cell')) .find(el => el.textContent.trim() === title) .style.border = "solid";
+   var spDel = delL.getElementsByTagName('p')[0]
+   spDel.innerHTML = title; 
+
+   //Array.from(document.querySelectorAll('td.title_cell')) .find(el => el.textContent.trim() === title) .style.border = "solid";
+}
+
+function closeLayer2(layer,del)
+{
+   var ll = document.getElementById(layer)
+   ll.style.display = 'none'; 
+   var title = ll.querySelector('input[name="title_update"]')
+   if (title == null)
+      title =  document.getElementById('spDel').innerHTML
+   else
+      title = title.value
+  
+   Array.from(document.querySelectorAll('td.title_cell'))
+    .find(el => el.textContent.trim() === title)
+    .style.border = "none";
+   
+   if(del == "YES")
+     window.document.formDelete.submit()
+
+}
+
+function closeLayerUpdate(layer)
+{
+   lU = document.getElementById(layer)
+   lU.style.display = 'none'; 
+   window.document.formUpdate.submit()
+
+}
+
+
+function swapSearchLayer()
+{
+    if (searchLayerSwitch++ % 2) 
+    {
+     document.getElementById("selDates").style.display = 'none';
+     document.getElementById("selUpdates").style.display = 'inline-block';
+     document.getElementById("selMods").style.backgroundColor = 'yellow';
+    }
+    else
+    {
+     document.getElementById("selDates").style.display = 'inline-block';
+     document.getElementById("selUpdates").style.display = 'none';
+     document.getElementById("selMods").style.backgroundColor = 'green';
+    }
 }
