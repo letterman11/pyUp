@@ -298,6 +298,7 @@ def updateMark():
 def deleteMark():
     user_id = request.get_cookie('wmUserID')
     tblBookMarkId = request.params['bk_id']
+    print (tblBookMarkId)
 
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
@@ -332,6 +333,7 @@ def deleteMark():
     finally:
         conn.close()
  
+    return renderMainView()
 
 @app.post("/pyWebMarks/deltaPass")
 @app.post("/deltaPass")

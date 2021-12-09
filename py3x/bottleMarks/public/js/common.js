@@ -153,7 +153,6 @@ function logOut()
 	top.location = "/logout";
 }
 
-//function goLink(url,title,bk_id)
 function goLink(title,bk_id)
 {
 
@@ -181,7 +180,6 @@ function goLink(title,bk_id)
 
 }
 
-//function displayUpdateLayer(url,title,bk_id)
 function displayUpdateLayer(title,bk_id)
 {
      //layerUpdate
@@ -206,18 +204,18 @@ function displayUpdateLayer(title,bk_id)
 
 }
 
-//function displayDelLayer(url,title,bk_id)
 function displayDelLayer(title,bk_id)
 {
    var delL = document.getElementById("delL")
    delL.style.display = 'block'
+
    var bk_idSet = delL.querySelector('input[name="bk_id"]')
-   //bk_idSet.value = bk_id
-  // Array.from(document.querySelectorAll('td.title_cell')) .find(el => el.textContent.trim() === title) .style.border = "solid";
+   bk_idSet.value = bk_id
+
+//   alert("BKID " + bk_id)
    var spDel = delL.getElementsByTagName('p')[0]
    spDel.innerHTML = title; 
 
-   //Array.from(document.querySelectorAll('td.title_cell')) .find(el => el.textContent.trim() === title) .style.border = "solid";
 }
 
 function closeLayer2(layer,del)
