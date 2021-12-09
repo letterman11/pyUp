@@ -223,11 +223,11 @@ function closeLayer2(layer,del)
    var ll = document.getElementById(layer)
    ll.style.display = 'none'; 
    var title = ll.querySelector('input[name="title_update"]')
-   if (title == null)
+   /*if (title == null)
       title =  document.getElementById('spDel').innerHTML
    else
       title = title.value
-  
+   */ 
    Array.from(document.querySelectorAll('td.title_cell'))
     .find(el => el.textContent.trim() === title)
     .style.border = "none";
