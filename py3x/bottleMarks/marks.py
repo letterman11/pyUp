@@ -90,9 +90,9 @@ class Marks(object):
             title = re.sub(r'"',r'\"',title)
             title = re.sub(r"'",r"`",title) #workaround for single quotes use apostrophe to soothe js
 
-            #tbl_row  += "<tr class=" + row_color + "> " + "<td class='title_cell'> <a href='javascript:goLink( \"" + html.escape(url) +"\", \"" + title + "\" , \"" + str(bk_id) + "\"  ) ' > "  +  title + " </a> </td>" \
-            tbl_row  += "<tr class=" + row_color + "> " + "<td class='title_cell'> <a href='javascript:goLink(\"" + title + "\" , \"" + str(bk_id) + "\"  ) ' > "  +  title + " </a> </td>" \
-            + " <td class='url_cell'> " +  url + " </td> " \
+            tbl_row  += "<tr class=" + row_color + "> " + "<td class='title_cell'> <a href='javascript:goLink(\"" + str(title) + "\" , \"" + str(bk_id) + "\"  ) ' > "  \
+            +  str(title) + " </a> </td>" \
+            + " <td class='url_cell'> " +  str(url) + " </td> " \
             + "<td class='date_cell'> "  + str(added) + " </td>" \
             + " </tr> \n "
 
