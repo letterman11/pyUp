@@ -252,12 +252,12 @@ function swapSearchLayer()
     {
      document.getElementById("selDates").style.display = 'none';
      document.getElementById("selUpdates").style.display = 'inline-block';
-     document.getElementById("selMods").style.backgroundColor = 'yellow';
+     document.getElementById("selMods").style.backgroundColor = 'green';
     }
     else
     {
      document.getElementById("selDates").style.display = 'inline-block';
      document.getElementById("selUpdates").style.display = 'none';
-     document.getElementById("selMods").style.backgroundColor = 'green';
+     document.getElementById("selMods").style.backgroundColor = 'yellow';
     }
 }
