@@ -227,11 +227,11 @@ function closeLayer2(layer,del)
       title =  document.getElementById('spDel').innerHTML
    else
       title = title.value
-   */ 
+    
    Array.from(document.querySelectorAll('td.title_cell'))
     .find(el => el.textContent.trim() === title)
     .style.border = "none";
-   
+   */
    if(del == "YES")
      window.document.formDelete.submit()
 
