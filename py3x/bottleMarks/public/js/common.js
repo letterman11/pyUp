@@ -10,6 +10,9 @@ function init()
 
 	var  tabTable = document.getElementById('tab_table');
 	tabTable.addEventListener('click', getCell, true);
+
+     document.getElementById("selDates").style.display = 'inline-block';
+     document.getElementById("selUpdates").style.display = 'none';
 	
 }
 
@@ -298,18 +301,21 @@ function closeLayerUpdate(layer,update)
 }
 
 
+
 function swapSearchLayer()
 {
-    if (searchLayerSwitch++ % 2) 
-    {
-     document.getElementById("selDates").style.display = 'none';
-     document.getElementById("selUpdates").style.display = 'inline-block';
-     document.getElementById("selMods").style.backgroundColor = 'green';
-    }
-    else
+ 	
+	if (searchLayerSwitch++ % 2) 
     {
      document.getElementById("selDates").style.display = 'inline-block';
      document.getElementById("selUpdates").style.display = 'none';
+     document.getElementById("selMods").style.backgroundColor = 'green';
+     
+    }
+    else
+    {
+     document.getElementById("selUpdates").style.display = 'inline-block';
      document.getElementById("selMods").style.backgroundColor = 'yellow';
+	 document.getElementById("selDates").style.display = 'none';
     }
 }
