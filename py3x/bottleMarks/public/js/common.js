@@ -258,6 +258,19 @@ function displayUpdateLayer(tblCell)
  
 }
 
+function closeLayerUpdate(layer,update)
+{
+   lU = document.getElementById(layer)
+   lU.style.display = 'none'; 
+   
+   currTblCell.style.border = 'none';
+   
+   if(update == "YES")
+	  window.document.formUpdate.submit()
+	
+	
+}
+
 function displayDelLayer(tblCell)
 {
    var delL = document.getElementById("delL")
@@ -286,20 +299,6 @@ function closeLayerDel(layer,del)
      window.document.formDelete.submit()
 
 }
-
-function closeLayerUpdate(layer,update)
-{
-   lU = document.getElementById(layer)
-   lU.style.display = 'none'; 
-   
-   currTblCell.style.border = 'none';
-   
-   if(update == "YES")
-	  window.document.formUpdate.submit()
-	
-	
-}
-
 
 
 function swapSearchLayer()
