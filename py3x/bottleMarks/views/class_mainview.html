@@ -85,7 +85,7 @@ end
    <div class="updateLayer" id="updateL">
      <!--  <h1> <a href="javascript:closeLayer('updateL')" > update </a> <a href="javascript:void 0" onclick= "document.getElementById('updateL').style.display='none'"> close </a></h1>  -->
        <h1> <a href="javascript:closeLayerUpdate('updateL', 'YES')" > update </a> <a href="javascript:closeLayerUpdate('updateL')"> close </a></h1> 
-       <form name="formUpdate" id="formUpdate" method="POST" action="/updateMark">
+       <form name="formUpdate" id="formUpdate" method="POST" action="/pyWebMarks/updateMark">
         <input type="text" name="title_update" id="title_update" size="70">
         <!--<input type="text" rows="3" name="url_update" id="url_update" size="150"> -->
         <textarea rows="3" name="url_update" id="url_update" cols="70">
@@ -96,7 +96,7 @@ end
 
    <div class="delLayer" id="delL" name="delL">
        <h1> delete ? <a href="javascript:closeLayerDel('delL')" > NO </a>  <a href="javascript:closeLayerDel('delL','YES')"> YES </a> </h1> 
-       <form name="formDelete" id="formDelete" method="POST" action="/deleteMark">
+       <form name="formDelete" id="formDelete" method="POST" action="/pyWebMarks/deleteMark">
         <input type="hidden" name="bk_id" id="bk_id_del" size="15">
        </form>
        <h2><p id="spDel" name="spDel"> LLC  </p> </h2>
