@@ -53,7 +53,7 @@
 <body onLoad="getSearchTerms();init();">
 <div id="main">
  <div id="header">
-    <a href="/pyWebMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
+    <a href="/flaskMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
     <a href="/"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
  </div>
  <div class="tab_divs" id='{{ tab }}' >
@@ -88,7 +88,7 @@
    </script>
 
    <div class="search_div">
-      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick""> 
+      <form  name="search_form" class="search_form" method="POST" action="/flaskMarks/searchMark" onClick""> 
        <ul>
        <li> Enter Search Term(s)  </li>
         <li style="display:inline; padding-left:3px;"> 
@@ -112,7 +112,7 @@
    </div>
 
   <div class="new_mark">
-   <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark"> 
+   <form name="newMark" id="new_mark" method="POST" action="/flaskMarks/insertMark"> 
     <ul>
     <!-- <li> Enter Title </li> -->
     <li> Enter Title <input name="mark_title" type="text" size="100"> </li>
@@ -124,7 +124,7 @@
   </div>
 
   <div class="delta_pass">
-    <form name="deltaPass" id="delta_pass" method="POST" action="/pyWebMarks/deltaPass"> 
+    <form name="deltaPass" id="delta_pass" method="POST" action="/flaskMarks/deltaPass"> 
     <ul>
     <li id="logout" onclick="logOut();"> <p> LOGOUT {{ user_id }} </p> </li>
     <li> Change Pass Word ? </li>
