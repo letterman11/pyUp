@@ -35,8 +35,8 @@ function setCookie(name,value,days)
                 var expires = "; expires="+date.toGMTString();
         }
         else var expires = "";
-        //document.cookie = name+"="+value+expires+"; path=/";
-        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/";
+        //document.cookie = name+"="+value+expires+"; path=/pyWebMarks";
+        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/pyWebMarks";
 }
 
 function getCookie(name,path)
@@ -162,9 +162,9 @@ function topOpToSearch(topOp)
 function logOut()
 {
 	//appending "PY" to some cookie parameters to differentiate from regular webMarks perl
-	eraseCookie("PYwmSessionID");
-	eraseCookie("PYwmUserName");
-	eraseCookie("PYwmUserID");
+	eraseCookie("wmSessionID");
+	eraseCookie("wmUserName");
+	eraseCookie("wmUserID");
 	eraseCookie("Counter");
 	eraseCookie("dt_cnter");
 	eraseCookie("tab_state");

@@ -12,6 +12,8 @@ import re
 
 app = Bottle()  
 
+app_cookie_path="/pyWebMarks"
+
 # static files ############################################
 # served by bottle -- ideally would be served by static 
 # server like Apache or Nginx
@@ -303,10 +305,14 @@ def validate_session2(req):
 def authorize(user_id,user_name):
     sessionID = util.genSessionID()
     init_count = 0
-    response.set_cookie('PYwmSessionID',str(sessionID), path='/')
-    response.set_cookie('PYwmUserID',str(user_id), path='/')
-    response.set_cookie('PYwmUserName', str(user_name), path='/')
-    response.set_cookie('Counter', str(init_count), path='/')
+    
+    path = app_cookie_path    
+    response.set_cookie('wmSessionID',str(sessionID), path=path)
+    response.set_cookie('wmUserID',str(user_id), path=path)
+    response.set_cookie('wmUserName', str(user_name), path=path)
+    response.set_cookie('Counter', str(init_count), path=path)
+    print(str(user_id) , " USERID")
+    
     util.saveSession(sessionID)
 #   response.set_cookie('expires', 60*60)
 
@@ -317,12 +323,12 @@ def renderMainView(user_id=None,errObj=None):
     except:
         pass
     if not user_id or not user_name:
-        user_id = request.get_cookie('PYwmUserID')
-        user_name = request.get_cookie('PYwmUserName')
+        user_id = request.get_cookie('wmUserID')
+        user_name = request.get_cookie('wmUserName')
 
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-#        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
-        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+#        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)

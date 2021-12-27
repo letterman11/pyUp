@@ -38,8 +38,8 @@ def genSessionID():
 
 def storeSQL(sSQL,req):
 
-    sessionID = req.get_cookie('PYwmSessionID')
-    USERID = req.get_cookie('PYwmUserID')
+    sessionID = req.get_cookie('wmSessionID')
+    USERID = req.get_cookie('wmUserID')
     sessObject = SessionObject()
     sessObject.SESSIONDATA = sSQL
     sessObject.SESSIONID = sessionID
@@ -49,7 +49,7 @@ def storeSQL(sSQL,req):
 def getStoredSQL(req):
 
     sessObj = SessionObject()
-    sessionID = req.get_cookie('PYwmSessionID')
+    sessionID = req.get_cookie('wmSessionID')
     sessFile = open(session_dir + dir_sep +  str(sessionID), 'rb')
     sessObj = pickle.load(sessFile)
     storedSQL = sessObj.SESSIONDATA
@@ -62,7 +62,7 @@ def storeSessionObject(sessObj):
     return sessObj 
 
 def validateSession2(req):
-    sessionID = req.get_cookie('PYwmSessionID')
+    sessionID = req.get_cookie('wmSessionID')
 
     try:
         sessFile = open(session_dir + dir_sep + str(sessionID), 'rb')  
