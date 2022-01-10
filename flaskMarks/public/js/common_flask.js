@@ -35,8 +35,8 @@ function setCookie(name,value,days)
                 var expires = "; expires="+date.toGMTString();
         }
         else var expires = "";
-        //document.cookie = name+"="+value+expires+"; path=/pyWebMarks";
-        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/pyWebMarks";
+        //document.cookie = name+"="+value+expires+"; path=/flaskMarks";
+        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/flaskMarks";
 }
 
 function getCookie(name,path)
@@ -109,7 +109,7 @@ function cgi_out(tab_parm)
 
 	//top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	// deploy url##
-	top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+	top.location = "/flaskMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	//	
 }
 
@@ -174,6 +174,6 @@ function logOut()
 	
 	//top.location = "/logout";
 	// deploy url
-	top.location = "/pyWebMarks/logout";
+	top.location = "/flaskMarks/logout";
 	//
 }

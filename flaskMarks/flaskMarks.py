@@ -65,13 +65,13 @@ def pre_auth():
     else:
         return None
 
-@app.route("/pyWebMarks/registration")
+@app.route("/flaskMarks/registration")
 @app.route('/registration')
 def register():
     return Marks().renderRegistrationView()
 
 
-@app.route("/pyWebMarks/regAuth")
+@app.route("/flaskMarks/regAuth")
 @app.post('/regAuth')
 def registerAuth():
 
@@ -126,7 +126,7 @@ def registerAuth():
 
     return Marks().renderDefaultView("grey", "Successfully Registered " + user_name)
 
-@app.route("/pyWebMarks/default")
+@app.route("/flaskMarks/default")
 @app.route('/default')
 def logIn():
     return Marks().renderDefaultView()
@@ -136,31 +136,31 @@ def logIn():
 ###  --  Authenticated routes -- via authenticate decorator -- ###
 ##################################################################
 
-@app.route("/pyWebMarks")
+@app.route("/flaskMarks")
 @app.route("/")
 @authenticate
 def index():
     return renderMainView()
 
-@app.route("/pyWebMarks/webMarks")
+@app.route("/flaskMarks/webMarks")
 @app.route("/webMarks")
 @authenticate
 def indexWB():
     return renderMainView()
 
-@app.route("/pyWebMarks/tabView")
+@app.route("/flaskMarks/tabView")
 @app.route("/tabView")
 @authenticate
 def indexView():
     return renderMainView()
 
-@app.route("/pyWebMarks/searchMark", methods=['POST'])
+@app.route("/flaskMarks/searchMark", methods=['POST'])
 @app.route("/searchMark", methods=['POST'])
 @authenticate
 def searchWebMark():
     return renderMainView()
 
-@app.route("/pyWebMarks/insertMark", methods=['POST'] )
+@app.route("/flaskMarks/insertMark", methods=['POST'] )
 @app.route("/insertMark", methods=['POST'])
 @authenticate
 def addWebMark():
@@ -225,7 +225,7 @@ def addWebMark():
       
     return renderMainView()
 
-@app.route("/pyWebMarks/deltaPass", methods=['POST'])
+@app.route("/flaskMarks/deltaPass", methods=['POST'])
 @app.route("/deltaPass", methods=['POST'])
 @authenticate
 def deltaPass():
@@ -258,13 +258,13 @@ def deltaPass():
 ## end authenticated routes via decorator ############################
 ######################################################################
 
-@app.route("/pyWebMarks/logout")
+@app.route("/flaskMarks/logout")
 @app.route("/logout")
 def logOut():
     session.clear()
     return Marks().renderDefaultView()
 
-@app.route("/pyWebMarks/authenCred", methods=['POST'])
+@app.route("/flaskMarks/authenCred", methods=['POST'])
 @app.route("/authenCred", methods=['POST'])
 def authenCredFunc():
      
