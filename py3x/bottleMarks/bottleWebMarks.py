@@ -177,7 +177,7 @@ def searchWebMark():
 @app.post("/insertMark")
 @authenticate
 def addWebMark():
-    user_id = request.get_cookie('PYwmUserID')	
+    user_id = request.get_cookie('wmUserID')	
 
     #utf-8 decoded-presented bottle forms post version
     title = request.forms.mark_title
