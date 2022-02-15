@@ -4,6 +4,7 @@ import pickle
 import os
 import sys
 import re
+import time
 from  lib.sessionObject import *
 
 if sys.platform == 'win32':
@@ -80,6 +81,13 @@ def saveSession(sessionID):
     pickle.dump(sessObj,sessFile)
     sessFile.close()
 
+def convertTime(dateAdded):
+    (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded/(1000 * 1000))[0:6]
+    curr_date_tuple  = time.localtime( dateAdded/(1000 * 1000))
+    day_of_week = time.strftime("%a",curr_date_tuple)
+    dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
+    #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
+    return dateAdded
 
 
 def convertDateEpoch(humanDate):
@@ -107,15 +115,12 @@ def convertDateEpoch(humanDate):
 
 def isset(string):
     if (string != None) and len(string) == 0:
-        print (string + " !RED")
         return False 
     elif string == None:
-        print (str(string) + " REDDER")
         return False
     elif re.match(r"\s+$", string):
         return False
     else:
-        print (str(string) + str(len(string)) + "TRUE?")
         return True 
 
 def unWrap(req,reqObj):
