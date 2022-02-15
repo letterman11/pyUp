@@ -305,12 +305,14 @@ def validate_session2(req):
 def authorize(user_id,user_name):
     sessionID = util.genSessionID()
     init_count = 0
+
+    fiveDayExpire = int(time.time()) + 60 * 60 *24 *5
     
     path = app_cookie_path    
-    response.set_cookie('wmSessionID',str(sessionID), path=path)
-    response.set_cookie('wmUserID',str(user_id), path=path)
-    response.set_cookie('wmUserName', str(user_name), path=path)
-    response.set_cookie('Counter', str(init_count), path=path)
+    response.set_cookie('wmSessionID',str(sessionID), path=path, expires=fiveDayExpire)
+    response.set_cookie('wmUserID',str(user_id), path=path, expires=fiveDayExpire)
+    response.set_cookie('wmUserName', str(user_name), path=path, expires=fiveDayExpire)
+    response.set_cookie('Counter', str(init_count), path=path, expires=fiveDayExpire)
     print(str(user_id) , " USERID")
     
     util.saveSession(sessionID)
@@ -329,6 +331,6 @@ def renderMainView(user_id=None,errObj=None):
     return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+#        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
 #        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
-#        app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
