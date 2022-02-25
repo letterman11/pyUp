@@ -249,7 +249,7 @@ function displayUpdateLayer(tblCell)
 
      titleSet.value = tblCell.textContent;
      urlSet.value = tblCell.nextSibling.nextSibling.textContent;
-     urlSet.value.trim();  
+     urlSet.value =  urlSet.value.trim();  
 
      tblCell.style.border = 'solid';
 		
