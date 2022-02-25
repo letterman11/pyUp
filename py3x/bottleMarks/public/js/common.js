@@ -249,6 +249,8 @@ function displayUpdateLayer(tblCell)
 
      titleSet.value = tblCell.textContent;
      urlSet.value = tblCell.nextSibling.nextSibling.textContent;
+     urlSet.value.trim();  
+
      tblCell.style.border = 'solid';
 		
 	 var thTag = tblCell.parentNode.getElementsByTagName('th');
