@@ -131,7 +131,7 @@ def registerAuth():
         curs.execute(insert_sql_str, (user_id, user_name, user_pass1, email_address,))
     except Exception:
         print ("Insert Error Error Error wm_user")
-        return Marks().renderRegistrationView(Error(2000).errText())
+        return Marks().renderRegistrationView(Error(120).errText())
     else:
         conn.commit()
     finally:
@@ -332,5 +332,5 @@ def renderMainView(user_id=None,errObj=None):
 
 if __name__ ==  '__main__':
 #        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
-#        app.run(debug="True", host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
+#        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
         app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
