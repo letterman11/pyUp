@@ -1,7 +1,9 @@
 from bottle import template
-import gen_histo_gram_multi as hist
+import datetime
 import time
-import io
+import gen_histo_gram_multi as hist
+import re
+import html
 
 class Marks(object):
 
@@ -16,7 +18,6 @@ class Marks(object):
         optionTops=hist.gen_optionListDiv(user_id)
         return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
 
-
     def renderDefaultView(self,colorStyle="red",displayText=str()):
         colorStyle="red"
         tab = 6
@@ -24,8 +25,11 @@ class Marks(object):
         return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle,
                                      tab=tab, user_name=user_name)
 
-    def renderRegistrationView(self,errText=""):
+    def renderRegistrationView(self):
+        errText = ""
         return template('class_registration.html', errText=errText)
+
+
 
 
     def genError(self):
@@ -54,7 +58,7 @@ class Marks(object):
             sort_sp_dt = " "
   
 
-        tbl = '''<table class='tab_table'>\n 
+        tbl = '''<table  id='tab_table' class='tab_table'>\n 
                  <col width='50%'>\n
                  <col width='35%'>\n
                  <col width='auto'>\n
@@ -76,14 +80,23 @@ class Marks(object):
         tbl_row = str()
         for row in self.dbObject:
             (url,title,added) = (row[0],row[1],row[2])
+            bk_id = row[3]
             added = self.convertTime(added)
             i += 1
             alt =  (i % 2) or 2    
             row_color = "row_color" + str(alt)
-            tbl_row  += "<tr class=" + row_color +"> " + "<td class='title_cell'> <a href=" + str(url) + " target='_blank'> "  +  str(title) + " </a> </td>" \
+  
+            tbl_row_header = ' <th hidden> ' + str(bk_id) + ' </th> ';
+  
+            tbl_row  += "<tr class=" + row_color + "> "  + tbl_row_header + "<td class='title_cell'> <a href=" + str(url) + " target='_blank'> "  +  str(title) + " </a> </td>" \
             + " <td class='url_cell'> " +  str(url) + " </td> " \
-            + "<td class='date_cell'> "  + str(added) + " </td>" \
+            + "<td class='date_cell'> "  + str(added) + " </td>"  \
             + " </tr> \n "
+            
+            title = re.sub(r'"',r'\"',title)
+            title = re.sub(r"'",r"`",title) #workaround for single quotes use apostrophe to soothe js
+
+  
 
         if self.rowCount:
            tbl += tbl_row  + "<!-- Row Count" + str(self.rowCount) + " -->"  + "</table>\n"
@@ -91,19 +104,5 @@ class Marks(object):
         return tbl
 
     def convertTime(self, dateAdded):
-        (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded/(1000 * 1000))[0:6]
-        curr_date_tuple  = time.localtime( dateAdded/(1000 * 1000))
-        day_of_week = time.strftime("%a",curr_date_tuple)
-        dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
-        #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
+        dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
         return dateAdded
-
-    def convertDateEpoch(self, humanDate):
-        res = re.match(r'([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})',humanDate)
-        year = res.group(1) 
-        month = res.group(2) 
-        day = res.group(3)
-        dateAdded = datetime.datetime(year,month,day,0,0).strftime('%s')
-        dateAdded = dateAdded * (1000 * 1000);
-        return dateAdded
-        #datetime.datetime(2012,4,1,0,0).timestamp()
