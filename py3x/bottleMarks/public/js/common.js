@@ -159,7 +159,7 @@ function cgi_out(tab_parm)
 
 	//top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	// deploy url##
-	top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+    top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
 	//	
 }
 
@@ -195,15 +195,9 @@ function topOpToSearch(topOp)
 
 function logOut()
 {
-<<<<<<< HEAD
-	//appending "PY" to some cookie parameters to differentiate from regular webMarks perl
 	eraseCookie("wmSessionID");
 	eraseCookie("wmUserName");
 	eraseCookie("wmUserID");
-=======
-	eraseCookie("PYwmSessionID");
-	eraseCookie("PYwmUserID");
->>>>>>> 064c568db7da943378f2046e990ee8b86dde24e1
 	eraseCookie("Counter");
 	eraseCookie("dt_cnter");
 	eraseCookie("tab_state");
