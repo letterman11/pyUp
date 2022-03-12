@@ -29,7 +29,7 @@ function getCell(event)
 	var tblCell = event.target;
 	var tblCellUrl;
 	
-	event.stopPropagation();
+	//event.stopPropagation();
 				
 	var checkRadio = document.querySelector('input[name="modlink"]:checked');
  
