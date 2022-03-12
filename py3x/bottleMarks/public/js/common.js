@@ -207,7 +207,8 @@ function logOut()
 	// vendor specific general Mojo cookie
 	eraseCookie("mojolicious");
 	// vendor specific general Mojo cookie	
-	top.location = "/logout";
+//	top.location = "/logout";
+	top.location = "/pyWebMarks/logout";
 }
 
 function goLink(title,bk_id)
