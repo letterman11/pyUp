@@ -125,6 +125,11 @@ function cgi_out(tab_parm)
 	var date_flag;
 	var currTab;
 
+    //added for first conditional to avoid error on server side
+    //not an end
+    var searchTab = 6; // added
+    //add
+
 	prevTab = parseInt(getCookie('tab'));	
 	counter = parseInt(getCookie('Counter'));	
 	date_flag = parseInt(getCookie('date_flag'));
@@ -133,10 +138,11 @@ function cgi_out(tab_parm)
 
 	if(currTab == sort_date_indicator && date_flag == 1) {
 	//	alert("A")
-		sortCrit = sort_date_desc
-		eraseCookie("date_flag")
-		tab_parm = "tab=" + prevTab
-		
+        sortCrit = sort_date_desc
+        eraseCookie("date_flag")
+        tab_parm = "tab=" + prevTab
+        tab_parm = tab_parm ? tab_parm : searchTab
+	    //alert( "tab " +tab_parm)	
 	} 
 	else if(currTab == sort_date_indicator) {
 	//	alert("B")
