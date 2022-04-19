@@ -29,9 +29,8 @@ class Error(object):
     def __init__(self,code):
         self.code  = code 
         self.err_codes = Error.err_codes
-        self.ERRCOND = code
 
 
     def errText(self):
-        return self.err_codes[self.ERRCOND]
+        return self.err_codes[self.code]
 
