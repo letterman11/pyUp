@@ -384,7 +384,7 @@ def authenCredFunc():
     if user_id:
         authorize(user_id,user_name)
     else:
-        return Marks().renderDefaultView(colorStyle="red",displayText="Incorrect User ID/Password")
+        return Marks().renderDefaultView(colorStyle="red",displayText=Error(112).errText())
     
     return renderMainView(user_id)
 
@@ -428,4 +428,4 @@ def renderMainView(user_id=None,errObj=None):
 if __name__ ==  '__main__':
 #        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+        app.run(daemon=False, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
