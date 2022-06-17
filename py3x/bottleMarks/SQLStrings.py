@@ -14,3 +14,17 @@ VZ_str = " a.title like 'V%' or  a.title like 'v%'  or  a.title like 'W%' or  a.
 ORDER_BY_TITLE =  " ) order by a.title "
 ORDER_BY_DATE =  " ) order by a.dateAdded "
 ########################  SQL STRINGS ####################################
+
+######## pagination #####
+main_sql_str_pg_index = "select  a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and  ("
+
+date_sql_str_pg_index = "select  a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} " 
+
+main_sql_str_page = "select b.url, a.title, a.dateAdded,  \
+        a.bookmark_id from WM_BOOKMARK a, WM_PLACE b    \
+        where a.PLACE_ID = b.PLACE_ID and a.bookmark_id in (  "
+
+date_sql_str_page = "select b.url, a.title, a.dateAdded, a.bookmark_id   \
+                from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID  \
+                and a.USER_ID = {}  and a.bookmark_id in (  "
+#########################

@@ -77,9 +77,12 @@ def exec_page(req,user_id,user_name,errObj):
    
 
     conn = db.db_factory()
+    #g_main_sql_str = main_sql_str.format(db.db_factory.place)
+    #g_date_sql_str = date_sql_str.format(db.db_factory.place)
 
-    g_main_sql_str = main_sql_str.format(db.db_factory.place)
-    g_date_sql_str = date_sql_str.format(db.db_factory.place)
+    g_main_sql_str = main_sql_str_pg_index.format(db.db_factory.place) # Now intermediary index query
+    g_date_sql_str = date_sql_str_pg_index.format(db.db_factory.place) # Now intermediary index query
+
 
 #############################################################################
 #Sort Criteria setting of ORDER_BY_CRITERIA
@@ -185,11 +188,15 @@ def exec_page(req,user_id,user_name,errObj):
             storedSQLStr = util.getStoredSQL(req)
             if not storedSQLStr:
                 exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
+                exec_sql_str_page = date_sql_str_page + sort_ord 
+
             else:
                 exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
 ###################################
 ##################################
-    executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord + " limit 200 "
+    #executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord + " limit 200 "
+    executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord
+    executed_sql_str_2 =  exec_sql_str_page if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord
 ##########
 # Start of Execution of SQL
 #########
@@ -201,24 +208,47 @@ def exec_page(req,user_id,user_name,errObj):
     print (str(tabtype) + " tab in play")
 
     conn = conn.connect()
-    conn.text_factory = bytes
+    #conn.text_factory = bytes
     conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
 
     try:
         curs = conn.cursor()
+
         curs.execute(executed_sql_str, (user_id,))
-        dbRows =curs.fetchall()
-        print ("RowCountWB " + str(len(dbRows)))
+        dbRows = curs.fetchall()
+
+        rowCount = len(dbRows)
+        print ("RowCountWB " + str(rowCount))
+        
+        
+        sessionID = req.get_cookie("wmSessionID")
+        sessObj = util.getSessionObject(sessionID)
+
+        sessObj.DATASTORE = dbRows
+        sessObj.ROWCOUNT = rowCount
+        sessObj.ORDERBYCRIT = ORDER_BY_CRIT
+        sessObj.SORT_ORD = sort_ord
+
+
+        util.storeSessionObject(sessObj)
+        
         conn.close()
+
     except Exception as inst:    
         print (inst)
         marks = Marks(tabMap[tabtype],None,None,Error(2000))
         #return marks.renderMainView(user_name,sort_crit,tabMap)
         return marks.renderMainView(user_id,sort_crit,tabMap)
 
-    markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
+    
+    exec_page_nav(req,user_id,user_name,errObj)
+    
+'''
+    #markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
     #return markObj.renderMainView(user_name,sort_crit,tabMap)
-    return markObj.renderMainView(user_id,sort_crit,tabMap)
+    #return markObj.renderMainView(user_id,sort_crit,tabMap)
+'''
+
 '''
 try:
     with con:
@@ -231,3 +261,53 @@ except sqlite3.IntegrityError:
 ###########
 
 
+
+def exec_page_nav(request,user_id,user_name,errObj):
+   
+    rowsPerPage = util.unWrap(req,rowsPerPage)
+    rowsPerPage = rowsPerPage or 30
+
+    data = ()
+    i = 0
+    j = 0
+
+    conn = db.db_factory()
+    
+    sessionID = req.get_cookie("wmSessionID")
+    
+    sessObj = util.getSessionObject(sessionID)
+    
+    dataRows = sessObj.DATASTORE
+    ORDER_BY_CRIT = sessObj.ORDERBYCRIT
+    SORT_ORD = sessObj.SORT_ORD 
+    
+    if page > 1:
+ 
+        page -= 1
+        i = page * rowsPerPage
+        page += 1
+        j = page * rowsPerPage
+ 
+        if j > totRows:
+            j = totRows
+    else:
+        i = 0
+        j = rowsPerPage
+
+    sql_str += " '" + data + "' "
+
+    i =+1
+
+    for i in range(i,j):
+        data =  dataRows[i]
+        sql_str += ", '" + data +"' " 
+     
+    sql_str += ") "
+
+    sql_str += ORDER_BY_CRIT + " "
+    sql_str += SORT_ORD
+
+    markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
+    #return markObj.renderMainView(user_name,sort_crit,tabMap)
+    return markObj.renderMainView(user_id,sort_crit,tabMap,page=None)
+ 

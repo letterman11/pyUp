@@ -165,6 +165,12 @@ def index():
 def indexWB():
     return renderMainView()
 
+@app.route("/pyWebMarks/pageNav")
+@app.route("/pageNav")
+@authenticate
+def indexWBNav():
+    return renderMainViewPageNav()
+
 @app.route("/pyWebMarks/tabView")
 @app.route("/tabView")
 @authenticate
@@ -425,7 +431,21 @@ def renderMainView(user_id=None,errObj=None):
 
     return exec_page(request,user_id,user_name,errObj)
 
+
+def renderMainViewPageNav(user_id=None,errObj=None):
+    user_name=None
+    try:
+        user_name = request.params['user_name']
+    except:
+        pass
+    if not user_id or not user_name:
+        user_id = request.get_cookie('wmUserID')
+        user_name = request.get_cookie('wmUserName')
+
+    return exec_page_nav(request,user_id,user_name,errObj)
+
+
 if __name__ ==  '__main__':
-#        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+#        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)

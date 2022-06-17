@@ -62,6 +62,13 @@ def storeSessionObject(sessObj):
     sessFile.close()
     return sessObj 
 
+def getSessionObject(sessionID):
+    sessFile = open(session_dir +  dir_sep + str(sessObj.SESSIONID), 'wb')
+    sessObj = pickle.load(sessFile)
+    sessFile.close()
+    return sessObj 
+
+
 def validateSession2(req):
     sessionID = req.get_cookie('wmSessionID')
 

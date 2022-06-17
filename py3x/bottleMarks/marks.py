@@ -14,7 +14,10 @@ class Marks(object):
         self.errObj = errObj
 
     def renderMainView(self,user_id,sort_crit,tabMap):
-        tabTable = self.genTabTable(sort_crit)        
+
+        tabTable = self.genTabTable(sort_crit,page)        
+        pageLinkNavs = self.genNavigation(currPage)
+
         optionTops=hist.gen_optionListDiv(user_id)
         return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
 
@@ -30,7 +33,27 @@ class Marks(object):
         return template('class_registration.html', errText=errText)
 
 
+    def genNavigation(self, rowPerpage,page,currPage=0):
 
+        pgCnt = 1
+        currCnt = 0
+        totRows = self.rowCount
+        #rowsPerPage = self.ROWSPERPAGE
+        
+        if totRows > rowsPerPage:
+
+            buffer_out +=  "Pages: "   
+            while currCnt < totRows:                 
+                if currPage == pgCnt:
+                    buffer_out += " <span id='curr_page'> " +  pgCnt + " </span>"
+                else:
+                    buffer_out += " <A HREF=/pyWebMarks/page=" + pgCnt 
+                    +  "&rowsPerPage=" + rowsPerPage + ">" +  pgCnt + "</A> "
+
+                currCnt += rowsPerPage
+                pgCnt += 1            
+
+        return buffer_out 
 
     def genError(self):
         errObj = self.errObj
@@ -45,7 +68,7 @@ class Marks(object):
         return errOut
 
 
-    def genTabTable(self,sort_crit):
+    def genTabTable(self,sort_crit,page):
 
         sort_span_html_asc = "<span id='sort_span_date'>  &uarr; </span>"
         sort_span_html_dsc = "<span id='sort_span_date'>  &darr; </span>"
