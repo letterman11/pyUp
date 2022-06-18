@@ -11,8 +11,11 @@ KP_str = " a.title like 'K%' or  a.title like 'k%'  or  a.title like 'L%' or  a.
 QU_str = " a.title like 'Q%' or  a.title like 'q%'  or  a.title like 'R%' or  a.title like 'r%'  or  a.title like 'S%' or  a.title like 's%'  or  a.title like 'T%' or  a.title like 't%'  or  a.title like 'U%' or  a.title like 'u%'"
 VZ_str = " a.title like 'V%' or  a.title like 'v%'  or  a.title like 'W%' or  a.title like 'w%'  or  a.title like 'X%' or  a.title like 'x%'  or  a.title like 'Y%' or  a.title like 'y%'  or  a.title like 'Z%' or  a.title like 'z%'"
 
-ORDER_BY_TITLE =  " ) order by a.title "
-ORDER_BY_DATE =  " ) order by a.dateAdded "
+#ORDER_BY_TITLE =  " ) order by a.title "
+#ORDER_BY_DATE =  " ) order by a.dateAdded "
+
+ORDER_BY_TITLE =  "  order by a.title "
+ORDER_BY_DATE =  "  order by a.dateAdded "
 ########################  SQL STRINGS ####################################
 
 ######## pagination #####
@@ -24,7 +27,7 @@ main_sql_str_page = "select b.url, a.title, a.dateAdded,  \
         a.bookmark_id from WM_BOOKMARK a, WM_PLACE b    \
         where a.PLACE_ID = b.PLACE_ID and a.bookmark_id in (  "
 
-date_sql_str_page = "select b.url, a.title, a.dateAdded, a.bookmark_id   \
-                from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID  \
-                and a.USER_ID = {}  and a.bookmark_id in (  "
+date_sql_str_page = "select b.url, a.title, a.dateAdded, \
+                a.bookmark_id from WM_BOOKMARK a, WM_PLACE b  \
+                where a.PLACE_ID = b.PLACE_ID and a.bookmark_id in (  "
 #########################

@@ -2,7 +2,7 @@ from bottle import Bottle, run, route, request, response, static_file
 from datetime import datetime
 from marks import Marks
 from functools import wraps
-from PJJExecPageSQL import exec_page
+from PJJExecPageSQL import exec_page, exec_page_nav
 import lib.util as util 
 import time
 import connection_factory as db
@@ -165,11 +165,11 @@ def index():
 def indexWB():
     return renderMainView()
 
-@app.route("/pyWebMarks/pageNav")
-@app.route("/pageNav")
+@app.route("/pyWebMarks/pageNav/<page>")
+@app.route("/pageNav/<page>")
 @authenticate
-def indexWBNav():
-    return renderMainViewPageNav()
+def indexWBNav(page):
+    return renderMainViewPageNav(page)
 
 @app.route("/pyWebMarks/tabView")
 @app.route("/tabView")
@@ -388,11 +388,12 @@ def authenCredFunc():
     (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
 
     if user_id:
-        authorize(user_id,user_name)
+        sessionID = authorize(user_id,user_name)
+        return renderMainView(user_id,None,sessionID)    
     else:
         return Marks().renderDefaultView(colorStyle="red",displayText="Incorrect User ID/Password")
     
-    return renderMainView(user_id)
+    
 
 def validate_session():
     wmSID = request.get_cookie('wmSessionID')
@@ -417,9 +418,13 @@ def authorize(user_id,user_name):
     print(str(user_id) , " USERID")
     
     util.saveSession(sessionID)
+    return sessionID
 #   response.set_cookie('expires', 60*60)
 
-def renderMainView(user_id=None,errObj=None):
+
+#def renderMainView(user_id=None,errObj=None):
+
+def renderMainView(user_id=None,errObj=None,sessionID=None):
     user_name=None
     try:
         user_name = request.params['user_name']
@@ -429,10 +434,15 @@ def renderMainView(user_id=None,errObj=None):
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
 
-    return exec_page(request,user_id,user_name,errObj)
+    return exec_page(request,user_id,user_name,errObj,sessionID)
 
 
-def renderMainViewPageNav(user_id=None,errObj=None):
+def renderMainViewPageNav(page):
+
+        sessionID = request.get_cookie("wmSessionID")
+        return exec_page_nav(request,page,sessionID)
+
+'''
     user_name=None
     try:
         user_name = request.params['user_name']
@@ -443,7 +453,7 @@ def renderMainViewPageNav(user_id=None,errObj=None):
         user_name = request.get_cookie('wmUserName')
 
     return exec_page_nav(request,user_id,user_name,errObj)
-
+'''
 
 if __name__ ==  '__main__':
         app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)

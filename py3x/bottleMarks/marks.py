@@ -13,13 +13,17 @@ class Marks(object):
         self.rowCount = rowCount
         self.errObj = errObj
 
-    def renderMainView(self,user_id,sort_crit,tabMap):
+    def renderMainView(self,user_id,sort_crit,tabMap,page=None):
 
-        tabTable = self.genTabTable(sort_crit,page)        
-        pageLinkNavs = self.genNavigation(currPage)
-
+        tabTable = self.genTabTable(sort_crit)        
+        pageLinkNavs = self.genNavigation(page)
+        print("LOOK")
         optionTops=hist.gen_optionListDiv(user_id)
-        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
+        return template('class_mainview', user_id=user_id, sort_crit=sort_crit,
+               tabMap=tabMap, tab=self.tab, tabTable=tabTable, pageLinkNavs=pageLinkNavs,optionTops=optionTops)
+
+
+
 
     def renderDefaultView(self,colorStyle="red",displayText=str()):
         colorStyle="red"
@@ -33,22 +37,25 @@ class Marks(object):
         return template('class_registration.html', errText=errText)
 
 
-    def genNavigation(self, rowPerpage,page,currPage=0):
+    def genNavigation(self, page):
 
+        rowsPerPage = 30
         pgCnt = 1
         currCnt = 0
+        buffer_out = ()
+        
         totRows = self.rowCount
+        print ("total rows " + str(totRows))
         #rowsPerPage = self.ROWSPERPAGE
         
         if totRows > rowsPerPage:
 
-            buffer_out +=  "Pages: "   
+            buffer_out =  "Pages: "   
             while currCnt < totRows:                 
-                if currPage == pgCnt:
-                    buffer_out += " <span id='curr_page'> " +  pgCnt + " </span>"
+                if page == pgCnt:
+                    buffer_out += " <span id='curr_page'> " +  str(pgCnt) + " </span>"
                 else:
-                    buffer_out += " <A HREF=/pyWebMarks/page=" + pgCnt 
-                    +  "&rowsPerPage=" + rowsPerPage + ">" +  pgCnt + "</A> "
+                    buffer_out += "<span> <A HREF=/pyWebMarks/pageNav/" + str(pgCnt) + ">" + str(pgCnt) +  "</A> </span>"
 
                 currCnt += rowsPerPage
                 pgCnt += 1            
@@ -68,7 +75,7 @@ class Marks(object):
         return errOut
 
 
-    def genTabTable(self,sort_crit,page):
+    def genTabTable(self,sort_crit):
 
         sort_span_html_asc = "<span id='sort_span_date'>  &uarr; </span>"
         sort_span_html_dsc = "<span id='sort_span_date'>  &darr; </span>"
@@ -125,6 +132,7 @@ class Marks(object):
            tbl += tbl_row  + "<!-- Row Count" + str(self.rowCount) + " -->"  + "</table>\n"
 
         return tbl
+
 
     def convertTime(self, dateAdded):
         dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")

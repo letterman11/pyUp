@@ -63,7 +63,8 @@ def storeSessionObject(sessObj):
     return sessObj 
 
 def getSessionObject(sessionID):
-    sessFile = open(session_dir +  dir_sep + str(sessObj.SESSIONID), 'wb')
+    print(sessionID)
+    sessFile = open(session_dir +  dir_sep + str(sessionID), 'rb')
     sessObj = pickle.load(sessFile)
     sessFile.close()
     return sessObj 
