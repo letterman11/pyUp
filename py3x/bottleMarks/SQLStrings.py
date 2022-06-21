@@ -19,7 +19,7 @@ ORDER_BY_DATE =  "  order by a.dateAdded "
 ########################  SQL STRINGS ####################################
 
 ######## pagination #####
-main_sql_str_pg_index = "select  a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and  ("
+main_sql_str_pg_index = "select  a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and  "
 
 date_sql_str_pg_index = "select  a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} " 
 

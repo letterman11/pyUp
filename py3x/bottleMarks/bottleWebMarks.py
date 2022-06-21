@@ -433,6 +433,9 @@ def renderMainView(user_id=None,errObj=None,sessionID=None):
     if not user_id or not user_name:
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
+    
+    if not sessionID:
+        sessionID = request.get_cookie("wmSessionID")
 
     return exec_page(request,user_id,user_name,errObj,sessionID)
 

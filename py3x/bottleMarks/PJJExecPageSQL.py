@@ -153,14 +153,14 @@ def exec_page(req,user_id,user_name,errObj,sessionID):
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchDateStart) and util.isset(searchDateEnd):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
-        exec_sql_str = g_main_sql_str + qstr + " ) "
+        exec_sql_str = g_main_sql_str + qstr 
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
     elif util.isset(searchDateStart):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
-        exec_sql_str = g_main_sql_str + qstr + " ) "
+        exec_sql_str = g_main_sql_str + qstr 
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
@@ -172,30 +172,36 @@ def exec_page(req,user_id,user_name,errObj,sessionID):
 ##for entry of tabs
 #############################
         if tabtype == tabMap['tab_AE']:
-            exec_sql_str = g_main_sql_str + AE_str
+            exec_sql_str = g_main_sql_str + " ( "  + AE_str + " ) " + ORDER_BY_CRIT + sort_ord 
         elif tabtype == tabMap['tab_FJ']:
-            exec_sql_str = g_main_sql_str + FJ_str
+            exec_sql_str = g_main_sql_str + " ( "  + FJ_str + " ) "+ ORDER_BY_CRIT + sort_ord 
         elif tabtype == tabMap['tab_KP']:
-            exec_sql_str = g_main_sql_str + KP_str
+            exec_sql_str = g_main_sql_str + " ( "  + KP_str + " ) "+ ORDER_BY_CRIT + sort_ord 
         elif tabtype == tabMap['tab_QU']:
-            exec_sql_str = g_main_sql_str + QU_str
+            exec_sql_str = g_main_sql_str + " ( "  + QU_str + " ) "+ ORDER_BY_CRIT + sort_ord 
         elif tabtype == tabMap['tab_VZ']:
-            exec_sql_str = g_main_sql_str + VZ_str
+            exec_sql_str = g_main_sql_str + " ( "  + VZ_str + " ) "+ ORDER_BY_CRIT + sort_ord 
         elif tabtype == tabMap['tab_DATE']:
             exec_sql_str = g_date_sql_str 
         elif tabtype == tabMap['tab_SRCH_TITLE']:
             storedSQLStr = util.getStoredSQL(req)
             if not storedSQLStr:
-                exec_sql_str = g_date_sql_str + ORDER_BY_CRIT + sort_ord
-                
+                exec_sql_str = g_date_sql_str + ORDER_BY_CRIT + sort_ord 
                 exec_sql_str_page = date_sql_str_page
             else:
-                exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
+                exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord 
 ###################################
 ##################################
- #   executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str
- #   executed_sql_str_2 =  exec_sql_str_page if (tabtype != tabMap['tab_DATE']) else g_date_sql_str 
-    executed_sql_str =  exec_sql_str + ORDER_BY_CRIT + sort_ord
+
+    if tabtype != tabMap['tab_DATE']:
+        executed_sql_str = exec_sql_str 
+    else:
+        executed_sql_str = g_date_sql_str + ORDER_BY_CRIT + sort_ord 
+        
+        
+    #executed_sql_str =  exec_sql_str  if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + ORDER_BY_CRIT + sort_ord 
+#    executed_sql_str_2 =  exec_sql_str_page if (tabtype != tabMap['tab_DATE']) else g_date_sql_str 
+ #   executed_sql_str =  exec_sql_str + ORDER_BY_CRIT + sort_ord
 ##########
 # Start of Execution of SQL
 #########
@@ -219,7 +225,8 @@ def exec_page(req,user_id,user_name,errObj,sessionID):
 
         rowCount = len(dbRows)
         print ("RowCountWB " + str(rowCount))
-     
+        print ("RowCountWBCursor " + str(curs.rowcount))
+        
         print ("arg " + sessionID)
         sessObj = util.getSessionObject(sessionID)
 
@@ -228,7 +235,6 @@ def exec_page(req,user_id,user_name,errObj,sessionID):
         sessObj.ORDERBYCRIT = ORDER_BY_CRIT
         sessObj.SORT_ORD = sort_ord
         sessObj.USERID = user_id
-
 
         util.storeSessionObject(sessObj)
         
@@ -240,9 +246,8 @@ def exec_page(req,user_id,user_name,errObj,sessionID):
         #return marks.renderMainView(user_name,sort_crit,tabMap)
         
         return marks.renderMainView(user_id,sort_crit,tabMap)
-
     
-    return exec_page_nav(req,0,sessionID,tabtype)
+    return exec_page_nav(req,1,sessionID,tabtype)
     
 '''
     #markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
@@ -274,20 +279,26 @@ def exec_page_nav(req,page,sessionID,tabtype=9):
     data = ()
     i = 0
     j = 0
-   
-#    sessionID = req.get_cookie("wmSessionID")
-    
+
     sessObj = util.getSessionObject(sessionID)
     
-    dataRows = (sessObj.DATASTORE)
+    dataRows = sessObj.DATASTORE
     ORDER_BY_CRIT = sessObj.ORDERBYCRIT
     SORT_ORD = sessObj.SORT_ORD 
     rowCount = sessObj.ROWCOUNT
     totRows = rowCount
     
     user_id = sessObj.USERID
-    
+
+    #No results do not bother with rest below
+    if rowCount == 0:
+        dbRows=None
+        sort_crit = ()
+        return Marks(tabMap[tabtype],dbRows,rowCount).renderMainView(user_id,sort_crit,tabMap,page)
+
     print(dataRows[0][0])
+    
+#### REVISIT BELOW ##############
     if page > 1:
  
         page = page - 1
@@ -299,22 +310,27 @@ def exec_page_nav(req,page,sessionID,tabtype=9):
             j = totRows
     else:
         i = 0
-        j = rowsPerPage
-
+        if totRows > rowsPerPage:     #all logic to account for page 1 ( really a spec case here ) being first of potentially 
+            j = rowsPerPage           #large result set or set less than a page
+        elif totRows < rowsPerPage:
+            j = totRows
+            
+        ##### python vs perl ######
+        
+#### REVISIT ABOVE ####
+   
     sql_str = "  " + str(dataRows[i][0]) + "  "
    
     i = i + 1
-
-    for ccc in range(i,j):
-        data =  dataRows[ccc][0]
+    
+    for qq in range(i,j):
+        data =  dataRows[qq][0]
         sql_str += ", " + str(data) + "  " 
      
-   
     sql_str +=  ") " + ORDER_BY_CRIT + " "
     sql_str += SORT_ORD
 
     executed_sql_str_page = main_sql_str_page + sql_str
-    
 
     print(executed_sql_str_page)
 #### SQL execute start

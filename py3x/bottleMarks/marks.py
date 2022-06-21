@@ -53,7 +53,7 @@ class Marks(object):
             buffer_out =  "Pages: "   
             while currCnt < totRows:                 
                 if page == pgCnt:
-                    buffer_out += " <span id='curr_page'> " +  str(pgCnt) + " </span>"
+                    buffer_out += " <span style='font-weight:bolder' id='curr_page'> " +  str(pgCnt) + " </span>"
                 else:
                     buffer_out += "<span> <A HREF=/pyWebMarks/pageNav/" + str(pgCnt) + ">" + str(pgCnt) +  "</A> </span>"
 
