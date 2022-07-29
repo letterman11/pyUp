@@ -149,7 +149,8 @@ def exec_page(req,user_id,user_name,errObj):
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
-    elif util.isset(searchDateStart) and util.isset(searchDateEnd):
+    elif util.isset(searchDateStart) and util.isset(searchDateEnd) and (searchDateStart != searchDateEnd):
+    #elif util.isset(searchDateStart) and util.isset(searchDateEnd):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
@@ -201,7 +202,7 @@ def exec_page(req,user_id,user_name,errObj):
     print (str(tabtype) + " tab in play")
 
     conn = conn.connect()
-    conn.text_factory = bytes
+    #conn.text_factory = bytes
     conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
 
     try:
