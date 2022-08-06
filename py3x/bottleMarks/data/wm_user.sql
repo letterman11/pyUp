@@ -5,7 +5,7 @@ use dcoda_acme;
 CREATE TABLE IF NOT EXISTS `WM_USER` (
   `USER_ID` varchar(15) NOT NULL,
   `USER_NAME` varchar(15) NOT NULL,
-  `USER_PASSWD` varchar(25) NOT NULL,
+  `USER_PASSWD` varchar(128) NOT NULL,
   `FNAME` varchar(25) DEFAULT NULL,
   `LNAME` varchar(25) DEFAULT NULL,
   `ADDRESS1` varchar(25) DEFAULT NULL,
