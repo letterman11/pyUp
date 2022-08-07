@@ -25,8 +25,9 @@ class Marks(object):
         return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle,
                                      tab=tab, user_name=user_name)
 
-    def renderRegistrationView(self):
-        errText = ""
+    def renderRegistrationView(self,errText=None):
+        if not errText:
+            errText = ""
         return template('class_registration.html', errText=errText)
 
 
