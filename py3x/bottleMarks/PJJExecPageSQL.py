@@ -152,7 +152,8 @@ def exec_page(req,user_id,user_name,errObj):
     elif util.isset(searchDateStart) and util.isset(searchDateEnd) and (searchDateStart != searchDateEnd):
     #elif util.isset(searchDateStart) and util.isset(searchDateEnd):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateEnd) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
-        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd) + dateAddedEnd)
+#        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
+        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
         util.storeSQL(storedSQLStr,req)
