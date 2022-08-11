@@ -1,4 +1,4 @@
-from bottle import Bottle, run, route, request, response, static_file
+from bottle import Bottle, run, route, request, response, static_file, error
 from datetime import datetime
 from marks import Marks
 from functools import wraps
@@ -34,7 +34,6 @@ def server_static_imgs(filename):
 def server_static_js(filename):
     return static_file(filename, root="./public/js")
 ###########################################################
-
 
 
 ### decorator functions
@@ -80,6 +79,46 @@ def pre_auth():
 
     else:
         return None
+        
+def pre_auth2():
+    
+    usr_name = util.unWrap(request, 'user_name') 
+    usr_pass = util.unWrap(request, 'user_pass')
+    old_usr_pass = util.unWrap(request, 'old_user_pass')
+    
+    password_digest = util.digest_pass(usr_pass);
+    password_old_digest = util.digest_pass(old_usr_pass);
+        
+    exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_name = '" + usr_name + "' ";
+    
+    ### error checking ????? ##############
+
+    conn = db.db_factory().connect()
+    curs = conn.cursor()
+    curs.execute(exec_sql_str)
+    
+    db_row = curs.fetchall()
+
+    conn.close()
+    
+    if db_row:
+        print (db_row)
+        (db_usr_id, db_usr_name, db_usr_pass) = db_row.pop()
+    else:
+        return None
+              
+   
+    if(util.isset(old_usr_pass) and (db_usr_pass == old_usr_pass) or db_usr_pass == password_old_digest):
+         
+        return (db_usr_id, db_usr_name, usr_pass); 
+    
+    elif ((db_usr_pass == usr_pass) or (db_usr_pass == password_digest)):
+    
+        return (db_usr_id, db_usr_name, db_usr_pass) 
+    
+    else:
+        return None
+    
 
 @app.route("/pyWebMarks/registration")
 @app.route('/registration')
@@ -127,12 +166,14 @@ def registerAuth():
     curs = conn.cursor()
     place = db.db_factory.place
     ########################################
-    
+
+    hash_pass = util.digest_pass(user_pass1)
     
     insert_sql_str = "INSERT INTO WM_USER (USER_ID,USER_NAME,USER_PASSWD,EMAIL_ADDRESS) VALUES ({},{},{},{})".format(place,place,place,place)
-
+    
     try:
-        curs.execute(insert_sql_str, (user_id, user_name, user_pass1, email_address,))
+        #curs.execute(insert_sql_str, (user_id, user_name, user_pass1, email_address,))
+        curs.execute(insert_sql_str, (user_id, user_name, hash_pass, email_address,))
     except Exception:
         print ("Insert Error Error Error wm_user")
         return Marks().renderRegistrationView(Error(120).errText())
@@ -148,6 +189,12 @@ def registerAuth():
 def logIn():
     return Marks().renderDefaultView()
     #return renderDefaultView()
+
+@app.error(404)
+def error404(error):
+    return renderErrorPageView()
+
+
 
 ##################################################################
 ###  --  Authenticated routes -- via authenticate decorator -- ###
@@ -343,11 +390,15 @@ def deleteMark():
 def deltaPass():
     
     try:
-        (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+        #(user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+        (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
     except:
         return renderMainView(request.params['user_name'],Error(112))
    
     new_passwd = request.params['user_pass']
+
+    new_hash_pass = util.digest_pass(new_passwd);
+
 
     if not user_id:
         return renderMainView(user_id,Error(112))
@@ -356,10 +407,10 @@ def deltaPass():
             conn = db.db_factory().connect()
             curs = conn.cursor()
             place = db.db_factory.place
-            curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_passwd,user_name));
-
+            #curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_passwd,user_name));
+            curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_hash_pass,user_name));
         except:
-            return renderMainView(user_id,Error(2000))
+            return renderMainView(user_id,Error(102))
         else:
             conn.commit()
         finally:
@@ -379,7 +430,8 @@ def logOut():
 @app.post("/authenCred")
 def authenCredFunc():
 
-    (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+    #(user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+    (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
 
     if user_id:
         authorize(user_id,user_name)
@@ -424,8 +476,11 @@ def renderMainView(user_id=None,errObj=None):
         user_name = request.get_cookie('wmUserName')
 
     return exec_page(request,user_id,user_name,errObj)
+    
+def renderErrorPageView():
+          return Marks().renderErrorPageView()
 
 if __name__ ==  '__main__':
-#        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-        app.run(daemon=False, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+#        app.run(daemon=False, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)

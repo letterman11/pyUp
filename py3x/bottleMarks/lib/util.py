@@ -5,6 +5,7 @@ import os
 import sys
 import re
 import time
+import hashlib
 from  lib.sessionObject import *
 
 if sys.platform == 'win32':
@@ -25,6 +26,14 @@ else:
 working_dir =  os.getcwd()
 session_dir = working_dir + dir_sep +  "sessions"
 print ("Session Dir " + session_dir)
+
+def digest_pass(passwd):
+    if not passwd:
+        passwd = ""
+    sha_pad = hashlib.sha512()
+    sha_pad.update(str.encode(passwd))
+    return sha_pad.hexdigest()
+    
 
 def genSessionID():
 

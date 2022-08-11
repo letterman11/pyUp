@@ -29,8 +29,14 @@ class Marks(object):
         if not errText:
             errText = ""
         return template('class_registration.html', errText=errText)
+   
+    def renderErrorPageView(self):
+        return template('class_not_found.html')
 
-
+    def renderErrorPageView2(self,errText=None):
+        if not errText:
+            errText = ""
+        return template('class_not_found.html', errText=errText)
 
 
     def genError(self):
