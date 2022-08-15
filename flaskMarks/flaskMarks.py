@@ -71,7 +71,7 @@ def register():
     return Marks().renderRegistrationView()
 
 
-@app.route("/flaskMarks/regAuth")
+@app.post("/flaskMarks/regAuth")
 @app.post('/regAuth')
 def registerAuth():
 
@@ -321,6 +321,6 @@ def renderMainView(user_id=None,errObj=None):
     #return exec_page(request,user_id,user_name,errObj)
 
 if __name__ ==  '__main__':
-    #app.run(debug="True", host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
-    app.run(debug="True", host="0.0.0.0", port='5000')
+    app.run(debug="True", host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+    #app.run(debug="True", host="0.0.0.0", port='5000')
     #app.run(debug="True", host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
