@@ -54,7 +54,7 @@ class Marks(object):
             sort_sp_dt = " "
   
 
-        tbl = '''<table class='tab_table'>\n 
+        tbl = '''<table id='tab_table' class='tab_table'>\n 
                  <col width='50%'>\n
                  <col width='35%'>\n
                  <col width='auto'>\n
@@ -76,11 +76,16 @@ class Marks(object):
         tbl_row = str()
         for row in self.dbObject:
             (url,title,added) = (row[0],row[1],row[2])
+            bk_id = row[3]
             added = self.convertTime(added)
             i += 1
             alt =  (i % 2) or 2    
             row_color = "row_color" + str(alt)
-            tbl_row  += "<tr class=" + row_color +"> " + "<td class='title_cell'> <a href=" + str(url) + " target='_blank'> "  +  str(title) + " </a> </td>" \
+            
+            tbl_row_header = ' <th hidden> ' + str(bk_id) + ' </th> ';
+                        
+#            tbl_row  += "<tr class=" + row_color +"> " + "<td class='title_cell'> <a href=" + str(url) + " target='_blank'> "  +  str(title) + " </a> </td>" \
+            tbl_row  += "<tr class=" + row_color + "> "  + tbl_row_header + "<td class='title_cell'> <a href=" + str(url) + " target='_blank'> "  +  str(title) + " </a> </td>" \
             + " <td class='url_cell'> " +  str(url) + " </td> " \
             + "<td class='date_cell'> "  + str(added) + " </td>" \
             + " </tr> \n "

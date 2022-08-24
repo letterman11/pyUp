@@ -12,7 +12,11 @@ import re
 
 app = Flask(__name__)
 
+app_cookie_path="/flaskMarks"
+
 app.secret_key = b"r\xb5\x96@|\xcd~\x96\xb1\x86\xb6'\xcd\x9b\x8c\xcd"
+
+place = db.db_factory().place
 
 # static files ############################################
 # served by Flask  local static dir-- 
@@ -223,6 +227,97 @@ def addWebMark():
     finally:
         conn.close()
       
+    return renderMainView()
+
+@app.post("/flaskMarks/updateMark")
+@app.post("/updateMark")
+@authenticate
+def updateMark():
+
+    user_id = session['wmUserID']
+
+    title = request.form['title_update']	
+    
+    url = request.form['url_update']	
+    
+    tblBookMarkId = request.form['bk_id']	
+     
+    print (tblBookMarkId)
+ 
+    unix_epochs = int(time.time())
+    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
+    dateAdded = unix_epochs * (1000 * 1000)
+
+    conn = db.db_factory().connect()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place) , (tblBookMarkId,))
+
+    except Exception as ex:
+        print ("error execute update")
+        raise ex
+        return renderMainView(user_id,Error(153))
+
+    (tblPlaceId,) = curs.fetchone()
+    print ("PlaceID " + str(tblPlaceId))
+
+    try:
+        curs.execute("update WM_BOOKMARK set TITLE = {} where BOOKMARK_ID = {} ".format(place,place), (title, tblBookMarkId,))
+        curs.execute("update WM_PLACE set  URL = {} , TITLE = {} where PLACE_ID = {} ".format(place,place,place), (url, title,tblPlaceId,))
+    except Exception as ex:
+        raise ex
+        return renderMainView(user_id,Error(153))
+    else:
+        conn.commit()
+    finally:
+        conn.close()
+ 
+    return renderMainView()
+
+@app.post("/flaskMarks/deleteMark")
+@app.post("/deleteMark")
+@authenticate
+def deleteMark():
+    
+    user_id = session['wmUserID']
+    tblBookMarkId = request.form['bk_id']
+    
+    print (tblBookMarkId)
+
+    unix_epochs = int(time.time())
+    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
+    dateAdded = unix_epochs * (1000 * 1000)
+    conn = db.db_factory().connect()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place), (tblBookMarkId,))
+
+    except Exception as ex:
+        print ("error execute select in deleteMark")
+        raise ex
+        return renderMainView(user_id,Error(153))
+
+    (tblPlaceId,) = curs.fetchone()
+    print ("PlaceID " + str(tblPlaceId))
+
+
+
+    try:
+        curs.execute("delete from  WM_PLACE  where PLACE_ID = {} ".format(place), (tblPlaceId,))
+        curs.execute("delete from  WM_BOOKMARK  where BOOKMARK_ID = {} ".format(place),(tblBookMarkId,))
+
+    except Exception as ex:
+        print ("error execute delettion")
+        raise ex
+        return renderMainView(user_id,Error(153))
+
+    else:
+        conn.commit()
+    finally:
+        conn.close()
+ 
     return renderMainView()
 
 @app.route("/flaskMarks/deltaPass", methods=['POST'])
