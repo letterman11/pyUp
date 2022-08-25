@@ -14,6 +14,10 @@ app = Flask(__name__)
 
 app_cookie_path="/flaskMarks"
 
+################################################################
+# randomly generate secret key of keep out of this file or other
+# below is just for testing... and should be taken out!!!!
+#################################################################
 app.secret_key = b"r\xb5\x96@|\xcd~\x96\xb1\x86\xb6'\xcd\x9b\x8c\xcd"
 
 place = db.db_factory().place
