@@ -1,0 +1,82 @@
+<% 
+import itertools
+(sort_sp_ae,sort_sp_fj,sort_sp_kp,sort_sp_qu,sort_sp_vz,sort_sp_date,sort_sp_search) =  itertools.repeat(" ",7) 
+sort_span_html_asc = "<span style='font-size:13pt; font-weight:bold' id='sort_span'> &uarr; </span>"
+
+sort_span_html_dsc = "<span style='font-size:13pt; font-weight:bold' id='sort_span'> &darr; </span>" 
+
+tabMap = {y:x for x,y in tabMap.items()}
+
+if sort_crit == 0:
+	if tabMap[tab] == 1:
+	  	sort_sp_ae = sort_span_html_asc 
+	elif tabMap[tab] == 2:  
+			sort_sp_fj = sort_span_html_asc 
+	elif tabMap[tab] == 3: 
+			sort_sp_kp = sort_span_html_asc 
+	elif tabMap[tab] == 4: 
+			sort_sp_qu = sort_span_html_asc
+	elif tabMap[tab] == 5: 
+			sort_sp_vz = sort_span_html_asc 
+	elif tabMap[tab] == 9: 
+			sort_sp_date = sort_span_html_asc 
+	elif tabMap[tab] == 6: 
+			sort_sp_search = sort_span_html_asc 
+	end
+elif sort_crit == 1:
+	if tabMap[tab] == 1: 
+		sort_sp_ae = sort_span_html_dsc 
+	elif tabMap[tab] == 2: 
+		sort_sp_fj = sort_span_html_dsc 
+	elif tabMap[tab] == 3: 
+		sort_sp_kp = sort_span_html_dsc 
+	elif tabMap[tab] == 4: 
+		sort_sp_qu = sort_span_html_dsc 
+	elif tabMap[tab] == 5: 
+		sort_sp_vz = sort_span_html_dsc 
+	elif tabMap[tab] == 9: 
+		sort_sp_date = sort_span_html_dsc 
+	elif tabMap[tab] == 6: 
+		sort_sp_search = sort_span_html_dsc
+	end
+end
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> WebMarks Application </title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=.65">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<link rel="shortcut icon" href="/static/images/dc.ico">
+<link rel="short icon" href="/static/images/dc.ico"> 
+<link rel="stylesheet" media="screen and (min-device-width:800px)" href="/static/css/style.css" type="text/css" />
+<link rel="stylesheet" media="screen and (max-device-width:600px)" href="/static/css/mobile_style.css" type="text/css" />
+<script type="text/javascript" src="/static/js/common.js"> </script> 
+</head>
+<body onload="init_2()">
+    <div class="tab_header">
+	<div class="tab_divs" id="{{!tab}}">
+        <div class="tab_top">
+         <span onclick="cgi_out('tab=1');" class="tab_spans" id="sp_AE"> A-E {{ !sort_sp_ae }} </span>
+         <span onclick="cgi_out('tab=2');" class="tab_spans" id="sp_FJ"> F-J {{ !sort_sp_fj}}  </span>
+         <span onclick="cgi_out('tab=3');" class="tab_spans" id="sp_KP"> K-P {{ !sort_sp_kp }} </span>
+         </div> <!-- end big1 -->
+
+        <div class="tab_bottom">
+             <span onclick="cgi_out('tab=4');" class="tab_spans" id="sp_QU"> Q-U {{ !sort_sp_qu }} </span>
+            <span onclick="cgi_out('tab=5');" class="tab_spans" id="sp_VZ"> V-Z {{ !sort_sp_vz }} </span>
+            <span onclick="cgi_out('tab=9');" class="tab_spans" id="sp_DATE"> DATE {{ !sort_sp_date }} </span>
+        </div>  <!-- end big2 -->
+
+        <div class="tab_bottom_search">
+            <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
+        </div> <!-- end big3 -->
+
+		{{!tabTable}}
+	</div>
+	
+</body>
+</html>
+

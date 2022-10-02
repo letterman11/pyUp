@@ -12,7 +12,7 @@ import re
 ## PJJExecPageSQL                       ####
 ## standalone CGI function to be required ##
 ############################################
-def exec_page(req,user_id,user_name,errObj):
+def exec_page(req,user_id,user_name,errObj,init):
     tabMap = g.tabMap
     print (user_id + "Req Cookie  IDs")
 
@@ -221,7 +221,12 @@ def exec_page(req,user_id,user_name,errObj):
 
     markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
     #return markObj.renderMainView(user_name,sort_crit,tabMap)
-    return markObj.renderMainView(user_id,sort_crit,tabMap)
+    if init:
+        print ("First View")
+        return markObj.renderMainView(user_id,sort_crit,tabMap)
+    else:
+        print("Other View")
+        return markObj.renderTabTableView(user_id,sort_crit,tabMap)
 '''
 try:
     with con:

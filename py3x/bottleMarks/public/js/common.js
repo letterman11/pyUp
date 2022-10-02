@@ -7,15 +7,38 @@ function init()
 {
 	var startDate = parent.top.document.getElementById("searchDateStart")
 	var endDate = parent.top.document.getElementById("searchDateEnd")
+    
+//	top.document.getElementById('iframeTabTableResults').src = "/pyWebMarks/tabTableView";
 
-	var  tabTable = document.getElementById('tab_table');
-	tabTable.addEventListener('click', getCell, true);
+	innerDoc = top.document.getElementById('iframeTabTableResults');
+	innerDoc.src = "/pyWebMarks/tabTableView";
+	
+	innerDoc = innerDoc.contentWindow.document;
+//	alert(innerDoc);
+	
+	var  tabTable = innerDoc.getElementById('tab_table');
+
+	//var  tabTable = top.document.getElementById('tab_table');
+	//alert(tabTable);
+//	tabTable.addEventListener('click', getCell, true);
 
      document.getElementById("selDates").style.display = 'inline-block';
      document.getElementById("selUpdates").style.display = 'none';
+    // top.document.getElementById('iframeTabTableResults').src = "/pyWebMarks/tabTableView";
 	
 }
 
+function init_2()
+{
+	var  tabTable = document.getElementById('tab_table');
+
+	//var  tabTable = top.document.getElementById('tab_table');
+	//alert(" Inner " + tabTable);
+	tabTable.addEventListener('click', getCell, true);
+	
+	
+	
+}
 
 function modCheck(el)
 {
@@ -163,10 +186,12 @@ function cgi_out(tab_parm)
 	}
 
 
+  
+	//try to get id of iframe and set  result html generation to source attribute of iframe
+	
+	top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + "&sortCrit=" + sortCrit;
+		
 	//top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
-	// deploy url##
-    top.location = "/pyWebMarks/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
-	//	
 }
 
 function setSearchTerms()

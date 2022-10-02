@@ -14,7 +14,7 @@ class Marks(object):
         self.errObj = errObj
 
     def renderMainView(self,user_id,sort_crit,tabMap):
-        tabTable = self.genTabTable(sort_crit)        
+        tabTable = self.genTabTable(sort_crit,tab=None)        
         optionTops=hist.gen_optionListDiv(user_id)
         return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
 
@@ -38,7 +38,14 @@ class Marks(object):
             errText = ""
         return template('class_not_found.html', errText=errText)
 
-
+    def renderTabTableView(self,user_id,sort_crit,tabMap):
+        tabTable = self.genTabTable(sort_crit,self.tab)        
+        optionTops=hist.gen_optionListDiv(user_id)
+        print ("redder")
+        return template('class_tab_view', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)  
+#        return tabTable
+        #return "<h1> Hello Angus </h1>"
+ 
     def genError(self):
         errObj = self.errObj
         errText = errObj.errText()
@@ -52,7 +59,7 @@ class Marks(object):
         return errOut
 
 
-    def genTabTable(self,sort_crit):
+    def genTabTable(self,sort_crit,tab):
 
         sort_span_html_asc = "<span id='sort_span_date'>  &uarr; </span>"
         sort_span_html_dsc = "<span id='sort_span_date'>  &darr; </span>"
@@ -64,7 +71,6 @@ class Marks(object):
         else:
             sort_sp_dt = " "
   
-
         tbl = '''<table  id='tab_table' class='tab_table'>\n 
                  <col width='50%'>\n
                  <col width='35%'>\n

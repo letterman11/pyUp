@@ -218,6 +218,12 @@ def indexWB():
 def indexView():
     return renderMainView()
 
+@app.route("/pyWebMarks/tabTableView")
+@app.route("/tabTableView")
+@authenticate
+def tabTableView():
+    return renderTabTableView()
+
 @app.post("/pyWebMarks/searchMark")
 @app.post("/searchMark")
 @authenticate
@@ -465,7 +471,7 @@ def authorize(user_id,user_name):
     util.saveSession(sessionID)
 #   response.set_cookie('expires', 60*60)
 
-def renderMainView(user_id=None,errObj=None):
+def renderMainView(user_id=None,errObj=None,init=True):
     user_name=None
     try:
         user_name = request.params['user_name']
@@ -475,12 +481,26 @@ def renderMainView(user_id=None,errObj=None):
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
 
-    return exec_page(request,user_id,user_name,errObj)
+    return exec_page(request,user_id,user_name,errObj,init)
+
+def renderTabTableView(user_id=None,errObj=None,init=False):    
+    user_name=None
+    try:
+        user_name = request.params['user_name']
+    except:
+        pass
+    print ("tabFunction")
+    if not user_id or not user_name:
+        user_id = request.get_cookie('wmUserID')
+        user_name = request.get_cookie('wmUserName')
+    
+    return exec_page(request,user_id,user_name,errObj,init)
+    
     
 def renderErrorPageView():
           return Marks().renderErrorPageView()
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8070', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
 #        app.run(daemon=False, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
