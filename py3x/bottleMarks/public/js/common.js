@@ -1,43 +1,31 @@
 var search_submission = 6;
 var stateOfBlur = 0;
 var searchLayerSwitch = 0;
-var currTblCell;
+window.top.currTblCell;
+var innerDoc;
 
 function init()
 {
 	var startDate = parent.top.document.getElementById("searchDateStart")
 	var endDate = parent.top.document.getElementById("searchDateEnd")
-    
-//	top.document.getElementById('iframeTabTableResults').src = "/pyWebMarks/tabTableView";
 
-	innerDoc = top.document.getElementById('iframeTabTableResults');
-	innerDoc.src = "/pyWebMarks/tabTableView";
-	
-	innerDoc = innerDoc.contentWindow.document;
-//	alert(innerDoc);
-	
-	var  tabTable = innerDoc.getElementById('tab_table');
+	innerFrame = top.document.getElementById('iframeTabTableResults');
 
-	//var  tabTable = top.document.getElementById('tab_table');
-	//alert(tabTable);
-//	tabTable.addEventListener('click', getCell, true);
+	innerFrame.src = "/pyWebMarks/tabTableView";
 
-     document.getElementById("selDates").style.display = 'inline-block';
-     document.getElementById("selUpdates").style.display = 'none';
-    // top.document.getElementById('iframeTabTableResults').src = "/pyWebMarks/tabTableView";
+    document.getElementById("selDates").style.display = 'inline-block';
+    document.getElementById("selUpdates").style.display = 'none';
 	
 }
 
 function init_2()
 {
-	var  tabTable = document.getElementById('tab_table');
+	innerFrame = top.document.getElementById('iframeTabTableResults');
+	innerDoc = innerFrame.contentWindow.document;
 
-	//var  tabTable = top.document.getElementById('tab_table');
-	//alert(" Inner " + tabTable);
+    var tabTable = innerDoc.getElementById('tab_table');
+
 	tabTable.addEventListener('click', getCell, true);
-	
-	
-	
 }
 
 function modCheck(el)
@@ -54,16 +42,16 @@ function getCell(event)
 	
 	//event.stopPropagation();
 				
-	var checkRadio = document.querySelector('input[name="modlink"]:checked');
+	var checkRadio = parent.document.querySelector('input[name="modlink"]:checked');
  
 	if (tblCell.parentNode == '[object HTMLTableCellElement]')
 	{
         tblCellUrl = tblCell;
 		tblCell = tblCell.parentNode;
-		currTblCell = tblCell;
+		window.top.currTblCell = tblCell;
 	}
 
-	currTblCell = tblCell;
+	window.top.currTblCell = tblCell;
 
 	if (checkRadio)
 	{
@@ -192,7 +180,11 @@ function cgi_out(tab_parm)
 	if (currTab == 6)
 	{	
 	    top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
-						"&sortCrit=" + sortCrit + "&searchBoxTitle=" + encodeURIComponent(searchObj.searchBoxTitle) +
+						"&sortCrit=" + sortCrit + 
+                        "&searchBoxTitle=" + encodeURIComponent(searchObj.searchBoxTitle) +
+						"&searchBoxURL=" + encodeURIComponent(searchObj.searchBoxURL) +
+						"&searchStartDate=" + encodeURIComponent(searchObj.searchStartDate) +
+						"&searchEndDate=" + encodeURIComponent(searchObj.searchEndDate) +
 						"&searchBool=" + encodeURIComponent(searchObj.searchBool);
 	}
 	else
@@ -207,11 +199,18 @@ function cgi_out(tab_parm)
 function packageSearchString()
 {
 	var searchTermsTitle = parent.top.document.getElementById('searchBxTitle');
+	var searchTermsURL = parent.top.document.getElementById('searchBxURL');
 	var searchTermsBool = parent.top.document.getElementById('searchtypeID');
+
+	var searchTermsStartDt = parent.top.document.getElementById('searchDateStart');
+	var searchTermsEndDt = parent.top.document.getElementById('searchDateEnd');
 
 	var searchObj = {
 			searchBoxTitle: searchTermsTitle.value,
 			searchBool: searchTermsBool.value,
+			searchBoxURL: searchTermsURL.value,
+			searchStartDate: searchTermsStartDt.value,
+			searchEndDate: searchTermsEndDt.value,
 	}
 
 	return searchObj;
@@ -297,7 +296,7 @@ function goLink(title,bk_id)
 function displayUpdateLayer(tblCell)
 {
      //layerUpdate
-     var lU = document.getElementById("updateL");
+     var lU = parent.document.getElementById("updateL");
 
 	 lU.style.overflow = 'auto';
      lU.style.display = 'block';
@@ -321,10 +320,10 @@ function displayUpdateLayer(tblCell)
 
 function closeLayerUpdate(layer,update)
 {
-   lU = document.getElementById(layer)
+   lU = parent.document.getElementById(layer)
    lU.style.display = 'none'; 
    
-   currTblCell.style.border = 'none';
+   window.top.currTblCell.style.border = 'none';
    
    if(update == "YES")
 	  window.document.formUpdate.submit()
@@ -334,7 +333,7 @@ function closeLayerUpdate(layer,update)
 
 function displayDelLayer(tblCell)
 {
-   var delL = document.getElementById("delL")
+   var delL = parent.document.getElementById("delL")
    delL.style.display = 'block'
 
    var bk_idSet = delL.querySelector('input[name="bk_id"]')
@@ -350,11 +349,11 @@ function displayDelLayer(tblCell)
 
 function closeLayerDel(layer,del)
 {
-   var ll = document.getElementById(layer)
+   var ll = parent.document.getElementById(layer)
    ll.style.display = 'none'; 
    var title = ll.querySelector('input[name="title_update"]')
   
-   currTblCell.style.border = 'none';
+   window.top.currTblCell.style.border = 'none';
    
    if(del == "YES")
      window.document.formDelete.submit()
@@ -367,15 +366,15 @@ function swapSearchLayer()
  	
 	if (searchLayerSwitch++ % 2) 
     {
-     document.getElementById("selDates").style.display = 'inline-block';
-     document.getElementById("selUpdates").style.display = 'none';
-     document.getElementById("selMods").style.backgroundColor = 'green';
+     parent.document.getElementById("selDates").style.display = 'inline-block';
+     parent.document.getElementById("selUpdates").style.display = 'none';
+     parent.document.getElementById("selMods").style.backgroundColor = 'green';
      
     }
     else
     {
-     document.getElementById("selUpdates").style.display = 'inline-block';
-     document.getElementById("selMods").style.backgroundColor = 'yellow';
-	 document.getElementById("selDates").style.display = 'none';
+     parent.document.getElementById("selUpdates").style.display = 'inline-block';
+     parent.document.getElementById("selMods").style.backgroundColor = 'yellow';
+	 parent.document.getElementById("selDates").style.display = 'none';
     }
 }

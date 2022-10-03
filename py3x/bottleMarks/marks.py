@@ -71,7 +71,7 @@ class Marks(object):
         else:
             sort_sp_dt = " "
   
-        tbl = '''<table  id='tab_table' class='tab_table'>\n 
+        tbl = '''<table  id='tab_table'  class='tab_table'>\n 
                  <col width='50%'>\n
                  <col width='35%'>\n
                  <col width='auto'>\n
