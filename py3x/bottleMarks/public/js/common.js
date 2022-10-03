@@ -183,8 +183,8 @@ function cgi_out(tab_parm)
 						"&sortCrit=" + sortCrit + 
                         "&searchBoxTitle=" + encodeURIComponent(searchObj.searchBoxTitle) +
 						"&searchBoxURL=" + encodeURIComponent(searchObj.searchBoxURL) +
-						"&searchStartDate=" + encodeURIComponent(searchObj.searchStartDate) +
-						"&searchEndDate=" + encodeURIComponent(searchObj.searchEndDate) +
+						"&searchDateStart=" + encodeURIComponent(searchObj.searchStartDate) +
+						"&searchDateEnd=" + encodeURIComponent(searchObj.searchEndDate) +
 						"&searchBool=" + encodeURIComponent(searchObj.searchBool);
 	}
 	else
