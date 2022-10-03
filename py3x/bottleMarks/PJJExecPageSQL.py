@@ -18,6 +18,9 @@ def exec_page(req,user_id,user_name,errObj,init):
 
     searchBoxTitle = util.unWrap(req,'searchBoxTitle')
     searchTypeBool = util.unWrap(req,'searchtype')
+    
+    searchTypeBool = searchTypeBool or "AND";
+
 
     searchDateStart = util.unWrap(req,'searchDateStart')
     searchDateEnd = util.unWrap(req,'searchDateEnd')
@@ -39,7 +42,7 @@ def exec_page(req,user_id,user_name,errObj,init):
     storedSQLStr = ""
     sort_ord  = "" 
     exec_sql_str = ""
-    print (str(searchBoxTitle)   + " searchBoxTitle")
+    print (str(searchBoxTitle)   + " PJJ searchBoxTitle")
     print (str(searchTypeBool)  + " searchBool")
 
 

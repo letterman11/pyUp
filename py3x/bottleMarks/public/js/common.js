@@ -184,19 +184,44 @@ function cgi_out(tab_parm)
 		sortCrit = (counter++ % 2) ? sort_desc : sort_asc;
 		setCookie('Counter',counter)
 	}
-
-
-  
-	//try to get id of iframe and set  result html generation to source attribute of iframe
 	
-	top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + "&sortCrit=" + sortCrit;
-		
-	//top.location = "/tabView?" + tab_parm + "&sortCrit=" + sortCrit;
+    	
+	var searchObj = packageSearchString();
+    //alert(encodeURIComponent(searchTermsTitle));
+
+	if (currTab == 6)
+	{	
+	    top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
+						"&sortCrit=" + sortCrit + "&searchBoxTitle=" + encodeURIComponent(searchObj.searchBoxTitle) +
+						"&searchBool=" + encodeURIComponent(searchObj.searchBool);
+	}
+	else
+	{	
+		top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
+						"&sortCrit=" + sortCrit;
+	}
+	
+	
+}
+
+function packageSearchString()
+{
+	var searchTermsTitle = parent.top.document.getElementById('searchBxTitle');
+	var searchTermsBool = parent.top.document.getElementById('searchtypeID');
+
+	var searchObj = {
+			searchBoxTitle: searchTermsTitle.value,
+			searchBool: searchTermsBool.value,
+	}
+
+	return searchObj;
+	
 }
 
 function setSearchTerms()
 {      
-       var searchTerms = parent.top.document.getElementById('searchBxTitle');
+       var searchTermsTitle = parent.top.document.getElementById('searchBxTitle');
+	   	   
        //parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
        setCookie('search_submission', search_submission);

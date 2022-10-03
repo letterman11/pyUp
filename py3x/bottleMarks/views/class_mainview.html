@@ -98,20 +98,21 @@ end
    </script>
 
    <div class="search_div">
-      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick""> 
+<!--      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick"">  -->
+      <form  name="search_form_" class="search_form"  onClick"">  
        <ul>
        <li> Enter Search Term(s)  </li>
         <li style="display:inline; padding-left:3px;"> 
-          OR <input name="searchtype" type="radio"  value="OR" > 
-         AND <input name="searchtype" checked="true" type="radio"  value="AND"> 
-       COMBO <input name="searchtype" type="radio" value="COMBO"> 
+          OR <input id="searchtypeID" name="searchtype" type="radio"  value="OR" > 
+         AND <input id="searchtypeID" name="searchtype" checked="true" type="radio"  value="AND"> 
+       COMBO <input id="searchtypeID" name="searchtype" type="radio" value="COMBO"> 
       </li>
        <li id="selDates" style="display:inline">
 	     <input name="searchDateStart" type="text" size=10 id="searchDateStart" value="Ex: 1-1-2021" onFocus="blurDates();">
 	     <input name="searchDateEnd" type="text" size=10 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">  
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
-              <input onclick="setSearchTerms();" name="submit" type="submit" value="Search">  
+              <input onclick="cgi_out('tab=6');setSearchTerms();" name="submit" type="button" value="Search">  
         </li>  
 
      <li id="selUpdates" style="display:inline; padding:1px; border: thin grey dashed; background-color:azure;">  
@@ -129,7 +130,8 @@ end
         </li> 
        </ul>
      </form>
-  
+	
+  <!-- </div> -->
 
   <div class="new_mark">
    <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark"> 

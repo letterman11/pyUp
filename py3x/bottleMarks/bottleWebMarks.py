@@ -228,8 +228,9 @@ def tabTableView():
 @app.post("/searchMark")
 @authenticate
 def searchWebMark():
-    return renderMainView()
-
+    return renderMainView(init=False)
+    #return renderTabTableView()
+    
 @app.post("/pyWebMarks/insertMark")
 @app.post("/insertMark")
 @authenticate
