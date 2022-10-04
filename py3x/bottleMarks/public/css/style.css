@@ -149,6 +149,13 @@ h1 a {
 	margin:2px 0px 0px 0px;
 }
 
+div#div_tab_table {
+    clear:both;
+    max-height:385px;
+    overflow-y:scroll;
+}
+
+
 .tab_table td {
 	 height:2em;
 }

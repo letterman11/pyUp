@@ -71,7 +71,8 @@ class Marks(object):
         else:
             sort_sp_dt = " "
   
-        tbl = '''<table  id='tab_table'  class='tab_table'>\n 
+        
+        tbl = '''<table  id='tab_table' class='tab_table'>
                  <col width='50%'>\n
                  <col width='35%'>\n
                  <col width='auto'>\n
@@ -114,7 +115,13 @@ class Marks(object):
         if self.rowCount:
            tbl += tbl_row  + "<!-- Row Count" + str(self.rowCount) + " -->"  + "</table>\n"
 
-        return tbl
+        div_table = " <div id=\"div_tab_table\" > "
+        div_table += tbl
+        div_table += "</div>"
+
+        return div_table
+        
+#        return tbl
 
     def convertTime(self, dateAdded):
         dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
