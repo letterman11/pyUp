@@ -219,7 +219,8 @@ function packageSearchString()
 
 function setSearchTerms()
 {      
-       var searchTermsTitle = parent.top.document.getElementById('searchBxTitle');
+       //var searchTermsTitle = parent.top.document.getElementById('searchBxTitle');
+       var searchTerms = parent.top.document.getElementById('searchBxTitle');
 	   	   
        //parent.top.document.getElementById('searchTerms').innerHTML = searchTerms.value;
        setCookie('searchTerms', searchTerms.value);
