@@ -97,8 +97,8 @@ end
    }
    </script>
 
-   <div class="search_div">
-<!--      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick"">  -->
+   <div class="search_div">  <!-- begin search div -->
+    <!--      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick="">  -->
       <form  name="search_form_" class="search_form"  onClick"">  
        <ul>
        <li> Enter Search Term(s)  </li>
@@ -112,7 +112,7 @@ end
 	     <input name="searchDateEnd" type="text" size=10 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">  
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
-              <input onclick="cgi_out('tab=6');setSearchTerms();" name="submit" type="button" value="Search">  
+              <input onclick="setSearchTerms();cgi_out('tab=6')" name="submit" type="button" value="Search">  
         </li>  
 
      <li id="selUpdates" style="display:inline; padding:1px; border: thin grey dashed; background-color:azure;">  
@@ -131,7 +131,7 @@ end
        </ul>
      </form>
 	
-  <!-- </div> -->
+  </div>  <!-- end search div -->
 
   <div class="new_mark">
    <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark"> 
