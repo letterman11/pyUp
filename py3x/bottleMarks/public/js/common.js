@@ -173,8 +173,10 @@ function cgi_out(tab_parm)
 		setCookie('Counter',counter)
 	}
 	
+    setSearchTerms();
     	
 	var searchObj = packageSearchString();
+
     //alert(encodeURIComponent(searchTermsTitle));
 
 	if (currTab == 6)
@@ -192,7 +194,6 @@ function cgi_out(tab_parm)
 		top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
 						"&sortCrit=" + sortCrit;
 	}
-	
 	
 }
 
