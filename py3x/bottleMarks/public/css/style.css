@@ -55,6 +55,10 @@ h1 a {
 	padding:1px 50px 1px 50px;
 }
 
+.tab_spans:hover {
+    background-color:orange;
+}
+
 /***** key lengths *****/
 .tab_divs {
 	width:990px;
