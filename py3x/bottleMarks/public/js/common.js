@@ -177,8 +177,6 @@ function cgi_out(tab_parm)
     	
 	var searchObj = packageSearchString();
 
-    //alert(encodeURIComponent(searchTermsTitle));
-
 	if (currTab == 6)
 	{	
 	    top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
@@ -187,7 +185,7 @@ function cgi_out(tab_parm)
 						"&searchBoxURL=" + encodeURIComponent(searchObj.searchBoxURL) +
 						"&searchDateStart=" + encodeURIComponent(searchObj.searchStartDate) +
 						"&searchDateEnd=" + encodeURIComponent(searchObj.searchEndDate) +
-						"&searchBool=" + encodeURIComponent(searchObj.searchBool);
+						"&searchtype=" + encodeURIComponent(searchObj.searchBool);
 	}
 	else
 	{	
@@ -201,7 +199,10 @@ function packageSearchString()
 {
 	var searchTermsTitle = parent.top.document.getElementById('searchBxTitle');
 	var searchTermsURL = parent.top.document.getElementById('searchBxURL');
-	var searchTermsBool = parent.top.document.getElementById('searchtypeID');
+
+	var searchTermsBool  = parent.document.querySelector('input[name="searchtype"]:checked');
+
+    //alert(searchTermsBool.value)
 
 	var searchTermsStartDt = parent.top.document.getElementById('searchDateStart');
 	var searchTermsEndDt = parent.top.document.getElementById('searchDateEnd');
