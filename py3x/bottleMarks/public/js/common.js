@@ -185,7 +185,7 @@ function cgi_out(tab_parm)
 						"&searchBoxURL=" + encodeURIComponent(searchObj.searchBoxURL) +
 						"&searchDateStart=" + encodeURIComponent(searchObj.searchStartDate) +
 						"&searchDateEnd=" + encodeURIComponent(searchObj.searchEndDate) +
-						"&searchtype=" + encodeURIComponent(searchObj.searchBool);
+						"&searchtype=" + encodeURIComponent(searchObj.searchBoolType);
 	}
 	else
 	{	
@@ -200,16 +200,16 @@ function packageSearchString()
 	var searchTermsTitle = parent.top.document.getElementById('searchBxTitle');
 	var searchTermsURL = parent.top.document.getElementById('searchBxURL');
 
-	var searchTermsBool  = parent.document.querySelector('input[name="searchtype"]:checked');
+	var searchTermsBoolType  = parent.document.querySelector('input[name="searchtype"]:checked');
 
-    //alert(searchTermsBool.value)
+    //alert(searchTermsBoolType.value)
 
 	var searchTermsStartDt = parent.top.document.getElementById('searchDateStart');
 	var searchTermsEndDt = parent.top.document.getElementById('searchDateEnd');
 
 	var searchObj = {
 			searchBoxTitle: searchTermsTitle.value,
-			searchBool: searchTermsBool.value,
+			searchBoolType: searchTermsBoolType.value,
 			searchBoxURL: searchTermsURL.value,
 			searchStartDate: searchTermsStartDt.value,
 			searchEndDate: searchTermsEndDt.value,
