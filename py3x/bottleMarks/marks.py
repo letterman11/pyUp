@@ -13,10 +13,15 @@ class Marks(object):
         self.rowCount = rowCount
         self.errObj = errObj
 
-    def renderMainView(self,user_id,sort_crit,tabMap):
-        tabTable = self.genTabTable(sort_crit,tab=None)        
+    def renderMainView(self,user_id,sort_crit,tabMap,page=None):
+
+        tabTable = self.genTabTable(sort_crit,self.tab)        
+        pageLinkNavs = self.genNavigation(page)
+        print("LOOK")
         optionTops=hist.gen_optionListDiv(user_id)
-        return template('class_mainview', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)
+        return template('class_mainview', user_id=user_id, sort_crit=sort_crit,
+               tabMap=tabMap, tab=self.tab, tabTable=tabTable, pageLinkNavs=pageLinkNavs,optionTops=optionTops)
+
 
     def renderDefaultView(self,colorStyle="red",displayText=str()):
         colorStyle="red"
@@ -38,14 +43,38 @@ class Marks(object):
             errText = ""
         return template('class_not_found.html', errText=errText)
 
-    def renderTabTableView(self,user_id,sort_crit,tabMap):
+    def renderTabTableView(self,user_id,sort_crit,tabMap,page):
         tabTable = self.genTabTable(sort_crit,self.tab)        
         optionTops=hist.gen_optionListDiv(user_id)
         print ("redder")
         return template('class_tab_view', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)  
-#        return tabTable
-        #return "<h1> Hello Angus </h1>"
  
+    def genNavigation(self, page):
+
+        rowsPerPage = 30
+        pgCnt = 1
+        currCnt = 0
+        buffer_out = ()
+        
+        totRows = self.rowCount
+        print ("total rows " + str(totRows))
+        #rowsPerPage = self.ROWSPERPAGE
+        
+        if totRows > rowsPerPage:
+            buffer_out = "<div>"
+            buffer_out +=  "Pages: "   
+            while currCnt < totRows:                 
+                if page == pgCnt:
+                    buffer_out += " <span style='font-weight:bolder' id='curr_page'> " +  str(pgCnt) + " </span>"
+                else:
+                    buffer_out += "<span> <A HREF=javascript:jax_cgi_out(" + str(pgCnt) + ")>" + str(pgCnt) +  "</A> </span>"
+
+                currCnt += rowsPerPage
+                pgCnt += 1            
+            buffer_out += "</div>"
+            print ("currCnt " + str(currCnt))
+        return buffer_out 
+
     def genError(self):
         errObj = self.errObj
         errText = errObj.errText()
@@ -120,8 +149,7 @@ class Marks(object):
         div_table += "</div>"
 
         return div_table
-        
-#        return tbl
+
 
     def convertTime(self, dateAdded):
         dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")

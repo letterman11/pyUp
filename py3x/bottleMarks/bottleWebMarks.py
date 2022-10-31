@@ -2,7 +2,7 @@ from bottle import Bottle, run, route, request, response, static_file, error
 from datetime import datetime
 from marks import Marks
 from functools import wraps
-from PJJExecPageSQL import exec_page
+from PJJExecPageSQL import exec_page, exec_page_nav
 import lib.util as util 
 import time
 import connection_factory as db
@@ -212,6 +212,20 @@ def index():
 def indexWB():
     return renderMainView()
 
+@app.route("/pyWebMarks/pageNav/<page:int>")
+@app.route("/pageNav/<page:int>")
+@authenticate
+#def indexWBNav(page):
+#    return renderMainViewPageNav(page)
+def tabTableView(page):
+
+    if page > 1:
+        init=False
+    else:
+        init=True
+    return renderTabTableView(page,init)
+
+
 @app.route("/pyWebMarks/tabView")
 @app.route("/tabView")
 @authenticate
@@ -222,7 +236,13 @@ def indexView():
 @app.route("/tabTableView")
 @authenticate
 def tabTableView():
-    return renderTabTableView()
+    return renderTabTableView(1)
+    
+@app.route("/pyWebMarks/tabTableViewNav/<page:int>")
+@app.route("/tabTableViewNav/<page:int>")
+@authenticate
+def tabTableViewNav(page):
+    return renderTabTableViewNav(page)
 
 @app.post("/pyWebMarks/searchMark")
 @app.post("/searchMark")
@@ -441,12 +461,11 @@ def authenCredFunc():
     (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
 
     if user_id:
-        authorize(user_id,user_name)
+        sessionID = authorize(user_id,user_name)
+        return renderMainView(user_id,None,sessionID)    
     else:
         return Marks().renderDefaultView(colorStyle="red",displayText=Error(112).errText())
     
-    return renderMainView(user_id)
-
 def validate_session():
     wmSID = request.get_cookie('wmSessionID')
     user_id = request.get_cookie('wmUserID')
@@ -470,9 +489,13 @@ def authorize(user_id,user_name):
     print(str(user_id) , " USERID")
     
     util.saveSession(sessionID)
+    return sessionID
 #   response.set_cookie('expires', 60*60)
 
-def renderMainView(user_id=None,errObj=None,init=True):
+
+#def renderMainView(user_id=None,errObj=None):
+
+def renderMainView(user_id=None,errObj=None,sessionID=None,init=True):
     user_name=None
     try:
         user_name = request.params['user_name']
@@ -481,27 +504,55 @@ def renderMainView(user_id=None,errObj=None,init=True):
     if not user_id or not user_name:
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
+    
+    if not sessionID:
+        sessionID = request.get_cookie("wmSessionID")
 
-    return exec_page(request,user_id,user_name,errObj,init)
+    return exec_page(request,user_id,user_name,errObj,sessionID,init)
 
-def renderTabTableView(user_id=None,errObj=None,init=False):    
+def renderMainViewPageNav(page):
+
+        sessionID = request.get_cookie("wmSessionID")
+        return exec_page_nav(request,page,sessionID,tabtype=6,init=True)
+
+def renderTabTableView(page,init=False,user_id=None,errObj=None):    
     user_name=None
     try:
         user_name = request.params['user_name']
     except:
         pass
+
+    sessionID = request.get_cookie("wmSessionID")
+
     print ("tabFunction")
     if not user_id or not user_name:
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
     
-    return exec_page(request,user_id,user_name,errObj,init)
+    return exec_page(request,user_id,user_name,errObj,sessionID,init)
     
+def renderTabTableViewNav(page,init=False,user_id=None,errObj=None):    
+    user_name=None
+    try:
+        user_name = request.params['user_name']
+    except:
+        pass
+
+    sessionID = request.get_cookie("wmSessionID")
+
+    print ("tabFunction")
+    if not user_id or not user_name:
+        user_id = request.get_cookie('wmUserID')
+        user_name = request.get_cookie('wmUserName')
     
+    return exec_page_nav(page,sessionID,9,False)    
+
 def renderErrorPageView():
           return Marks().renderErrorPageView()
 
+
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8070', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8091', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-#        app.run(daemon=False, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+#        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+

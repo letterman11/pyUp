@@ -123,6 +123,14 @@ function eraseCookie(name)
         setCookie(name,"",-1);
 }
 
+
+function jax_cgi_out(page)
+{
+	top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableViewNav/" + page;
+	
+}
+
+
 function cgi_out(tab_parm)
 {
 	var sort_asc = 0;
