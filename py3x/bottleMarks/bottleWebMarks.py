@@ -7,6 +7,7 @@ import lib.util as util
 import time
 import connection_factory as db
 from globals import *
+import globals as g
 from error import *
 import re
 
@@ -42,7 +43,8 @@ def authenticate(f):
     def wrapper(*args, **kwargs):
         #if validate_session() == False:
         aa = [ (k,v) for k,v in request.forms.allitems()]
-        print( aa )
+        print( aa + ["auth"])
+        print ( wrapper )
         if validate_session2(request) == False:
             return Marks().renderDefaultView()
         return f(*args, **kwargs)
@@ -515,7 +517,7 @@ def renderMainViewPageNav(page):
         sessionID = request.get_cookie("wmSessionID")
         return exec_page_nav(request,page,sessionID,tabtype=6,init=True)
 
-def renderTabTableView(page,init=False,user_id=None,errObj=None):    
+def renderTabTableView(tab,init=False,user_id=None,errObj=None):    
     user_name=None
     try:
         user_name = request.params['user_name']
@@ -539,13 +541,14 @@ def renderTabTableViewNav(page,init=False,user_id=None,errObj=None):
         pass
 
     sessionID = request.get_cookie("wmSessionID")
-
-    print ("tabFunction")
+    
     if not user_id or not user_name:
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
-    
-    return exec_page_nav(page,sessionID,9,False)    
+        tab = int(request.get_cookie('tab'))
+       
+    return exec_page_nav(page,sessionID,tab,False)    
+   
 
 def renderErrorPageView():
           return Marks().renderErrorPageView()

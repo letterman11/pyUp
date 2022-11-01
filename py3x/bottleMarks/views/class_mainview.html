@@ -53,7 +53,7 @@ end
 <link rel="short icon" href="/static/images/dc.ico"> 
 <link rel="stylesheet" media="screen and (min-device-width:800px)" href="/static/css/style.css" type="text/css" />
 <link rel="stylesheet" media="screen and (max-device-width:600px)" href="/static/css/mobile_style.css" type="text/css" />
-<script type="text/javascript" src="/static/js/common.js"> </script> 
+<script type="text/javascript" src="/static/js/common_top.js"> </script> 
 </head>
 <body onLoad="getSearchTerms();init();">
 <div id="main">
@@ -89,7 +89,7 @@ end
 	<!-- </div> -->
 
 
-<div>
+<div id="pageLinkNavs">
 {{ !pageLinkNavs }}
 </div>
 
@@ -116,7 +116,7 @@ end
 	     <input name="searchDateEnd" type="text" size=10 id="searchDateEnd" value="Ex: 1-10-2021"  onFocus="blurDates();">  
        </li>
         <li style="position:absolute; top:20px; right:5px;"> 
-              <input onclick="setSearchTerms();cgi_out('tab=6')" name="submit" type="button" value="Search">  
+              <input onclick="setSearchTerms();cgi_out_top('tab=6')" name="submit" type="button" value="Search">  
         </li>  
 
      <li id="selUpdates" style="display:inline; padding:1px; border: thin grey dashed; background-color:azure;">  

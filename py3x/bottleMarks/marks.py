@@ -47,31 +47,33 @@ class Marks(object):
         tabTable = self.genTabTable(sort_crit,self.tab)        
         optionTops=hist.gen_optionListDiv(user_id)
         print ("redder")
-        return template('class_tab_view', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)  
+        print ("mark " + str(self.rowCount))
+        return template('class_tab_view', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops, rowCount=self.rowCount)  
  
     def genNavigation(self, page):
 
         rowsPerPage = 30
         pgCnt = 1
         currCnt = 0
-        buffer_out = ()
+        buffer_out = ""
         
         totRows = self.rowCount
         print ("total rows " + str(totRows))
         #rowsPerPage = self.ROWSPERPAGE
         
         if totRows > rowsPerPage:
-            buffer_out = "<div>"
+            
             buffer_out +=  "Pages: "   
             while currCnt < totRows:                 
                 if page == pgCnt:
                     buffer_out += " <span style='font-weight:bolder' id='curr_page'> " +  str(pgCnt) + " </span>"
                 else:
-                    buffer_out += "<span> <A HREF=javascript:jax_cgi_out(" + str(pgCnt) + ")>" + str(pgCnt) +  "</A> </span>"
+                    #buffer_out += "<span> <A HREF=javascript:jax_cgi_out(" + str(pgCnt) +  ")>" + str(pgCnt) +  "</A> </span>"
+                    buffer_out += "<span> <A HREF='javascript:jax_cgi_out(" + str(pgCnt) + " , " + str(totRows) + " )'> " + str(pgCnt) +  "</A> </span>"
 
                 currCnt += rowsPerPage
                 pgCnt += 1            
-            buffer_out += "</div>"
+            
             print ("currCnt " + str(currCnt))
         return buffer_out 
 

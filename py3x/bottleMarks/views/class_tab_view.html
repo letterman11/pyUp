@@ -54,8 +54,10 @@ end
 <link rel="stylesheet" media="screen and (min-device-width:800px)" href="/static/css/style.css" type="text/css" />
 <link rel="stylesheet" media="screen and (max-device-width:600px)" href="/static/css/mobile_style.css" type="text/css" />
 <script type="text/javascript" src="/static/js/common.js"> </script> 
+<script type="text/javascript"> window.top.rowCount = {{!rowCount}} </script>
 </head>
 <body onload="getSearchTerms();init_2()">
+
     <div class="tab_header">
 	<div class="tab_divs" id="{{!tab}}">
         <div class="tab_top">

@@ -3,6 +3,10 @@ var stateOfBlur = 0;
 var searchLayerSwitch = 0;
 window.top.currTblCell;
 var innerDoc;
+window.top.rowCount = 0;
+window.top.loadState = 0;
+window.top.sameTab
+window.top.init_tab = false;
 
 function init()
 {
@@ -18,24 +22,7 @@ function init()
 	
 }
 
-function init_2()
-{
-	innerFrame = top.document.getElementById('iframeTabTableResults');
-	innerDoc = innerFrame.contentWindow.document;
 
-    var tabTable = innerDoc.getElementById('tab_table');
-
-	tabTable.addEventListener('click', getCell, true);
-	//window.top.rowCount = innerDoc.rowCount
-	
-
-//	alert("init uu " + parent.window.top.init_tab)
-	if (window.top.init_tab)
-	{
-		window.top.init_tab = false;
-		jax_cgi_out(1, window.top.rowCount);		
-	}
-}
 
 function modCheck(el)
 {
@@ -159,7 +146,7 @@ function jax_cgi_out(page,rowCount)
 }
 
 
-function cgi_out(tab_parm)
+function cgi_out_top(tab_parm)
 {
 	var sort_asc = 0;
 	var sort_desc = 1;
@@ -240,6 +227,7 @@ function cgi_out(tab_parm)
 	}
 	
 }
+
 
 function packageSearchString()
 {
