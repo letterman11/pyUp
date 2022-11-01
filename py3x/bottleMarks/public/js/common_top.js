@@ -343,6 +343,7 @@ function displayUpdateLayer(tblCell)
 	 var bk_idSet = lU.querySelector('input[name="bk_id"]')
 
      titleSet.value = tblCell.textContent;
+	 titleSet.value = titleSet.value.trim();
      urlSet.value = tblCell.nextSibling.nextSibling.textContent;
      urlSet.value =  urlSet.value.trim();  
 
