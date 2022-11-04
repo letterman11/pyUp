@@ -4,21 +4,6 @@ var searchLayerSwitch = 0;
 window.top.currTblCell;
 var innerDoc;
 
-/*
-function init()
-{
-	var startDate = parent.top.document.getElementById("searchDateStart")
-	var endDate = parent.top.document.getElementById("searchDateEnd")
-
-	innerFrame = top.document.getElementById('iframeTabTableResults');
-
-	innerFrame.src = "/pyWebMarks/tabTableView";
-
-    document.getElementById("selDates").style.display = 'inline-block';
-    document.getElementById("selUpdates").style.display = 'none';
-	
-}
-*/
 
 function init_2()
 {
@@ -28,16 +13,7 @@ function init_2()
     var tabTable = innerDoc.getElementById('tab_table');
 
 	tabTable.addEventListener('click', getCell, true);
-	//window.top.rowCount = innerDoc.rowCount
-	
 
-
-/*	if (window.top.init_tab)
-	{
-		window.top.init_tab = false;
-		jax_cgi_out(1, window.top.rowCount);		
-	}
-*/
 	
 	if (window.top.cgi_out_exec)
 	{
@@ -49,7 +25,7 @@ function init_2()
 
 function modCheck(el)
 {
-//	alert(el)
+
 		el.childNodes[1].checked = true;
 }
 
@@ -146,30 +122,14 @@ function eraseCookie(name)
 function jax_cgi_out(page,rowCount)
 {
 	top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableViewNav/" + page;
-	var div_pageLinkNavs = top.document.getElementById("pageLinkNavs");
-	var html_links = "";
-	var rowsPerPage = 30;
-	var pageCnt =1;
-	var currCnt = 1;
-	
-	html_links = "Pages: ";
-	while (currCnt  < rowCount)
-	{
-		if (page == pageCnt)
-			html_links += " <span style='font-size:16px; font-weight:bolder' id='curr_page'> " +  pageCnt + " </span>"
-		else
-			html_links += "<span> <A HREF='javascript:jax_cgi_out(" + pageCnt + " , " + rowCount + " )'> " + pageCnt +  "</A> </span>"
 
-		currCnt += rowsPerPage
-		pageCnt +=1
-	}
-	
-	//div_pageLinkNavs.innerHTML = "";
-	div_pageLinkNavs.innerHTML = html_links;
+	update_links(page, rowCount);
+
 }
 
 function update_links(page,rowCount)
 {
+
 	var div_pageLinkNavs = top.document.getElementById("pageLinkNavs");
 	var html_links = "";
 	var rowsPerPage = 30;
@@ -187,8 +147,7 @@ function update_links(page,rowCount)
 		currCnt += rowsPerPage
 		pageCnt +=1
 	}
-	
-	//div_pageLinkNavs.innerHTML = "";
+
 	div_pageLinkNavs.innerHTML = html_links;
 	
 }

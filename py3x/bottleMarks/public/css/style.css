@@ -177,6 +177,10 @@ div#div_tab_table {
 	overflow:hidden;
 }
 
+#pageLinkNavs {
+	width:970px;
+}
+	
 .landing {
 	margin: 0 auto;
 	width:400px;
