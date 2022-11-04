@@ -214,19 +214,6 @@ def index():
 def indexWB():
     return renderMainView()
 
-@app.route("/pyWebMarks/pageNav/<page:int>")
-@app.route("/pageNav/<page:int>")
-@authenticate
-#def indexWBNav(page):
-#    return renderMainViewPageNav(page)
-def tabTableView(page):
-
-    if page > 1:
-        init=False
-    else:
-        init=True
-    return renderTabTableView(page,init)
-
 
 @app.route("/pyWebMarks/tabView")
 @app.route("/tabView")
@@ -512,10 +499,6 @@ def renderMainView(user_id=None,errObj=None,sessionID=None,init=True):
 
     return exec_page(request,user_id,user_name,errObj,sessionID,init)
 
-def renderMainViewPageNav(page):
-
-        sessionID = request.get_cookie("wmSessionID")
-        return exec_page_nav(request,page,sessionID,tabtype=6,init=True)
 
 def renderTabTableView(tab,init=False,user_id=None,errObj=None):    
     user_name=None

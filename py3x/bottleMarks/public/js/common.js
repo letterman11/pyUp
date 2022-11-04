@@ -4,6 +4,7 @@ var searchLayerSwitch = 0;
 window.top.currTblCell;
 var innerDoc;
 
+/*
 function init()
 {
 	var startDate = parent.top.document.getElementById("searchDateStart")
@@ -17,6 +18,7 @@ function init()
     document.getElementById("selUpdates").style.display = 'none';
 	
 }
+*/
 
 function init_2()
 {
@@ -29,12 +31,20 @@ function init_2()
 	//window.top.rowCount = innerDoc.rowCount
 	
 
-//	alert("init uu " + parent.window.top.init_tab)
-	if (window.top.init_tab)
+
+/*	if (window.top.init_tab)
 	{
 		window.top.init_tab = false;
 		jax_cgi_out(1, window.top.rowCount);		
 	}
+*/
+	
+	if (window.top.cgi_out_exec)
+	{
+		window.top.cgi_out_exec = false;
+		update_links(1, window.top.rowCount);	
+	}
+	
 }
 
 function modCheck(el)
@@ -158,6 +168,31 @@ function jax_cgi_out(page,rowCount)
 	div_pageLinkNavs.innerHTML = html_links;
 }
 
+function update_links(page,rowCount)
+{
+	var div_pageLinkNavs = top.document.getElementById("pageLinkNavs");
+	var html_links = "";
+	var rowsPerPage = 30;
+	var pageCnt =1;
+	var currCnt = 1;
+	
+	html_links = "Pages: ";
+	while (currCnt  < rowCount)
+	{
+		if (page == pageCnt)
+			html_links += " <span style='font-size:16px; font-weight:bolder' id='curr_page'> " +  pageCnt + " </span>"
+		else
+			html_links += "<span> <A HREF='javascript:jax_cgi_out(" + pageCnt + " , " + rowCount + " )'> " + pageCnt +  "</A> </span>"
+
+		currCnt += rowsPerPage
+		pageCnt +=1
+	}
+	
+	//div_pageLinkNavs.innerHTML = "";
+	div_pageLinkNavs.innerHTML = html_links;
+	
+}
+
 
 function cgi_out(tab_parm)
 {
@@ -176,14 +211,14 @@ function cgi_out(tab_parm)
     //not an end
     var searchTab = 6; // added
     //add
-
+	
 	prevTab = parseInt(getCookie('tab'));	
 	counter = parseInt(getCookie('Counter'));	
 	date_flag = parseInt(getCookie('date_flag'));
 
 	currTab = tab_parm.substr(4,2);
 
-	window.top.init_tab = true;
+//	window.top.init_tab = true;
 	if (currTab != prevTab)
 		window.top.sameTab = false;
 
@@ -239,6 +274,7 @@ function cgi_out(tab_parm)
 						"&sortCrit=" + sortCrit;
 	}
 	
+	window.top.cgi_out_exec = true;
 }
 
 function packageSearchString()

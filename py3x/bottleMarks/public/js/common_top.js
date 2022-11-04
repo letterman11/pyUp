@@ -7,6 +7,7 @@ window.top.rowCount = 0;
 window.top.loadState = 0;
 window.top.sameTab
 window.top.init_tab = false;
+window.top.cgi_out_exec = false;
 
 function init()
 {
@@ -126,7 +127,7 @@ function jax_cgi_out(page,rowCount)
 	var div_pageLinkNavs = top.document.getElementById("pageLinkNavs");
 	var html_links = "";
 	var rowsPerPage = 30;
-	var pageCnt =1;
+	var pageCnt = 1;
 	var currCnt = 1;
 	
 	html_links = "Pages: ";
@@ -209,6 +210,7 @@ function cgi_out_top(tab_parm)
 	var searchObj = packageSearchString();
 	
 	window.top.rowCount = 0;
+	window.top.cgi_out_exec = true;
 	
 	if (currTab == 6)
 	{	
@@ -225,6 +227,7 @@ function cgi_out_top(tab_parm)
 		top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
 						"&sortCrit=" + sortCrit;
 	}
+	
 	
 }
 
