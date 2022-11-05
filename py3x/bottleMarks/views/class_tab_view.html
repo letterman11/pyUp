@@ -56,7 +56,7 @@ end
 <script type="text/javascript" src="/static/js/common.js"> </script> 
 </head>
 <body onload="getSearchTerms();init_2()">
-    <div class="tab_header">
+<div class="tab_header">  
 	<div class="tab_divs" id="{{!tab}}">
         <div class="tab_top">
          <span onclick="cgi_out('tab=1');" class="tab_spans" id="sp_AE"> A-E {{ !sort_sp_ae }} </span>
@@ -74,8 +74,11 @@ end
             <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
         </div> <!-- end big3 -->
 
+
 		{{!tabTable}}
 	</div>
+		
+</div>
 	
 </body>
 </html>

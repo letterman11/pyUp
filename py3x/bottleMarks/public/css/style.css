@@ -46,6 +46,12 @@ h1 a {
 	border:none;
 }
 
+
+#iframeTabTableResults {
+	width:995px;
+	
+}
+
 .tab_spans {
 	width:100px;
 	/* border:solid 1px blue; */

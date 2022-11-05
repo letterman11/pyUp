@@ -115,6 +115,9 @@ class Marks(object):
         if self.rowCount:
            tbl += tbl_row  + "<!-- Row Count" + str(self.rowCount) + " -->"  + "</table>\n"
 
+        #--- wrap tab table in a div to give it an explicit size 
+        #--- cannot size a regular html table by itself needs to 
+        #--- be wrapped in a div and then div needs to sized
         div_table = " <div id=\"div_tab_table\" > "
         div_table += tbl
         div_table += "</div>"
