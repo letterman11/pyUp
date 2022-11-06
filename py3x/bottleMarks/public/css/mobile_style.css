@@ -237,7 +237,7 @@ div#optionDiv select {
 }
 
 
-.search_div form  input[type=submit]{
+.search_div form  input[type=button]{
 	height:55px;
 	width:60px;
 }
