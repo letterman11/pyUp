@@ -13,11 +13,11 @@ class Marks(object):
         self.rowCount = rowCount
         self.errObj = errObj
 
-    def renderMainView(self,user_id,sort_crit,tabMap,page=None):
+    def renderMainView(self,user_id,sort_crit,tabMap,rowsPerPage,page=None):
 
         tabTable = self.genTabTable(sort_crit,self.tab)        
-        pageLinkNavs = self.genNavigation(page)
-        print("LOOK")
+        pageLinkNavs = self.genNavigation(page,rowsPerPage)
+        print("LOOK **** " + str(rowsPerPage))
         optionTops=hist.gen_optionListDiv(user_id)
         return template('class_mainview', user_id=user_id, sort_crit=sort_crit,
                tabMap=tabMap, tab=self.tab, tabTable=tabTable, pageLinkNavs=pageLinkNavs,optionTops=optionTops)
@@ -44,15 +44,17 @@ class Marks(object):
         return template('class_not_found.html', errText=errText)
 
     def renderTabTableView(self,user_id,sort_crit,tabMap,page):
+                
         tabTable = self.genTabTable(sort_crit,self.tab)        
         optionTops=hist.gen_optionListDiv(user_id)
         print ("redder")
         print ("mark " + str(self.rowCount))
         return template('class_tab_view', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops, rowCount=self.rowCount)  
  
-    def genNavigation(self, page):
+    def genNavigation(self, page,rowsPerPage):
 
-        rowsPerPage = 30
+        #rowsPerPage = rowsPerPage or 15
+        print ("Rows Per Page " + str(rowsPerPage))
         pgCnt = 1
         currCnt = 0
         buffer_out = ""
@@ -69,7 +71,7 @@ class Marks(object):
                     buffer_out += " <span style='font-weight:bolder' id='curr_page'> " +  str(pgCnt) + " </span>"
                 else:
                     #buffer_out += "<span> <A HREF=javascript:jax_cgi_out(" + str(pgCnt) +  ")>" + str(pgCnt) +  "</A> </span>"
-                    buffer_out += "<span> <A HREF='javascript:jax_cgi_out(" + str(pgCnt) + " , " + str(totRows) + " )'> " + str(pgCnt) +  "</A> </span>"
+                    buffer_out += "<span> <A HREF='javascript:jax_cgi_out(" + str(pgCnt) + " , " +  str(rowsPerPage) + ", " + str(totRows) + " )'> " + str(pgCnt) +  "</A> </span>"
 
                 currCnt += rowsPerPage
                 pgCnt += 1            

@@ -58,7 +58,7 @@ end
 <body onLoad="getSearchTerms();init();">
 <div id="main">
  <div id="header">
-    <a href="/pyWebMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
+    <a href="javascript:bannerClick()"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
     <a href="/"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
  </div>
   
@@ -103,7 +103,7 @@ end
 
    <div class="search_div">  <!-- begin search div -->
     <!--      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick="">  -->
-      <form  name="search_form_" class="search_form"  onClick"">  
+      <form  name="search_form" class="search_form"  onClick"">  
        <ul>
        <li> Enter Search Term(s)  </li>
         <li style="display:inline; padding-left:3px;"> 
@@ -127,7 +127,15 @@ end
       <p id="selMods" style="display:inline;background-color:green;" onClick="swapSearchLayer();" > &nbsp;MOD </p>
 
          {{ !optionTops }}
-
+		<li> 
+		<select name="rowsPerPage" id="rowsPerPage"> 
+		 <option value="30"> 30 	</option>
+		<option value="30">  30 	</option>
+		<option value="50">  50		</option>
+		<option value="100">  100   </option>
+		<option value="1000">  1000 </option>
+		</select>
+		</li>
         <li style="padding-left:3px; width:100%">
            title <input id="searchBxTitle" name="searchBoxTitle" type="text" size="25">  
            url <input id="searchBxURL" name="searchBoxURL" type="text" size="25"> 
@@ -165,6 +173,7 @@ end
    </form>
   </div>
 
+</div>
 </body>
 </html>
 

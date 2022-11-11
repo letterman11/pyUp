@@ -18,7 +18,9 @@ function init_2()
 	if (window.top.cgi_out_exec)
 	{
 		window.top.cgi_out_exec = false;
-		update_links(1, window.top.rowCount);	
+		var rowsPerPage = parent.top.document.search_form.rowsPerPage.value;
+		//alert("Global RowC " + window.top.rowCount + " ---  " +  rowsPerPage);
+		update_links(1, rowsPerPage, window.top.rowCount);	
 	}
 	
 }
@@ -119,35 +121,38 @@ function eraseCookie(name)
 }
 
 
-function jax_cgi_out(page,rowCount)
+function jax_cgi_out(page,rowsPerPage,rowCount)
 {
 	top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableViewNav/" + page;
-
-	update_links(page, rowCount);
+	
+	update_links(page,rowsPerPage,rowCount);
 
 }
 
-function update_links(page,rowCount)
+function update_links(page,rowsPerPage,rowCount)
 {
 
 	var div_pageLinkNavs = top.document.getElementById("pageLinkNavs");
 	var html_links = "";
-	var rowsPerPage = 30;
+
 	var pageCnt =1;
 	var currCnt = 1;
 	
+	rowCount = parseInt(rowCount);
+	rowsPerPage = parseInt(rowsPerPage);
+
 	html_links = "Pages: ";
 	while (currCnt  < rowCount)
 	{
 		if (page == pageCnt)
 			html_links += " <span style='font-size:16px; font-weight:bolder' id='curr_page'> " +  pageCnt + " </span>"
 		else
-			html_links += "<span> <A HREF='javascript:jax_cgi_out(" + pageCnt + " , " + rowCount + " )'> " + pageCnt +  "</A> </span>"
+			html_links += "<span> <A HREF='javascript:jax_cgi_out(" + pageCnt + " , " + rowsPerPage + "," + rowCount + " )'> " + pageCnt +  "</A> </span>"
 
-		currCnt += rowsPerPage
-		pageCnt +=1
+		currCnt += rowsPerPage;
+		pageCnt +=1;
 	}
-
+	
 	div_pageLinkNavs.innerHTML = html_links;
 	
 }
@@ -212,15 +217,21 @@ function cgi_out(tab_parm)
 	}
 	
     setSearchTerms();
-    	
+    
+	rowsPerPage = window.top.handle.search_form.rowsPerPage.value;
+//	alert("Inner per Page " + rowsPerPage);
+	
 	var searchObj = packageSearchString();
 	
 	window.top.rowCount = 0;
+
+	window.top.cgi_out_exec = true;
 	
 	if (currTab == 6)
 	{	
 	    top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
 						"&sortCrit=" + sortCrit + 
+						"&rowsPerPage=" + encodeURIComponent(rowsPerPage) +
                         "&searchBoxTitle=" + encodeURIComponent(searchObj.searchBoxTitle) +
 						"&searchBoxURL=" + encodeURIComponent(searchObj.searchBoxURL) +
 						"&searchDateStart=" + encodeURIComponent(searchObj.searchStartDate) +
@@ -230,10 +241,11 @@ function cgi_out(tab_parm)
 	else
 	{	
 		top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
+						"&rowsPerPage=" + encodeURIComponent(rowsPerPage) +
 						"&sortCrit=" + sortCrit;
 	}
 	
-	window.top.cgi_out_exec = true;
+	
 }
 
 function packageSearchString()

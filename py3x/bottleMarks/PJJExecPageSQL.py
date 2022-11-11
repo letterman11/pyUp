@@ -11,7 +11,7 @@ import re
 ## PJJExecPageSQL                       ####
 ## standalone CGI function to be required ##
 ############################################
-def exec_page(req,user_id,user_name,errObj,sessionID,init):
+def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
     tabMap = g.tabMap
     print (user_id + " Req Cookie  IDs")
 
@@ -216,6 +216,8 @@ def exec_page(req,user_id,user_name,errObj,sessionID,init):
     print ("Exec webMark SQL " + executed_sql_str)
     print (str(tabtype) + " tab in play")
 
+    #rowsPerPage = 30
+    
     conn = conn.connect()
     conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
 
@@ -251,20 +253,17 @@ def exec_page(req,user_id,user_name,errObj,sessionID,init):
         return marks.renderMainView(user_id,sort_crit,tabMap)
     
     #return exec_page_nav(req,1,sessionID,tabtype)
-    return exec_page_nav(1,sessionID,tabtype,init)
+    return exec_page_nav(1,sessionID,tabtype,sort_crit,rowsPerPage,init)
 
 
     
-def exec_page_nav(page,sessionID,tabtype,init):
+def exec_page_nav(page,sessionID,tabtype,sort_crit,rowsPerPage,init):
     tabMap = g.tabMap
     tabMap = {y:x for x,y in tabMap.items()}
     #rowsPerPage = util.unWrap(req,rowsPerPage)
     #rowsPerPage = 30
-    rowsPerPage = 30
+    #rowsPerPage = 30
 
-
-    
-  
     page = int(page)
 
     data = ()
@@ -288,6 +287,7 @@ def exec_page_nav(page,sessionID,tabtype,init):
         return Marks(tabMap[tabtype],dbRows,rowCount).renderMainView(user_id,sort_crit,tabMap,page)
 
     print(dataRows[0][0])
+   
     
 #### REVISIT BELOW ##############
     if page > 1:
@@ -345,14 +345,13 @@ def exec_page_nav(page,sessionID,tabtype,init):
 ###################
 ### sql execute end
     
-    sort_crit = ()
-
+    
     markObj = Marks(tabMap[tabtype],dbRows,rowCount)
     #return markObj.renderMainView(user_name,sort_crit,tabMap)
 
     if init:
         print ("First View")
-        return markObj.renderMainView(user_id,sort_crit,tabMap,page)
+        return markObj.renderMainView(user_id,sort_crit,tabMap,rowsPerPage,page)
     else:
         print("Other View")
         return markObj.renderTabTableView(user_id,sort_crit,tabMap,page)

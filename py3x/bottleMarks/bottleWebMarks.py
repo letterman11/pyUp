@@ -227,11 +227,11 @@ def indexView():
 def tabTableView():
     return renderTabTableView(1)
     
-@app.route("/pyWebMarks/tabTableViewNav/<page:int>")
-@app.route("/tabTableViewNav/<page:int>")
+@app.route("/pyWebMarks/tabTableViewNav/<page:int>/<rowsPerPage:int>")
+@app.route("/tabTableViewNav/<page:int>/<rowsPerPage:int>")
 @authenticate
-def tabTableViewNav(page):
-    return renderTabTableViewNav(page)
+def tabTableViewNav(page,rowsPerPage):
+    return renderTabTableViewNav(page,rowsPerPage)
 
 @app.post("/pyWebMarks/searchMark")
 @app.post("/searchMark")
@@ -494,10 +494,16 @@ def renderMainView(user_id=None,errObj=None,sessionID=None,init=True):
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
     
+    
+    try:
+        rowsPerPage = int(request.params['rowsPerPage'])
+    except:
+        rowsPerPage = 30
+    
     if not sessionID:
         sessionID = request.get_cookie("wmSessionID")
 
-    return exec_page(request,user_id,user_name,errObj,sessionID,init)
+    return exec_page(request,user_id,user_name,errObj,sessionID,rowsPerPage,init)
 
 
 def renderTabTableView(tab,init=False,user_id=None,errObj=None):    
@@ -509,28 +515,52 @@ def renderTabTableView(tab,init=False,user_id=None,errObj=None):
 
     sessionID = request.get_cookie("wmSessionID")
 
+    try:
+        rowsPerPage = int(request.params['rowsPerPage'])
+        
+    except:
+        rowsPerPage = 15
+
     print ("tabFunction")
     if not user_id or not user_name:
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
     
-    return exec_page(request,user_id,user_name,errObj,sessionID,init)
+    return exec_page(request,user_id,user_name,errObj,sessionID,rowsPerPage,init)
     
-def renderTabTableViewNav(page,init=False,user_id=None,errObj=None):    
+def renderTabTableViewNav(page,rowsPerPage,init=False,user_id=None,errObj=None):    
     user_name=None
     try:
         user_name = request.params['user_name']
     except:
         pass
 
+    try:
+        sort_crit = request.params['sortCrit']
+    
+    except:
+        sort_crit = 3
+   
+   
+   # try:
+   #     rowsPerPage = int(request.params['rowsPerPage'])
+   # except:
+   #     rowsPerPage = 15
+        
+   
     sessionID = request.get_cookie("wmSessionID")
     
     if not user_id or not user_name:
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
-        tab = int(request.get_cookie('tab'))
+        
+        try:
+            tab = int(request.get_cookie('tab'))
        
-    return exec_page_nav(page,sessionID,tab,False)    
+        except:
+            tab = 9
+                     
+    return exec_page_nav(page,sessionID,tab,sort_crit,rowsPerPage,False)    
    
 
 def renderErrorPageView():

@@ -58,27 +58,36 @@ end
 </head>
 <body onload="getSearchTerms();init_2()">
 
-    <div class="tab_header">
+<div class="tab_header">
+	
 	<div class="tab_divs" id="{{!tab}}">
+
         <div class="tab_top">
-         <span onclick="cgi_out('tab=1');" class="tab_spans" id="sp_AE"> A-E {{ !sort_sp_ae }} </span>
+    
+		<span onclick="cgi_out('tab=1');" class="tab_spans" id="sp_AE"> A-E {{ !sort_sp_ae }} </span>
          <span onclick="cgi_out('tab=2');" class="tab_spans" id="sp_FJ"> F-J {{ !sort_sp_fj}}  </span>
          <span onclick="cgi_out('tab=3');" class="tab_spans" id="sp_KP"> K-P {{ !sort_sp_kp }} </span>
-         </div> <!-- end big1 -->
+        
+		</div> <!-- end big1 -->
 
         <div class="tab_bottom">
-             <span onclick="cgi_out('tab=4');" class="tab_spans" id="sp_QU"> Q-U {{ !sort_sp_qu }} </span>
+        
+			<span onclick="cgi_out('tab=4');" class="tab_spans" id="sp_QU"> Q-U {{ !sort_sp_qu }} </span>
             <span onclick="cgi_out('tab=5');" class="tab_spans" id="sp_VZ"> V-Z {{ !sort_sp_vz }} </span>
             <span onclick="cgi_out('tab=9');" class="tab_spans" id="sp_DATE"> DATE {{ !sort_sp_date }} </span>
-        </div>  <!-- end big2 -->
+ 
+		</div>  <!-- end big2 -->
 
         <div class="tab_bottom_search">
             <span onclick="cgi_out('tab=6');" class="tab_spans" id="sp_SRCH"> SEARCH {{ !sort_sp_search }} </span>  
         </div> <!-- end big3 -->
 
 		{{!tabTable}}
-	</div>
-	
+
+	</div> <!-- end tab_divs --->
+
+</div> 	<!-- end tab header -->
+
 </body>
 </html>
 
