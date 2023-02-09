@@ -39,7 +39,6 @@ def digest_pass(passwd):
     sha_pad = hashlib.sha512()
     sha_pad.update(str.encode(passwd))
     return sha_pad.hexdigest()
-    
 
 def genSessionID():
 
@@ -78,6 +77,9 @@ def getStoredSQLDB(req):
         conn.close()
         #return renderMainView(user_id,Error(103))
         return renderMainView("XXXXX",Error(103))
+
+    finally:
+        conn.close()
 
     storedSQL = res[0]
 
@@ -151,7 +153,6 @@ def convertTime(dateAdded):
     dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
     #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
     return dateAdded
-
 
 def convertDateEpoch(humanDate):
 
