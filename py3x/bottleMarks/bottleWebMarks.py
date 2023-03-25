@@ -81,6 +81,46 @@ def pre_auth():
     else:
         return None
 
+def pre_auth2():
+    
+    usr_name = util.unWrap(request, 'user_name') 
+    usr_pass = util.unWrap(request, 'user_pass')
+    old_usr_pass = util.unWrap(request, 'old_user_pass')
+    
+    password_digest = util.digest_pass(usr_pass);
+    password_old_digest = util.digest_pass(old_usr_pass);
+        
+    exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_name = '" + usr_name + "' ";
+    
+    ### error checking ????? ##############
+
+    conn = db.db_factory().connect()
+    curs = conn.cursor()
+    curs.execute(exec_sql_str)
+    
+    db_row = curs.fetchall()
+
+    conn.close()
+    
+    if db_row:
+        print (db_row)
+        (db_usr_id, db_usr_name, db_usr_pass) = db_row.pop()
+    else:
+        return None
+              
+   
+    if(util.isset(old_usr_pass) and (db_usr_pass == old_usr_pass) or db_usr_pass == password_old_digest):
+         
+        return (db_usr_id, db_usr_name, usr_pass); 
+    
+    elif ((db_usr_pass == usr_pass) or (db_usr_pass == password_digest)):
+    
+        return (db_usr_id, db_usr_name, db_usr_pass) 
+    
+    else:
+        return None
+
+
 @app.route("/pyWebMarks/registration")
 @app.route('/registration')
 def register():
@@ -459,6 +499,6 @@ def renderMainViewPageNav(page):
 '''
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8099', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
 #        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)

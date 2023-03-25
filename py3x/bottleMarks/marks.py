@@ -32,7 +32,7 @@ class Marks(object):
         return template('class_defaultpage', displayText=displayText, colorStyle=colorStyle,
                                      tab=tab, user_name=user_name)
 
-    def renderRegistrationView(self,errText):
+    def renderRegistrationView(self,errText=None):
         if not errText:
             errText = ""
         return template('class_registration.html', errText=errText)
@@ -49,6 +49,9 @@ class Marks(object):
         print ("total rows " + str(totRows))
         #rowsPerPage = self.ROWSPERPAGE
         
+        if not totRows:
+            totRows = 0
+
         if totRows > rowsPerPage:
 
             buffer_out =  "Pages: "   
