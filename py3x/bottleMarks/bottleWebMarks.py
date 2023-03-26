@@ -389,7 +389,8 @@ def deleteMark():
 def deltaPass():
     
     try:
-        (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+        #(user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+        (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
     except:
         return renderMainView(request.params['user_name'],Error(112))
    
@@ -425,7 +426,8 @@ def logOut():
 @app.post("/authenCred")
 def authenCredFunc():
 
-    (user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+    #(user_id,user_name,user_pass) = pre_auth() or (None,None,None)
+    (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
 
     if user_id:
         sessionID = authorize(user_id,user_name)
