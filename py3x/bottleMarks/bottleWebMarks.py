@@ -3,7 +3,8 @@ from datetime import datetime
 from marks import Marks
 from functools import wraps
 from PJJExecPageSQL import exec_page
-import lib.util as util 
+#import lib.util as util 
+import lib.util_db as util 
 import time
 import connection_factory as db
 from globals import *
@@ -447,7 +448,8 @@ def validate_session():
         return False
 
 def validate_session2(req):
-    return util.validateSession2(req) 
+    #return util.validateSession2(req) 
+    return util.validateSessionDB(req) 
 
 def authorize(user_id,user_name):
     sessionID = util.genSessionID()
@@ -462,7 +464,8 @@ def authorize(user_id,user_name):
     response.set_cookie('Counter', str(init_count), path=path, expires=fiveDayExpire)
     print(str(user_id) , " USERID")
     
-    util.saveSession(sessionID)
+#    util.saveSession(sessionID)
+    util.saveSessionDB(sessionID,user_id)
 #   response.set_cookie('expires', 60*60)
 
 def renderMainView(user_id=None,errObj=None):
@@ -481,6 +484,6 @@ def renderErrorPageView():
           return Marks().renderErrorPageView()
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8090', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8072', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
 #        app.run(daemon=False, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
