@@ -263,8 +263,14 @@ def addWebMark():
     print (tbl1MaxId)
     print (tbl2MaxId)
 
-    tbl1MaxId +=1
-    tbl2MaxId +=1
+    if not tbl1MaxId:
+        tbl1MaxId = 1
+
+    if not tbl2MaxId:
+        tbl2MaxId = 1
+
+    tbl1MaxId =+ 1
+    tbl2MaxId =+ 1
 
     curs.execute("select b.url from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and b.URL =  {} ".format(place,place), (user_id, url))
     dup_check = curs.fetchone()
@@ -275,18 +281,20 @@ def addWebMark():
     
     try:
         curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values ({},{},{})".format(place,place,place), (tbl2MaxId, url, title,))
-    except:
+    except Exception as ex:
+        print (ex)
         print ("Insert Error wmplace")
         conn.rollback()
-        return renderMainView(user_id,Error(2000))
+        return renderMainView(user_id,Error(2001))
 
     try:
         curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values ({},{},{},{},{},{})".format(place
                                 ,place,place,place,place,place), (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
-    except:
+    except Exception as ex:
+        print (ex)
         print ("Insert Error wmbookmark")
         conn.rollback()
-        return renderMainView(user_id,Error(2000))
+        return renderMainView(user_id,Error(2001))
     else:
         conn.commit()
     finally:
