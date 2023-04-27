@@ -264,10 +264,10 @@ def addWebMark():
     print (tbl2MaxId)
 
     if not tbl1MaxId:
-        tbl1MaxId = 1
+        tbl1MaxId = 0
 
     if not tbl2MaxId:
-        tbl2MaxId = 1
+        tbl2MaxId = 0
 
     tbl1MaxId =+ 1
     tbl2MaxId =+ 1
