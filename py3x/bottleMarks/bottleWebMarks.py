@@ -269,8 +269,8 @@ def addWebMark():
     if not tbl2MaxId:
         tbl2MaxId = 0
 
-    tbl1MaxId =+ 1
-    tbl2MaxId =+ 1
+    tbl1MaxId += 1
+    tbl2MaxId += 1
 
     curs.execute("select b.url from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and b.URL =  {} ".format(place,place), (user_id, url))
     dup_check = curs.fetchone()
