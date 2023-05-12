@@ -2,25 +2,26 @@ hist_sql_all_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PL
 import re
 from connection_factory  import db_factory as db
 
-# elim2 = { "greenich" : { "url" : 'ht://loop', 'dateAdded': '2001-12-02' }, "santan" : { "url": 'ht://loas', 'dateAdded': '2001-12-03'} }  
 def gen_histogram():
     markHist = {}
     elimdups = {}
     histo_list = []
     (title,url,dateAdded) = (1,0,2)
 
-    
     conn = db().connect()
     conn.text_factory = lambda x: x.decode("utf-8", errors='ignore')
+
     try:
         curs = conn.cursor()
         curs.execute(hist_sql_all_str)
         dbRows = curs.fetchall()
         print ("RowCountWB " + str(len(dbRows)))
         conn.close()
+
     except Exception as ex:
        print (str(ex)) 
        raise ex
+
     for data in dbRows:
         if not data[title]:
             continue       
@@ -33,8 +34,6 @@ def gen_histogram():
         else:
             elimdups[data[title].upper()] = { "url": data[url], "dateAdded": data[dateAdded] }
 
-    #for title_str,v in elimdups.iteritems():
-    
     for title_str,v in elimdups.items():
         words = re.split(r'\s+', title_str)
 
@@ -43,10 +42,15 @@ def gen_histogram():
                 continue
             if re.match(r"(?:[-+|:']|\bsqft\b|\bof\b|\bThe\b|\bthe\b|\bto\b|\band\b|\b[0-9]\b)",word,re.I):
                 continue
+            if re.match(r"(?:[-+|:']|\bbd\b|\bba\b|\bfor\b)",word,re.I):
+                continue
             if re.match(r"'",word):
                 continue
             if not re.match(r'[\x00-\x7f]',word):
                 continue 
+            if len(word) < 3:
+                continue 
+
             word = re.sub(r'\s+$','',word)
             word = re.sub(r'^\s+','',word)
 
@@ -57,14 +61,25 @@ def gen_histogram():
 
     new_list = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()),  key=lambda hist : hist[1] , reverse=True)
 
-    print(len(new_list))
     for line in new_list:
 
-        pretty =            line[1] >   100     and  "*" * int((line[1]/100))
-        pretty = pretty or  line[1] <=  100     and  "#" * int((line[1]/10))
-        pretty = pretty or  line[1] <   10      and  "-" * line[1]
+        pretty =            ( line[1] >   100   and                     "*" * int(line[1]/100) )
+        pretty = pretty or  ( line[1] <=  100   and line[1] > 10 and    "#" * int(line[1]/10)  )
+        pretty = pretty or  ( line[1] <=  10    and line[1] > 5  and    "-" * int(line[1])     )
+        pretty = pretty or  ( line[1] <=  5     and                     "!" * int(line[1])     )
 
-        print ('%-35s%5d %-50s' % (str(line[0]).encode('utf-8', errors='replace').decode('ascii', errors='ignore'),line[1],pretty))
+        print ('%-35s%5d %-50s' % 
+                                    (line[0].encode('utf-8', errors='replace').decode('ascii', errors='ignore'),
+                                                        line[1],
+                                                                                pretty))
+
+def agg(w_list):
+
+    for  line in w_list:
+        if line[1]  == last_line:
+            liner  = liner + "|" + line[0]
+        else:
+           last_line = line[1]
 
 
 gen_histogram()
