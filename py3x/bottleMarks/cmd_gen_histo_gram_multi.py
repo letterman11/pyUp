@@ -59,7 +59,10 @@ def gen_histogram():
             else:
                 markHist[word] =  { 'count' : 1 }
 
-    new_list = sorted( map(lambda x: [x, markHist[x]['count']],markHist.keys()),  key=lambda hist : hist[1] , reverse=True)
+    new_list = sorted( map( lambda x: [x, markHist[x]['count']], markHist.keys() )   #1
+                            , key=lambda hist : hist[1]                              #2  args to sorted() 
+                            , reverse=True)                                          #3
+
 
     for line in new_list:
 
