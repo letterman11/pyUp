@@ -207,7 +207,9 @@ def exec_page(req,sess,user_id,user_name,errObj):
     #conn = db.db_factory().connect()
     conn = conn.connect()
     #conn.text_factory = bytes
-    conn.text_factory = lambda x: x.decode("latin1")
+
+    conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
+   # conn.text_factory = lambda x: x.decode("latin1")
     try:
         curs = conn.cursor()
         curs.execute(executed_sql_str, (user_id,))
