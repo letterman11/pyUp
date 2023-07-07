@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+#######################################################
+# Currently for python 2.7 and below                  #
+# ms windows 10 exec -> py -2.7 pascalT.py            #
+#######################################################
+
 import sys
 import string
 import python_colors as pc
@@ -68,11 +73,9 @@ def pydprint(a,sumCF):
        msp = sp * int(TileLn/2) * N
 
        if  N % 2 == 0:
-#           binpyout += "%-15s%-15s" %  (str(sumCF[nN]), str(Pr*sumCF[nN])) +  msp + pc.colors.bg.red + str.join(tileLine) + pc.colors.reset + msp  + "\n"
            binpyout += "%-15s%-15s" %  (str(sumCF[nN]), str(Pr*sumCF[nN])) +  msp + pc.colors.bg.red + string.join(tileLine,'') + pc.colors.reset + msp  + "\n"
        else:
            binpyout += "%-15s%-15s" %  (str(sumCF[nN]), str(Pr*sumCF[nN])) +  msp + pc.colors.bg.orange + string.join(tileLine,'') + pc.colors.reset + msp  + "\n"
-#           binpyout += "%-15s%-15s" %  (str(sumCF[nN]), str(Pr*sumCF[nN])) +  msp + pc.colors.bg.orange + str.join(tileLine) + pc.colors.reset + msp  + "\n"
        nN += 1
    print (binpyout)
 
