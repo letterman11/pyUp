@@ -8,5 +8,5 @@ CREATE TABLE session (
         UPDATE_TS datetime,
         rowcount int(1),
         sort varchar(25),
-        SESSIONDATA varchar(15000)
+        sessiondata varchar(15000)
 );
