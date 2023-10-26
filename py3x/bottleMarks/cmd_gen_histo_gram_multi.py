@@ -63,7 +63,7 @@ def gen_histogram():
     new_list = sorted( map( lambda word: [ word, markHist[ word ] ['count'] ]   # map ( function/lambda,  
                             , markHist.keys())                                  #  iterable ) 
                                                                                     #1 -- the map
-                            , key=lambda word : word[count]                         #2 -- key to sort       **args to sorted()** 
+                            , key=lambda birdie : birdie[count]                         #2 -- key to sort       **args to sorted()** 
                             , reverse=True)                                         #3 -- reverse order ?
 
                             # the option "key" --> takes a func/lambda that transforms the list to be
@@ -73,7 +73,7 @@ def gen_histogram():
 
     for line in new_list:
 
-        pretty =            ( line[1] >   100   and                     "*" * int(line[1]/100) )
+        pretty =            ( line[1] >=   100  and                    "*" * int(line[1]/100) )
         pretty = pretty or  ( line[1] <=  100   and line[1] > 10 and    "#" * int(line[1]/10)  )
         pretty = pretty or  ( line[1] <=  10    and line[1] > 5  and    "-" * int(line[1])     )
         pretty = pretty or  ( line[1] <=  5     and                     "!" * int(line[1])     )
