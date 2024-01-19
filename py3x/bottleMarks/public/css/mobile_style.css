@@ -222,7 +222,9 @@ div#optionDiv select {
 .search_div {
 	position:relative;
 	width:100%;
-	height:175px;
+	//height:175px;
+	background-color: #EEEEEE;
+	height:195px;
 }
 
 .search_div ul {
