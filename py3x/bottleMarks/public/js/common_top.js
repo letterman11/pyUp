@@ -22,8 +22,8 @@ function init()
 	var rowsPerPage = parseInt(getCookie("rowsPerPage"));
 	
 	//if (!window.top.bannerClicked)
-	if (bannerClicked)
-		innerFrame.src = "/pyWebMarks/tabTableView?&rowsPerPage=" + rowsPerPage;
+	//if (bannerClicked)
+	innerFrame.src = "/pyWebMarks/tabTableView?&rowsPerPage=" + rowsPerPage;
 
     document.getElementById("selDates").style.display = 'inline-block';
     document.getElementById("selUpdates").style.display = 'none';
@@ -320,6 +320,12 @@ function topOpToSearch(topOp)
 
 function logOut()
 {
+/*
+	eraseCookie("rowsPerPage");
+	eraseCookie("tab");
+	eraseCookie("bannerClicked");
+*/
+
 	eraseCookie("wmSessionID");
 	eraseCookie("wmUserName");
 	eraseCookie("wmUserID");
