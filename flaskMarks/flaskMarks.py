@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, render_template, request, session
 from datetime import datetime
 from marks import Marks
 from functools import wraps
-from PJJExecPageSQL import exec_page
-import lib.util as util 
+#from PJJExecPageSQL import exec_page
+from PJJExecPageSQL_DB import exec_page
+#import lib.util as util 
+import lib.util_db as util
 import time
 import connection_factory as db
 from globals import *
@@ -238,17 +242,16 @@ def addWebMark():
       
     return renderMainView()
 
-@app.post("/flaskMarks/updateMark")
-@app.post("/updateMark")
+@app.route("/flaskMarks/updateMark", methods=['POST'])
+@app.route("/updateMark", methods=['POST'])
 @authenticate
 def updateMark():
 
     user_id = session['wmUserID']
 
     title = request.form['title_update']	
-    
     url = request.form['url_update']	
-    
+ 
     tblBookMarkId = request.form['bk_id']	
      
     print (tblBookMarkId)
@@ -383,18 +386,23 @@ def authenCredFunc():
     return renderMainView(user_id)
 
 def validate_session(session):
-   
+
     try:
 
        wmSID = session['wmSessionID']
        userID = session['wmUserID']
 
-    except:
+    except Exception as ex:
 
         return False
     
-    return util.validateSession2(session) 
+    return util.validateSessionDB(session) 
+#    return validateSession2(session, userID) 
 
+
+def validateSession2(session,user_id):
+
+    return validateSessionDB(session,user_id)
 
 def authorize(user_id,user_name):
 
@@ -406,7 +414,8 @@ def authorize(user_id,user_name):
     session['expires'] = None
     session['domain'] = None
 
-    util.saveSession(sessionID)
+#    util.saveSession(sessionID)
+    util.saveSessionDB(sessionID,user_id)
 
 def renderMainView(user_id=None,errObj=None):
 #   user_name=None

@@ -1,7 +1,8 @@
 from marks import *
 from SQLStrings import *
 from error import *
-import lib.util as util
+#import lib.util as util
+import lib.util_db as util
 import globals as g
 from globals import *
 import connection_factory as db
@@ -126,7 +127,7 @@ def exec_page(req,sess,user_id,user_name,errObj):
         ##########################################
         #exec_sql_str = g_main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,sess)
+        util.storeSQLDB(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxTitle):
         #print ("Hit search" + searchBoxTitle)
@@ -145,13 +146,13 @@ def exec_page(req,sess,user_id,user_name,errObj):
                     qstr += " or a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
         exec_sql_str = g_main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,sess)
+        util.storeSQLDB(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxURL):
         qstr = " b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,sess)
+        util.storeSQLDB(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchDateStart) and util.isset(searchDateEnd) and (searchDateStart != searchDateEnd):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateEnd) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) )     
@@ -159,14 +160,14 @@ def exec_page(req,sess,user_id,user_name,errObj):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,sess)
+        util.storeSQLDB(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_DATE']
     elif util.isset(searchDateStart):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,sess)
+        util.storeSQLDB(storedSQLStr,sess)
         tabtype = tabMap['tab_SRCH_DATE']
 ##############################################################################################
 # End of logic branches for SrcBoxTitle + SrchBoxURL + Radio Button
@@ -188,7 +189,7 @@ def exec_page(req,sess,user_id,user_name,errObj):
         elif tabtype == tabMap['tab_DATE']:
             exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
         elif tabtype == tabMap['tab_SRCH_TITLE']:
-            storedSQLStr = util.getStoredSQL(sess)
+            storedSQLStr = util.getStoredSQLDB(sess)
             if not storedSQLStr:
                 exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
             else:
@@ -204,7 +205,7 @@ def exec_page(req,sess,user_id,user_name,errObj):
     print (sort_crit)
     print ("Exec webMark SQL " + executed_sql_str)
     print (str(tabtype) + " tab in play")
-    #conn = db.db_factory().connect()
+
     conn = conn.connect()
     #conn.text_factory = bytes
 
