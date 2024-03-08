@@ -4,8 +4,7 @@ from flask import Flask, render_template, request, session
 from datetime import datetime
 from marks import Marks
 from functools import wraps
-#from PJJExecPageSQL import exec_page
-from PJJExecPageSQL_DB import exec_page
+from PJJExecPageSQL import exec_page
 #import lib.util as util 
 import lib.util_db as util
 import time
