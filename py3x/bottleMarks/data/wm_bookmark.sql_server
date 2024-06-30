@@ -1,0 +1,20 @@
+-- #use Acme_octagonyel937919;
+-- use Widgets;
+
+--use dcoda_acme;
+
+CREATE TABLE WM_BOOKMARK (
+  BOOKMARK_ID int PRIMARY KEY NOT NULL,
+  USER_ID varchar(15)  NOT NULL,
+  PLACE_ID int  NOT NULL,
+  TYPE tinyint  DEFAULT NULL,
+  TITLE varchar(5500) DEFAULT NULL,
+  KEYWORD_ID smallint  DEFAULT NULL,
+  FOLDER_TYPE text,
+  DATEADDED bigint  DEFAULT NULL,
+  DATE_ADDED datetime DEFAULT NULL,
+  LASTMODIFIED bigint  DEFAULT NULL,
+  SHAREABLE bit,
+  DELETED bit
+);
+

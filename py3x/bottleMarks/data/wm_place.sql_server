@@ -1,0 +1,17 @@
+-- #use Acme_octagonyel937919;
+-- use Widgets;
+
+-- use dcoda_acme;
+
+CREATE TABLE WM_PLACE (
+  PLACE_ID int NOT NULL,
+  URL varchar(5500) DEFAULT NULL,
+  TYPE tinyint DEFAULT NULL,
+  TITLE varchar(5500) DEFAULT NULL,
+  REV_HOST varchar(255) DEFAULT NULL,
+  VISIT_COUNT tinyint  DEFAULT '0',
+  FREQUENCY tinyint NOT NULL DEFAULT '0',
+  LAST_VISIT_DATE tinyint DEFAULT NULL,
+  PRIMARY KEY (PLACE_ID)
+);
+
