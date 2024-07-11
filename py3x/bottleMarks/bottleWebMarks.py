@@ -13,6 +13,8 @@ import re
 app = Bottle()  
 
 app_cookie_path="/pyWebMarks"
+fiveDayExpire = int(time.time()) + 60 * 60 *24 *5
+path = app_cookie_path
 
 place = db.db_factory().place
 
@@ -269,6 +271,12 @@ def addWebMark():
     print (tbl1MaxId)
     print (tbl2MaxId)
 
+    if not tbl1MaxId:
+        tbl1MaxId = 0
+
+    if not tbl2MaxId:
+        tbl2MaxId = 0
+
     tbl1MaxId +=1
     tbl2MaxId +=1
 
@@ -277,7 +285,9 @@ def addWebMark():
     
     if dup_check:
         print ("Duplicate")
+        response.set_cookie("Error", str(150), path=path, expires=fiveDayExpire)
         return renderMainView(user_id,Error(150))
+#        return renderTabTableView(user_id,Error(150))
     
     try:
         curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values ({},{},{})".format(place,place,place), (tbl2MaxId, url, title,))
@@ -495,6 +505,13 @@ def renderTabTableView(user_id=None,errObj=None,init=False):
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
     
+    error = request.get_cookie("Error")
+    
+    if error:
+        errObj = Error(int(error))
+    else:
+        errObj = None
+    response.delete_cookie("Error")    
     return exec_page(request,user_id,user_name,errObj,init)
     
     
