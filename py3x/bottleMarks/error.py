@@ -26,10 +26,10 @@ class Error(object):
 
 
 
-    def __init__(self,code):
+    def __init__(self,code, url=None):
         self.code  = code 
         self.err_codes = Error.err_codes
-
+        self.err_url = url
 
     def errText(self):
         return self.err_codes[self.code]

@@ -286,7 +286,8 @@ def addWebMark():
     if dup_check:
         print ("Duplicate")
         response.set_cookie("Error", str(150), path=path, expires=fiveDayExpire)
-        return renderMainView(user_id,Error(150))
+        response.set_cookie("Error_url", str(url), path=path, expires=fiveDayExpire)
+        return renderMainView(user_id,Error(150, url))
 #        return renderTabTableView(user_id,Error(150))
     
     try:
@@ -505,13 +506,15 @@ def renderTabTableView(user_id=None,errObj=None,init=False):
         user_id = request.get_cookie('wmUserID')
         user_name = request.get_cookie('wmUserName')
     
-    error = request.get_cookie("Error")
+    error   = request.get_cookie("Error")
+    err_url = request.get_cookie("Error_url")
     
     if error:
-        errObj = Error(int(error))
+        errObj = Error(int(error), err_url)
     else:
         errObj = None
     response.delete_cookie("Error")    
+    response.delete_cookie("Error_url")    
     return exec_page(request,user_id,user_name,errObj,init)
     
     
