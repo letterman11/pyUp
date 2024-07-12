@@ -12,7 +12,7 @@ import re
 
 app = Bottle()  
 
-app_cookie_path="/pyWebMarks"
+app_cookie_path="/exWebMarks"
 fiveDayExpire = int(time.time()) + 60 * 60 *24 *5
 path = app_cookie_path
 
@@ -122,13 +122,13 @@ def pre_auth2():
         return None
     
 
-@app.route("/pyWebMarks/registration")
+@app.route("/exWebMarks/registration")
 @app.route('/registration')
 def register():
     return Marks().renderRegistrationView()
 
 
-@app.post("/pyWebMarks/regAuth")
+@app.post("/exWebMarks/regAuth")
 @app.post('/regAuth')
 def registerAuth():
 
@@ -186,7 +186,7 @@ def registerAuth():
 
     return Marks().renderDefaultView("red", "Successfully Registered " + user_name)
 
-@app.route("/pyWebMarks/default")
+@app.route("/exWebMarks/default")
 @app.route('/default')
 def logIn():
     return Marks().renderDefaultView()
@@ -202,38 +202,38 @@ def error404(error):
 ###  --  Authenticated routes -- via authenticate decorator -- ###
 ##################################################################
 
-@app.route("/pyWebMarks")
+@app.route("/exWebMarks")
 @app.route("/")
 @authenticate
 def index():
     return renderMainView()
 
-@app.route("/pyWebMarks/webMarks")
+@app.route("/exWebMarks/webMarks")
 @app.route("/webMarks")
 @authenticate
 def indexWB():
     return renderMainView()
 
-@app.route("/pyWebMarks/tabView")
+@app.route("/exWebMarks/tabView")
 @app.route("/tabView")
 @authenticate
 def indexView():
     return renderMainView()
 
-@app.route("/pyWebMarks/tabTableView")
+@app.route("/exWebMarks/tabTableView")
 @app.route("/tabTableView")
 @authenticate
 def tabTableView():
     return renderTabTableView()
 
-@app.post("/pyWebMarks/searchMark")
+@app.post("/exWebMarks/searchMark")
 @app.post("/searchMark")
 @authenticate
 def searchWebMark():
     return renderMainView(init=False)
     #return renderTabTableView()
     
-@app.post("/pyWebMarks/insertMark")
+@app.post("/exWebMarks/insertMark")
 @app.post("/insertMark")
 @authenticate
 def addWebMark():
@@ -311,7 +311,7 @@ def addWebMark():
       
     return renderMainView()
 
-@app.post("/pyWebMarks/updateMark")
+@app.post("/exWebMarks/updateMark")
 @app.post("/updateMark")
 @authenticate
 def updateMark():
@@ -359,7 +359,7 @@ def updateMark():
     return renderMainView()
 
 
-@app.post("/pyWebMarks/deleteMark")
+@app.post("/exWebMarks/deleteMark")
 @app.post("/deleteMark")
 @authenticate
 def deleteMark():
@@ -402,7 +402,7 @@ def deleteMark():
  
     return renderMainView()
 
-@app.post("/pyWebMarks/deltaPass")
+@app.post("/exWebMarks/deltaPass")
 @app.post("/deltaPass")
 @authenticate
 def deltaPass():
@@ -439,12 +439,12 @@ def deltaPass():
 ## end authenticated routes via decorator ############################
 ######################################################################
 
-@app.route("/pyWebMarks/logout")
+@app.route("/exWebMarks/logout")
 @app.route("/logout")
 def logOut():
     return Marks().renderDefaultView()
 
-@app.post("/pyWebMarks/authenCred")
+@app.post("/exWebMarks/authenCred")
 @app.post("/authenCred")
 def authenCredFunc():
 

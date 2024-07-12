@@ -58,14 +58,14 @@ end
 <body onLoad="getSearchTerms();init();">
 <div id="main">
  <div id="header">
-    <a href="/pyWebMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
+    <a href="/exWebMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a> 
     <a href="/"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a> 
  </div>
   
    <div class="updateLayer" id="updateL">
      <!--  <h1> <a href="javascript:closeLayer('updateL')" > update </a> <a href="javascript:void 0" onclick= "document.getElementById('updateL').style.display='none'"> close </a></h1>  -->
        <h1> <a href="javascript:closeLayerUpdate('updateL', 'YES')" > update </a> <a href="javascript:closeLayerUpdate('updateL')"> close </a></h1> 
-       <form name="formUpdate" id="formUpdate" method="POST" action="/pyWebMarks/updateMark">
+       <form name="formUpdate" id="formUpdate" method="POST" action="/exWebMarks/updateMark">
         <input type="text" name="title_update" id="title_update" size="70">
         <!--<input type="text" rows="3" name="url_update" id="url_update" size="150"> -->
         <textarea rows="3" name="url_update" id="url_update" cols="70">
@@ -76,7 +76,7 @@ end
 
    <div class="delLayer" id="delL" name="delL">
        <h1> delete ? <a href="javascript:closeLayerDel('delL')" > NO </a>  <a href="javascript:closeLayerDel('delL','YES')"> YES </a> </h1> 
-       <form name="formDelete" id="formDelete" method="POST" action="/pyWebMarks/deleteMark">
+       <form name="formDelete" id="formDelete" method="POST" action="/exWebMarks/deleteMark">
         <input type="hidden" name="bk_id" id="bk_id_del" size="15">
        </form>
        <h2><p id="spDel" name="spDel"> LLC  </p> </h2>
@@ -95,7 +95,7 @@ end
    </script>
 
    <div class="search_div">  <!-- begin search div -->
-    <!--      <form  name="search_form" class="search_form" method="POST" action="/pyWebMarks/searchMark" onClick="">  -->
+    <!--      <form  name="search_form" class="search_form" method="POST" action="/exWebMarks/searchMark" onClick="">  -->
       <form  name="search_form_" class="search_form"  onClick"">  
        <ul>
        <li> Enter Search Term(s)  </li>
@@ -131,7 +131,7 @@ end
   </div>  <!-- end search div -->
 
   <div class="new_mark">
-   <form name="newMark" id="new_mark" method="POST" action="/pyWebMarks/insertMark"> 
+   <form name="newMark" id="new_mark" method="POST" action="/exWebMarks/insertMark"> 
     <ul>
     <!-- <li> Enter Title </li> -->
     <li> Enter Title <input name="mark_title" type="text" size="100"> </li>
@@ -143,7 +143,7 @@ end
   </div>
 
   <div class="delta_pass">
-    <form name="deltaPass" id="delta_pass" method="POST" action="/pyWebMarks/deltaPass"> 
+    <form name="deltaPass" id="delta_pass" method="POST" action="/exWebMarks/deltaPass"> 
     <ul>
     <li id="logout" onclick="logOut();"> <p> LOGOUT {{ user_id }} </p> </li>
     <li> Change Pass Word ? </li>

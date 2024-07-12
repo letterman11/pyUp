@@ -13,6 +13,7 @@ class Marks(object):
         self.rowCount = rowCount
         self.errObj = errObj
 
+
     def renderMainView(self,user_id,sort_crit,tabMap):
         tabTable = self.genTabTable(sort_crit,tab=None)        
         optionTops=hist.gen_optionListDiv(user_id)
@@ -45,19 +46,6 @@ class Marks(object):
         return template('class_tab_view', user_id=user_id, sort_crit=sort_crit, tabMap=tabMap, tab=self.tab, tabTable=tabTable, optionTops=optionTops)  
 #        return tabTable
         #return "<h1> Hello Angus </h1>"
- 
-    def genError(self):
-        errObj = self.errObj
-        errText = errObj.errText()
-        errOut = '''
-<div>
-  <ul>
-   <li style="font-size:16px; color:red"> ''' + errText + '''  </li>
-  </ul>
-</div>
-'''
-        return errOut
-
 
     def genTabTable(self,sort_crit,tab):
 
@@ -83,7 +71,6 @@ class Marks(object):
         ## POTENTIAL ERROR SECTION ##
         if self.errObj:
             tbl += self.genError()
-  
 
         ## POTENTIAL ERROR SECTION ##
         if not self.dbObject:
@@ -129,3 +116,18 @@ class Marks(object):
     def convertTime(self, dateAdded):
         dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
         return dateAdded
+
+
+    def genError(self):
+        errObj = self.errObj
+        errText = errObj.errText()
+        err_url = errObj.err_url
+        print(errText)
+        errOut = '''
+<div style="width:100%">
+  <ul style="width:100%">
+     <li style="font-size:16px; color:red"> ''' + errText + ": " + err_url +  '''  </li>
+  </ul>
+</div>
+'''
+        return errOut

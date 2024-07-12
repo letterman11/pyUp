@@ -11,7 +11,7 @@ function init()
 
 	innerFrame = top.document.getElementById('iframeTabTableResults');
 
-	innerFrame.src = "/pyWebMarks/tabTableView";
+	innerFrame.src = "/exWebMarks/tabTableView";
 
     document.getElementById("selDates").style.display = 'inline-block';
     document.getElementById("selUpdates").style.display = 'none';
@@ -97,8 +97,8 @@ function setCookie(name,value,days)
                 var expires = "; expires="+date.toGMTString();
         }
         else var expires = "";
-        //document.cookie = name+"="+value+expires+"; path=/pyWebMarks";
-        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/pyWebMarks";
+        //document.cookie = name+"="+value+expires+"; path=/exWebMarks";
+        document.cookie = name+"="+encodeURIComponent(value)+expires+"; path=/exWebMarks";
 }
 
 function getCookie(name,path)
@@ -179,7 +179,7 @@ function cgi_out(tab_parm)
 
 	if (currTab == 6)
 	{	
-	    top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
+	    top.document.getElementById("iframeTabTableResults").src = "/exWebMarks/tabTableView?" + tab_parm + 
 						"&sortCrit=" + sortCrit + 
                         "&searchBoxTitle=" + encodeURIComponent(searchObj.searchBoxTitle) +
 						"&searchBoxURL=" + encodeURIComponent(searchObj.searchBoxURL) +
@@ -189,7 +189,7 @@ function cgi_out(tab_parm)
 	}
 	else
 	{	
-		top.document.getElementById("iframeTabTableResults").src = "/pyWebMarks/tabTableView?" + tab_parm + 
+		top.document.getElementById("iframeTabTableResults").src = "/exWebMarks/tabTableView?" + tab_parm + 
 						"&sortCrit=" + sortCrit;
 	}
 	
@@ -266,7 +266,7 @@ function logOut()
 	eraseCookie("mojolicious");
 	// vendor specific general Mojo cookie	
 //	top.location = "/logout";
-	top.location = "/pyWebMarks/logout";
+	top.location = "/exWebMarks/logout";
 }
 
 function goLink(title,bk_id)

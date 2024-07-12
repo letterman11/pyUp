@@ -223,6 +223,7 @@ def exec_page(req,user_id,user_name,errObj,init):
         return marks.renderMainView(user_id,sort_crit,tabMap)
 
     markObj = Marks(tabMap[tabtype],dbRows,len(dbRows),errObj)
+
     #return markObj.renderMainView(user_name,sort_crit,tabMap)
     if init:
         print ("First View")
