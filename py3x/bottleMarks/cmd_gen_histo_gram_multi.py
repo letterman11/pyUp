@@ -60,10 +60,9 @@ def gen_histogram():
                 markHist[word] =  { 'count' : 1 }
 
     count=1
-    new_list = sorted( map( lambda word: [ word, markHist[ word ] ['count'] ]   # map ( function/lambda,  
-                            , markHist.keys())                                  #  iterable ) 
-                                                                                    #1 -- the map
-                            , key=lambda birdie : birdie[count]                         #2 -- key to sort       **args to sorted()** 
+    new_list = sorted( map( lambda word: [ word, markHist[ word ] ['count'] ]       #1 -- map ( function/lambda,  
+                            , markHist.keys())                                      # iterable ) 
+                            , key=lambda birdie : birdie[count]                     #2 -- key to sort       **args to sorted()** 
                             , reverse=True)                                         #3 -- reverse order ?
 
                             # the option "key" --> takes a func/lambda that transforms the list to be
