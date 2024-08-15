@@ -1,5 +1,6 @@
 import sqlite3
 import mysql.connector
+import pyodbc
 import re
 
 
@@ -33,7 +34,7 @@ class db_factory(object):
             if  re.match(r'^#',line):
                 continue
 
-            res = re.match(r'([A-Za-z_0-9]+)=([A-Za-z_0-9\-\/\.\:\\]+)',line)
+            res = re.match(r'([A-Za-z_0-9]+)=([A-Za-z_0-9\-\/\.\*\:\\]+)',line)
 
             if res: 
                 (key,value) = (res.group(1), res.group(2))
@@ -78,5 +79,12 @@ class db_factory(object):
                               database=self.db_name(),
                               use_pure=False)
 
-
-
+        elif re.match(r'pyodbc', self.db_driver()):
+            db_factory.place = "?"
+            user=self.db_user()
+            password=self.db_passwd()
+            host=self.db_host()
+            database=self.db_name()
+            #connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password}'
+            connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no'
+            return  pyodbc.connect(connectionString)
