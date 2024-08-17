@@ -8,6 +8,7 @@ from globals import *
 #import sqlite3
 import connection_factory as db
 import re
+import json
 ############################################
 ## Bottle Modified ExecPageSQL function #### 
 ## PJJExecPageSQL                       ####
@@ -79,8 +80,7 @@ def exec_page(req,user_id,user_name,errObj):
    
 
     conn = db.db_factory()
-
-    
+    sql_server = db.db_factory().driver == 'pyodbc'
      
     if db.db_factory.driver == 'pyodbc':
         g_main_sql_str = main_sql_str_sql_server.format(db.db_factory.place)
@@ -111,23 +111,31 @@ def exec_page(req,user_id,user_name,errObj):
 ##########################################################
 # SearchBoxTitle + SearchBoxURL + AND/OR Radio Button
 ##########################################################
+    if sql_server:
+        q_ls = "'%"
+        q_le = "%'"
+    else:
+        q_ls = '"%'
+        q_le = '%"'
+        
     if searchTypeBool == "COMBO" and (util.isset(searchBoxTitle)) and (util.isset(searchBoxURL)):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like \"%" + re.sub(r'^s','S',searchBoxTitle) + "%\"  and b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',searchBoxTitle) +  q_le + "  and b.url like " + q_ls + re.sub(r'^s','S',searchBoxURL) + q_le # sort_ord
+            
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like \"%" + re.sub(r'^s','S',queri[0]) + "%\" "
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',queri[0]) + q_le
             for q in queri[1:]:
                 if searchTypeBool == "OR":
-                    qstr += " or a.title like \"%" + re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " or a.title  like " + q_ls + re.sub(r'^s','S',q) + q_le
                 else:
-                    qstr += " and a.title like \"%" + re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " and a.title like " + q_ls + re.sub(r'^s','S',q) + q_le 
         ###########################################
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
         if len(queri) >= 2:
-            qstr +=  " and b.url like '%" + re.sub(r'^s', 'S', searchBoxURL) + "%' " 
+            qstr +=  " and b.url like " + q_ls  + re.sub(r'^s', 'S', searchBoxURL) + q_le 
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
         ##########################################
         #exec_sql_str = g_main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
@@ -141,22 +149,24 @@ def exec_page(req,user_id,user_name,errObj):
         #queri = re.split("\s*",searchBoxTitle)
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like \"%" + re.sub(r'^s','S',searchBoxTitle) + "%\" "# sort_ord
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',searchBoxTitle) + q_le # sort_ord                            
+            #qstr = " a.title like " + re.sub(r'^s','S',searchBoxTitle) + "%\" "# sort_ord            
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like \"%" +   re.sub(r'^s','S',queri[0])+ "%\" "
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',queri[0])+ q_le            
             for q in queri[1:]:
                 if searchTypeBool == "AND":
-                    qstr += " and a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " and a.title like " +  q_ls +  re.sub(r'^s','S',q) + q_le
+                    #qstr += " and a.title like \"%" +  re.sub(r'^s','S',q) + "%\" "                     
                 else:  
-                    qstr += " or a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " or a.title like " + q_ls  +  re.sub(r'^s','S',q) + q_le
         exec_sql_str = g_main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
         #util.storeSQL(storedSQLStr,req)
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxURL):
-        qstr = " b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
+        qstr = " b.url like " + q_ls + re.sub(r'^s','S',searchBoxURL) + q_le # sort_ord
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = g_main_sql_str + qstr 
         #util.storeSQL(storedSQLStr,req)
