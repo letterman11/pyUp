@@ -38,9 +38,27 @@ database=c:\\Users\\angus\\dcoda_net\\db\\dcoda_acme.webMarks
 
 # Mysql laptop
 #--------------------------------------
-hostname=localhost
-user=dococt
-password=dococt
-database=dcoda_acme
-driver=mysql.connector
-port=3306
+#hostname=localhost
+#user=dococt
+#password=dococt
+#database=dcoda_acme
+#driver=mysql.connector
+#port=3306
+
+# Azure SQL Server 
+#--------------------------------------
+hostname=dcoda-acme.database.windows.net
+user=dcoda-acme
+password=coolataCode*
+database=dcoda-acme
+driver=pyodbc
+port=1433
+
+# Azure MySQL Server 
+#--------------------------------------
+#hostname=dcoda-net.mysql.database.azure.com
+#user=aabSmall
+#password=coolataCode*
+#database=dcoda_acme
+#driver=mysql.connector
+#port=3306

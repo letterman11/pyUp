@@ -212,8 +212,13 @@ def exec_page(req,user_id,user_name,errObj):
 
     conn = conn.connect()
     #conn.text_factory = bytes
-    conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
-
+    
+    #for mysql ODBC Driver exception case
+    try:
+         conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
+    except:
+        pass
+            
     try:
         curs = conn.cursor()
         curs.execute(executed_sql_str, (user_id,))

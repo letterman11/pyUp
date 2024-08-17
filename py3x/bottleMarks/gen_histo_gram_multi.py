@@ -11,7 +11,12 @@ def gen_histogram(user_id):
 
     conn = db.db_factory().connect()
     #conn.text_factory = bytes
-    conn.text_factory = lambda x: x.decode("latin1")
+ 
+    # SQL Server ODBC exception 
+    try:
+         conn.text_factory = lambda x: x.decode("latin1")
+    except:
+        pass
 
     try:
         curs = conn.cursor()
