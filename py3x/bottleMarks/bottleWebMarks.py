@@ -165,7 +165,6 @@ def registerAuth():
     ########################################
     conn = db.db_factory().connect()
     curs = conn.cursor()
-    place = db.db_factory.place
     ########################################
 
     hash_pass = util.digest_pass(user_pass1)
@@ -253,8 +252,7 @@ def addWebMark():
 
     conn = db.db_factory().connect()
     curs = conn.cursor()
-    #place = db.db_factory.place
-    place = db.db_factory().place
+
     curs.execute("select max(BOOKMARK_ID) from WM_BOOKMARK")
     (tbl1MaxId,) = curs.fetchone()
     curs.execute("select max(PLACE_ID) from WM_PLACE")
@@ -314,7 +312,6 @@ def updateMark():
     #utf-8 decoded-presented bottle forms post version
     url = request.forms.url_update
 
-    place = db.db_factory().place
     tblBookMarkId = request.params['bk_id']
     print (tblBookMarkId)
  
@@ -357,9 +354,6 @@ def deleteMark():
     user_id = request.get_cookie('wmUserID')
     tblBookMarkId = request.params['bk_id']
     print (tblBookMarkId)
-
-
-    place = db.db_factory().place
 
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
@@ -411,15 +405,13 @@ def deltaPass():
 
     new_hash_pass = util.digest_pass(new_passwd);
 
-    place = db.db_factory().place
-
     if not user_id:
         return renderMainView(user_id,Error(112))
     else:
         try:
             conn = db.db_factory().connect()
             curs = conn.cursor()
-            place = db.db_factory.place
+
             #curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_passwd,user_name));
             curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_hash_pass,user_name));
         except:

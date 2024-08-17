@@ -42,13 +42,18 @@ class db_factory(object):
 
                 config_hash[key] = value  
         config_file.close()
+        
+        db_factory.driver = self.db_driver()
 
         if re.match(r'sqlite3', self.db_driver()):
             db_factory.place = "?"
 
         elif re.match(r'mysql', self.db_driver()):
             db_factory.place = "%s"
-
+        
+        elif re.match(r'pyodbc', self.db_driver()):
+            db_factory.place = "?"
+            
         return config_hash
 
     def db_user(self):
@@ -69,27 +74,24 @@ class db_factory(object):
     def connect(self):
 
         if re.match(r'sqlite3', self.db_driver()):
-            db_factory.place = "?"
-            db_factory.driver = self.db_driver()
+
             return sqlite3.connect(self.db_name())
           
 
         elif re.match(r'mysql', self.db_driver()):
-            db_factory.place = "%s"
-            db_factory.driver = self.db_driver()
+
             return  mysql.connector.connect(user=self.db_user(), password=self.db_passwd(),
                               host=self.db_host(),
                               database=self.db_name(),
                               use_pure=False)
 
         elif re.match(r'pyodbc', self.db_driver()):
-            db_factory.place = "?"
-            db_factory.driver = self.db_driver()
+
             user=self.db_user()
             password=self.db_passwd()
             host=self.db_host()
             database=self.db_name()
-            #connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password}'
+
             connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no'
             return pyodbc.connect(connectionString)
             
