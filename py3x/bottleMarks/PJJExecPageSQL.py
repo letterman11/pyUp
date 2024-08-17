@@ -16,6 +16,7 @@ import re
 def exec_page(req,user_id,user_name,errObj):
     tabMap = g.tabMap
     print (user_id + "Req Cookie  IDs")
+    sql_server = False
 
     searchBoxTitle = util.unWrap(req,'searchBoxTitle')
     searchTypeBool = util.unWrap(req,'searchtype')
@@ -79,8 +80,16 @@ def exec_page(req,user_id,user_name,errObj):
 
     conn = db.db_factory()
 
-    g_main_sql_str = main_sql_str.format(db.db_factory.place)
-    g_date_sql_str = date_sql_str.format(db.db_factory.place)
+    
+     
+    if db.db_factory.driver == 'pyodbc':
+        g_main_sql_str = main_sql_str_sql_server.format(db.db_factory.place)
+        g_date_sql_str = date_sql_str_sql_server.format(db.db_factory.place)
+        sql_server = True
+    else:
+        g_main_sql_str = main_sql_str.format(db.db_factory.place)
+        g_date_sql_str = date_sql_str.format(db.db_factory.place)
+        
 
 #############################################################################
 #Sort Criteria setting of ORDER_BY_CRITERIA
@@ -189,17 +198,26 @@ def exec_page(req,user_id,user_name,errObj):
         elif tabtype == tabMap['tab_VZ']:
             exec_sql_str = g_main_sql_str + VZ_str + ORDER_BY_CRIT + sort_ord
         elif tabtype == tabMap['tab_DATE']:
-            exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
+            if sql_server:
+               exec_sql_str = g_date_sql_str + sort_ord 
+            else:
+               exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
         elif tabtype == tabMap['tab_SRCH_TITLE']:
             #storedSQLStr = util.getStoredSQL(req)
             storedSQLStr = util.getStoredSQLDB(req)
             if not storedSQLStr:
-                exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
+                if sql_server:
+                    exec_sql_str = g_date_sql_str + sort_ord
+                else:
+                    exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
             else:
                 exec_sql_str = storedSQLStr + ORDER_BY_CRIT + sort_ord
 ###################################
 ##################################
-    executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord + " limit 200 "
+    if sql_server:
+        executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord
+    else:
+        executed_sql_str =  exec_sql_str if (tabtype != tabMap['tab_DATE']) else g_date_sql_str + sort_ord + " limit 200 "
 ##########
 # Start of Execution of SQL
 #########

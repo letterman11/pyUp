@@ -5,9 +5,9 @@
 #---------------------------------------------------
 # SQLite3 database
 #---------------------------------------------
-hostname=
-user=
-password=
+#hostname=
+#user=
+#password=
 #database=dcoda_acme
 ##database=/home/angus/dcoda_net/cgi-bin/webMarks/cgi-bin/dcoda_acme.webMarks_test
 ##database=/home/angus/dcoda_net/cgi-bin/webMarks/cgi-bin/dcoda_acme.webMarks_test
@@ -17,8 +17,18 @@ password=
 #database=C:/Users/angus/dcoda_net/db/dcoda_acme.webMarks
 
 
-driver=sqlite3
-database=c:\\Users\\angus\\dcoda_net\\db\\dcoda_acme.webMarks
+#driver=sqlite3
+#database=c:\\Users\\angus\\dcoda_net\\db\\dcoda_acme.webMarks
+
+#Amazon AWS Mysql database
+#___________________________________________
+#hostname=dcoda.net
+#user=dococt
+#password=coolc117
+#database=dcoda_acme
+#driver=mysql.connector
+#port=3306
+#
 
 #Legacy Mysql database
 #___________________________________________
@@ -47,18 +57,18 @@ database=c:\\Users\\angus\\dcoda_net\\db\\dcoda_acme.webMarks
 
 # Azure SQL Server 
 #--------------------------------------
-hostname=dcoda-acme.database.windows.net
-user=dcoda-acme
-password=coolataCode*
-database=dcoda-acme
-driver=pyodbc
-port=1433
+#hostname=dcoda-acme.database.windows.net
+#user=dcoda-acme
+#password=coolataCode*
+#database=dcoda-acme
+#driver=pyodbc
+#port=1433
 
 # Azure MySQL Server 
 #--------------------------------------
-#hostname=dcoda-net.mysql.database.azure.com
-#user=aabSmall
-#password=coolataCode*
-#database=dcoda_acme
-#driver=mysql.connector
-#port=3306
+hostname=dcoda-net.mysql.database.azure.com
+user=aabSmall
+password=coolataCode*
+database=dcoda_acme
+driver=mysql.connector
+port=3306

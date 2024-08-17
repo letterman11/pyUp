@@ -30,6 +30,7 @@ session_dir = working_dir + dir_sep +  "sessions"
 print ("Session Dir " + session_dir)
 
 sqlSelectSess = "select sessiondata,userid,rowcount,sort from session where sessionid = {} "
+sqlSelectSessSQLServer = "select sessiondata,userid,row_count,sort from session where sessionid = {} "
 sqlInsertSess = "insert into session ( sessionid,userid,DATE_TS )  values ( {}, {}, {} ) "
 sqlUpdateSess = "update session set sessiondata = {},  UPDATE_TS =  {}  where sessionid = {} "
 
@@ -41,7 +42,7 @@ def digest_pass(passwd):
     return sha_pad.hexdigest()
 
 def genSessionID():
-
+    print("HEEEEEEEEEEEEEEERRRRRRRRRRRR")
     id_list = ('A','B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9') 
     session_id  = str()
@@ -68,7 +69,8 @@ def getStoredSQLDB(req):
 
     conn = db_factory().connect()
     curs = conn.cursor()
-    place = db_factory.place
+   # place = db_factory.place
+    place = db_factory().place
 
     try:
         curs.execute(sqlSelectSess.format(place), (sessionID,))
@@ -86,11 +88,13 @@ def getStoredSQLDB(req):
     return storedSQL 
 
 def storeSessionObjectDB(sessObj):
-
+    
+    print("storeSessOBJ")
     conn = db_factory().connect()
     curs = conn.cursor()
-    place = db_factory.place
-
+    #place = db_factory.place
+    place = db_factory().place
+    
     try:
         curs.execute(sqlUpdateSess.format(place,place,place), (sessObj.SESSIONDATA,datetime.datetime.now(),sessObj.SESSIONID))
     except:
@@ -106,15 +110,19 @@ def storeSessionObjectDB(sessObj):
 def validateSessionDB(req):
     sessionID = req.get_cookie('wmSessionID')
 
+    place = db_factory().place    
     conn = db_factory().connect()
     curs = conn.cursor()
-    place = db_factory.place
+    
     print("Validate val " + str(sessionID))
 
     res = None
 
     try:
-        curs.execute(sqlSelectSess.format(place), (sessionID,))
+        if db_factory.driver == 'pyodbc':
+            curs.execute(sqlSelectSessSQLServer.format(place), (sessionID,))
+        else:    
+            curs.execute(sqlSelectSess.format(place), (sessionID,))
         res = curs.fetchone()
         print(sqlSelectSess.format(place))
     except Exception as ex:
@@ -133,8 +141,9 @@ def saveSessionDB(sessionID,userID):
 
     conn = db_factory().connect()
     curs = conn.cursor()
-    place = db_factory.place
-
+    #place = db_factory.place
+    place = db_factory().place
+    
     try:
         curs.execute(sqlInsertSess.format(place,place,place), (sessionID,userID,  datetime.datetime.now(),))
     except:

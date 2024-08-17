@@ -13,7 +13,8 @@ config_hash = {} #@@@@@@@@@@@@@@@@@@@
 class db_factory(object):
     
     place = None 
-
+    driver = None
+    
     def __init__(self, config_file=None):
         self.config_file = config_file
         self.parse_config()
@@ -69,11 +70,13 @@ class db_factory(object):
 
         if re.match(r'sqlite3', self.db_driver()):
             db_factory.place = "?"
+            db_factory.driver = self.db_driver()
             return sqlite3.connect(self.db_name())
           
 
         elif re.match(r'mysql', self.db_driver()):
             db_factory.place = "%s"
+            db_factory.driver = self.db_driver()
             return  mysql.connector.connect(user=self.db_user(), password=self.db_passwd(),
                               host=self.db_host(),
                               database=self.db_name(),
