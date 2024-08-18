@@ -80,7 +80,7 @@ def exec_page(req,user_id,user_name,errObj):
    
 
     conn = db.db_factory()
-    sql_server = db.db_factory().driver == 'pyodbc'
+    sql_server = db.db_factory.driver == 'pyodbc'
      
     if db.db_factory.driver == 'pyodbc':
         g_main_sql_str = main_sql_str_sql_server.format(db.db_factory.place)
