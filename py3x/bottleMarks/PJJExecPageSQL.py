@@ -356,6 +356,11 @@ def exec_page_nav(req,page,sessionID,tabtype=9):
 ### sql execute end
     
     sort_crit = ()
+    
+    if re.search(r'asc', SORT_ORD):
+        sort_crit = 0
+    elif re.search(r'desc', SORT_ORD):
+        sort_crit = 1
 
     markObj = Marks(tabMap[tabtype],dbRows,rowCount)
     #return markObj.renderMainView(user_name,sort_crit,tabMap)
