@@ -7,7 +7,7 @@ import lib.util as util
 import time
 import connection_factory as db
 from globals import *
-from error import *
+from error import Error 
 import re
 
 app = Bottle()  

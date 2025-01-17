@@ -6,7 +6,7 @@ import sys
 import re
 import time
 import hashlib
-from  lib.sessionObject import *
+from  lib.sessionObject import SessionObject
 
 if sys.platform == 'win32':
 
