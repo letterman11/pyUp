@@ -1,9 +1,17 @@
 #!/usr/bin/python
 
 #######################################################
-# Currently for python 2.7 and below                  #
-# ms windows 10 exec -> py -2.7 pascalT.py            #
+# pascalT.py                                          #
+# author: angus brooks                                #
+# updated for python 3.xx                             #
+# - calculates pascal triangle and Future Value of PV #
+# - compounded annually                               #
 #######################################################
+
+# 
+# pascalT.py [1] [end] [percent] [Present Value]
+# pascalT.py 1  10  .10  1000
+#
 
 import sys
 import string
@@ -63,7 +71,6 @@ def pydprint(a,sumCF):
        for pp in (p):
            ltile = str(pp)
            ltile = ltile.center(TileLn," ")
-   #        ltile = placeElonTile(pp)
            vT.append(ltile)
        i +=1
    binpyout = ""
