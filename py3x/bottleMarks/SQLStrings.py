@@ -4,6 +4,11 @@ hist_sql_str = "select b.url, a.title, a.dateAdded, a.bookmark_id from WM_BOOKMA
 #date_sql_str = "select b.url, a.title, a.dateAdded from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {}  order by a.dateAdded desc limit 100"
 date_sql_str = "select b.url, a.title, a.dateAdded, a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {}  order by a.dateAdded "
 
+main_sql_str_sql_server = "select top(200) b.url, a.title, a.dateAdded, a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and  ("
+hist_sql_str_sql_server = "select top(200) b.url, a.title, a.dateAdded, a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {}  "
+date_sql_str_sql_server = "select top(200) b.url, a.title, a.dateAdded, a.bookmark_id from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {}  order by a.dateAdded "
+
+
 
 AE_str = " a.title like 'A%' or  a.title like 'a%' or  a.title like 'B%' or  a.title like 'b%' or  a.title like 'C%' or  a.title like 'c%' or  a.title like 'D%' or  a.title like 'd%'  or  a.title like 'E%' or  a.title like 'e%'"
 FJ_str = " a.title like 'F%' or  a.title like 'f%'  or  a.title like 'G%' or  a.title like 'g%'  or  a.title like 'H%' or  a.title like 'h%'  or  a.title like 'I%' or  a.title like 'i%'  or  a.title like 'J%' or  a.title like 'j%'"

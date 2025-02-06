@@ -1,7 +1,7 @@
 from marks import *
 from SQLStrings import *
 from error import *
-import lib.util as util
+import lib.util_db as util
 import globals as g
 from globals import *
 #import sqlite3
@@ -79,10 +79,23 @@ def exec_page(req,user_id,user_name,errObj,init):
             searchDateEnd = res_sub_1.group(1) + "-" + res_sub_1.group(2) + "-" + "20" +res_sub_1.group(3)
    
 
+#    conn = db.db_factory()
+
+#    g_main_sql_str = main_sql_str.format(db.db_factory.place)
+#    g_date_sql_str = date_sql_str.format(db.db_factory.place)
+
     conn = db.db_factory()
 
-    g_main_sql_str = main_sql_str.format(db.db_factory.place)
-    g_date_sql_str = date_sql_str.format(db.db_factory.place)
+    sql_server = db.db_factory.driver == 'pyodbc'
+
+    if db.db_factory.driver == 'pyodbc':
+        g_main_sql_str = main_sql_str_sql_server.format(db.db_factory.place)
+        g_date_sql_str = date_sql_str_sql_server.format(db.db_factory.place)
+        sql_server = True
+    else:
+        g_main_sql_str = main_sql_str.format(db.db_factory.place)
+        g_date_sql_str = date_sql_str.format(db.db_factory.place)
+
 
 #############################################################################
 #Sort Criteria setting of ORDER_BY_CRITERIA
@@ -125,7 +138,8 @@ def exec_page(req,user_id,user_name,errObj,init):
         ##########################################
         #exec_sql_str = g_main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req) 
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxTitle):
         print ("Hit search" + searchBoxTitle)
@@ -144,13 +158,15 @@ def exec_page(req,user_id,user_name,errObj,init):
                     qstr += " or a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
         exec_sql_str = g_main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxURL):
         qstr = " b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchDateStart) and util.isset(searchDateEnd) and (searchDateStart != searchDateEnd):
     #elif util.isset(searchDateStart) and util.isset(searchDateEnd):
@@ -159,14 +175,16 @@ def exec_page(req,user_id,user_name,errObj,init):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
     elif util.isset(searchDateStart):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
 ##############################################################################################
 # End of logic branches for SrcBoxTitle + SrchBoxURL + Radio Button
@@ -188,7 +206,8 @@ def exec_page(req,user_id,user_name,errObj,init):
         elif tabtype == tabMap['tab_DATE']:
             exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
         elif tabtype == tabMap['tab_SRCH_TITLE']:
-            storedSQLStr = util.getStoredSQL(req)
+            #storedSQLStr = util.getStoredSQL(req)
+            storedSQLStr = util.getStoredSQLDB(req)
             if not storedSQLStr:
                 exec_sql_str = g_date_sql_str + sort_ord + "limit 200 "
             else:
@@ -208,7 +227,12 @@ def exec_page(req,user_id,user_name,errObj,init):
 
     conn = conn.connect()
     #conn.text_factory = bytes
-    conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
+
+    #for mysql ODBC Driver exception case
+    try:
+         conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
+    except:
+        pass
 
     try:
         curs = conn.cursor()

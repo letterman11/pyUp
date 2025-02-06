@@ -3,7 +3,8 @@ from datetime import datetime
 from marks import Marks
 from functools import wraps
 from PJJExecPageSQL import exec_page
-import lib.util as util 
+#import lib.util as util 
+import lib.util_db as util 
 import time
 import connection_factory as db
 from globals import *
@@ -465,7 +466,8 @@ def validate_session():
         return False
 
 def validate_session2(req):
-    return util.validateSession2(req) 
+#    return util.validateSession2(req) 
+    return util.validateSessionDB(req) 
 
 def authorize(user_id,user_name):
     sessionID = util.genSessionID()
@@ -480,7 +482,8 @@ def authorize(user_id,user_name):
     response.set_cookie('Counter', str(init_count), path=path, expires=fiveDayExpire)
     print(str(user_id) , " USERID")
     
-    util.saveSession(sessionID)
+    #util.saveSession(sessionID)
+    util.saveSessionDB(sessionID,user_id)
 #   response.set_cookie('expires', 60*60)
 
 def renderMainView(user_id=None,errObj=None,init=True):
