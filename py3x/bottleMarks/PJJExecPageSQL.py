@@ -1,11 +1,9 @@
-from marks import *
+from marks import Marks
 from SQLStrings import *
-from error import *
-#import lib.util as util
+from error import Error
 import lib.util_db as util
 import globals as g
-from globals import *
-#import sqlite3
+#from globals import tabMap
 import connection_factory as db
 import re
 import json
