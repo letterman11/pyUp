@@ -88,6 +88,9 @@ def pre_auth2():
     usr_name = util.unWrap(request, 'user_name') 
     usr_pass = util.unWrap(request, 'user_pass')
     old_usr_pass = util.unWrap(request, 'old_user_pass')
+
+    if not usr_name or not usr_pass:
+        return None;
     
     password_digest = util.digest_pass(usr_pass);
     password_old_digest = util.digest_pass(old_usr_pass);
@@ -445,8 +448,8 @@ def deltaPass():
 def logOut():
     return Marks().renderDefaultView()
 
-@app.post("/exWebMarks/authenCred")
-@app.post("/authenCred")
+@app.route("/exWebMarks/authenCred", method=['GET', 'POST'])
+@app.route("/authenCred", method=['GET', 'POST'])
 def authenCredFunc():
 
     #(user_id,user_name,user_pass) = pre_auth() or (None,None,None)
