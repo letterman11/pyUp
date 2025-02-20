@@ -14,7 +14,7 @@ class db_factory(object):
     
     place = None 
     driver = None
-    azure_db_wait = 90
+    azure_db_wait = 70
     
     def __init__(self, config_file=None):
         self.config_file = config_file
@@ -99,13 +99,13 @@ class db_factory(object):
             try:
                 print("First Connection Call")
                 conn =  pyodbc.connect(connectionString)
-            except:
+            except Exception as ex:
                 print("Second Connection Call")
-                time.sleep(azure_db_wait)
+                time.sleep(db_factory.azure_db_wait)
                 conn =  pyodbc.connect(connectionString)
             finally:
                 if not conn:
-                    raise 
+                    raise ex 
                 return conn
              
  
