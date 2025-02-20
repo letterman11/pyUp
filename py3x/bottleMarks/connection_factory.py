@@ -2,7 +2,7 @@ import sqlite3
 import mysql.connector
 import pyodbc
 import re
-
+import time
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 dbConf = "stockDbConfig.dat" #@@@@@@@
@@ -14,6 +14,7 @@ class db_factory(object):
     
     place = None 
     driver = None
+    azure_db_wait = 90
     
     def __init__(self, config_file=None):
         self.config_file = config_file
@@ -35,7 +36,7 @@ class db_factory(object):
             if  re.match(r'^#',line):
                 continue
 
-            res = re.match(r'([A-Za-z_0-9]+)=([A-Za-z_0-9\-\/\.\*\:\\]+)',line)
+            res = re.match(r'([A-Za-z_0-9]+)=([A-Za-z_0-9\*\-\/\.\*\:\\]+)',line)
 
             if res: 
                 (key,value) = (res.group(1), res.group(2))
@@ -87,11 +88,24 @@ class db_factory(object):
 
         elif re.match(r'pyodbc', self.db_driver()):
 
+            conn=None
             user=self.db_user()
             password=self.db_passwd()
             host=self.db_host()
             database=self.db_name()
 
-            connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no'
-            return pyodbc.connect(connectionString)
-            
+            #Using free tier Azure SQL which pauses db so retry needed to wakeup paused db
+            connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no;ConnectionTimeout=120;ConnectionRetryCount=2'
+            try:
+                print("First Connection Call")
+                conn =  pyodbc.connect(connectionString)
+            except:
+                print("Second Connection Call")
+                time.sleep(azure_db_wait)
+                conn =  pyodbc.connect(connectionString)
+            finally:
+                if not conn:
+                    raise 
+                return conn
+             
+ 
