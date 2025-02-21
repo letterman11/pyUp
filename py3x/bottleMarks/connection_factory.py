@@ -14,7 +14,7 @@ class db_factory(object):
     
     place = None 
     driver = None
-    azure_db_wait = 170
+    azure_db_wait = 70
     
     def __init__(self, config_file=None):
         self.config_file = config_file
