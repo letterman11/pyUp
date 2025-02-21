@@ -11,7 +11,7 @@ import re
 
 app = Bottle()  
 
-app_cookie_path="/pyWebMarks"
+app_cookie_path="/pyWebMarks" 
 
 place = db.db_factory().place
 
@@ -96,6 +96,7 @@ def pre_auth2():
     ### error checking ????? ##############
 
     conn = db.db_factory().connect()
+    curs = conn.cursor()
     curs = conn.cursor()
     curs.execute(exec_sql_str)
     
@@ -432,8 +433,6 @@ def deltaPass():
 def logOut():
     return Marks().renderDefaultView()
 
-#@app.post("/pyWebMarks/authenCred")
-#@app.post("/authenCred", method=['GET', 'POST'])
 @app.route("/authenCred", method=['GET', 'POST'])
 @app.route("/pyWebMarks/authenCred", method=['GET', 'POST'])
 def authenCredFunc():

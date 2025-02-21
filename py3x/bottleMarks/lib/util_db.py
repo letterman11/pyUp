@@ -6,6 +6,7 @@ import sys
 import re
 import time
 import hashlib
+from marks import Marks
 #from  lib.sessionObject import *
 from  . sessionObject import *
 from connection_factory import db_factory 
@@ -78,7 +79,7 @@ def getStoredSQLDB(req):
     except:
         conn.close()
         #return renderMainView(user_id,Error(103))
-        return renderMainView("XXXXX",Error(103))
+        return Marks().renderMainView("XXXXX",Error(103))
 
     finally:
         conn.close()
@@ -95,9 +96,9 @@ def storeSessionObjectDB(sessObj):
     
     try:
         curs.execute(sqlUpdateSess.format(place,place,place), (sessObj.SESSIONDATA,datetime.datetime.now(),sessObj.SESSIONID))
-    except:
+    except Exception as ex:
         conn.rollback()
-        return renderMainView(user_id,Error(103))
+        return Marks().renderMainView(user_id,Error(103))
     else:
         conn.commit()
     finally:
@@ -141,9 +142,9 @@ def saveSessionDB(sessionID,userID):
     
     try:
         curs.execute(sqlInsertSess.format(place,place,place), (sessionID,userID,  datetime.datetime.now(),))
-    except:
+    except Exception as ex:
         conn.rollback()
-        return renderMainView(userID,Error(102))
+        return Marks().renderMainView(userID,Error(102))
     else:
         conn.commit()
     finally:
