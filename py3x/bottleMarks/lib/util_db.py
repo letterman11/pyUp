@@ -75,18 +75,18 @@ def getStoredSQLDB(req):
     curs = conn.cursor()
 
     try:
-        curs.execute(sqlSelectSess.format(place), (sessionID,))
+        if db_factory.driver == 'pyodbc':
+            curs.execute(sqlSelectSessSQLServer.format(place), (sessionID,))
+        else:    
+            curs.execute(sqlSelectSess.format(place), (sessionID,))
+
         res = curs.fetchone()
     except:
         conn.close()
-        #return renderMainView(user_id,Error(103))
-        return Marks().renderDefaultView("XXXXX",Error(103).errText())
-
-    finally:
-        conn.close()
-
+   
+        return Marks().renderDefaultView("red",Error(103).errText())
+        
     storedSQL = res[0]
-
     return storedSQL 
 
 def storeSessionObjectDB(sessObj):
@@ -99,7 +99,7 @@ def storeSessionObjectDB(sessObj):
         curs.execute(sqlUpdateSess.format(place,place,place), (sessObj.SESSIONDATA,datetime.datetime.now(),sessObj.SESSIONID))
     except Exception as ex:
         conn.rollback()
-        return Marks().renderDefaultView(user_id,Error(103).errText())
+        return Marks().renderDefaultView("red",Error(103).errText())
     else:
         conn.commit()
     finally:
@@ -144,9 +144,11 @@ def saveSessionDB(sessionID,userID):
     try:
         curs.execute(sqlInsertSess.format(place,place,place), (sessionID,userID,  datetime.datetime.now(),))
     except Exception as ex:
+        print("Error save")
         conn.rollback()
         #return renderMainView(userID,Error(102))
-        return Marks().renderDefaultView(userID,Error(102).errText())
+        return Marks().renderDefaultView("red",Error(102).errText())
+        #return Marks().renderDefaultView("red",Error(102).errText())
     else:
         conn.commit()
     finally:
