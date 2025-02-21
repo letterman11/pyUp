@@ -14,7 +14,7 @@ class db_factory(object):
     
     place = None 
     driver = None
-    azure_db_wait = 70
+    azure_db_wait = 170
     
     def __init__(self, config_file=None):
         self.config_file = config_file
@@ -95,6 +95,7 @@ class db_factory(object):
             database=self.db_name()
 
             #Using free tier Azure SQL which pauses db so retry needed to wakeup paused db
+            # rough logic just to get past auto-pause of free tier
             connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no;ConnectionTimeout=120;ConnectionRetryCount=2'
             try:
                 print("First Connection Call")
@@ -105,7 +106,7 @@ class db_factory(object):
                 conn =  pyodbc.connect(connectionString)
             finally:
                 if not conn:
-                    raise ex 
-                return conn
-             
- 
+                    Marks().renderDefaultView(red, "Database TimeOut")                    
+                else:
+                    print(conn)
+                    return conn
