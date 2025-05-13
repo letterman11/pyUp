@@ -113,9 +113,11 @@ def exec_page(req,user_id,user_name,errObj):
         q_ls = "'%"
         q_le = "%'"
     else:
-        q_ls = '"%'
-        q_le = '%"'
-        
+        q_ls = "'%"
+        q_le = "%'"
+        #q_ls = '"%'
+        #q_le = '%"'
+
     if searchTypeBool == "COMBO" and (util.isset(searchBoxTitle)) and (util.isset(searchBoxURL)):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
@@ -142,12 +144,14 @@ def exec_page(req,user_id,user_name,errObj):
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxTitle):
+        #escaping apostrophe
+        searchBoxTitle = re.sub(r"'","\\'",searchBoxTitle)                          
         print ("Hit search" + searchBoxTitle)
           #ORDER_BY_CRIT 
         #queri = re.split("\s*",searchBoxTitle)
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like " + q_ls + re.sub(r'^s','S',searchBoxTitle) + q_le # sort_ord                            
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',searchBoxTitle) + q_le  # sort_ord                            
             #qstr = " a.title like " + re.sub(r'^s','S',searchBoxTitle) + "%\" "# sort_ord            
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
