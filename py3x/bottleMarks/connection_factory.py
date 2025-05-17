@@ -72,6 +72,9 @@ class db_factory(object):
     def db_driver(self):
         return config_hash['driver']
 
+    def db_port(self):
+        return config_hash['port']
+
     def connect(self):
 
         if re.match(r'sqlite3', self.db_driver()):
@@ -84,7 +87,9 @@ class db_factory(object):
             return  mysql.connector.connect(user=self.db_user(), password=self.db_passwd(),
                               host=self.db_host(),
                               database=self.db_name(),
-                              use_pure=False)
+                              port=self.db_port() or 3306 ,
+                              #use_pure=False)
+                              use_pure=True)
 
         elif re.match(r'pyodbc', self.db_driver()):
 
