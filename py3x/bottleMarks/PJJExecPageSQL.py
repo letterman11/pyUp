@@ -16,7 +16,8 @@ def exec_page(req,user_id,user_name,errObj):
     tabMap = g.tabMap
     print (user_id + "Req Cookie  IDs")
     sql_server = False
-
+    sqlite3 = False
+    
     searchBoxTitle = util.unWrap(req,'searchBoxTitle')
     searchTypeBool = util.unWrap(req,'searchtype')
 
@@ -78,7 +79,9 @@ def exec_page(req,user_id,user_name,errObj):
    
 
     conn = db.db_factory()
+    
     sql_server = db.db_factory.driver == 'pyodbc'
+    sqlite3 = db.db_factory.driver == 'sqlite3' 
      
     if db.db_factory.driver == 'pyodbc':
         g_main_sql_str = main_sql_str_sql_server.format(db.db_factory.place)
@@ -109,15 +112,21 @@ def exec_page(req,user_id,user_name,errObj):
 ##########################################################
 # SearchBoxTitle + SearchBoxURL + AND/OR Radio Button
 ##########################################################
-    if sql_server:
+    #if sql_server or sqlite3:
+    if not sqlite3:           
         q_ls = "'%"
         q_le = "%'"
+        try:
+             #search replace apostrophe
+             searchBoxTitle = re.sub(r"'","\\'",searchBoxTitle)
+        except:
+            pass       
     else:
-        q_ls = "'%"
-        q_le = "%'"
-        #q_ls = '"%'
-        #q_le = '%"'
-
+        #q_ls = "'%"
+        #q_le = "%'"
+        q_ls = '"%'
+        q_le = '%"'
+             
     if searchTypeBool == "COMBO" and (util.isset(searchBoxTitle)) and (util.isset(searchBoxURL)):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
@@ -144,8 +153,7 @@ def exec_page(req,user_id,user_name,errObj):
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxTitle):
-        #escaping apostrophe
-        searchBoxTitle = re.sub(r"'","\\'",searchBoxTitle)                          
+
         print ("Hit search" + searchBoxTitle)
           #ORDER_BY_CRIT 
         #queri = re.split("\s*",searchBoxTitle)
