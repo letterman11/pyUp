@@ -86,9 +86,6 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
     sql_server = db.db_factory.driver == 'pyodbc'
     sqlite3 = db.db_factory.driver == 'sqlite3' 
 
-    #g_main_sql_str = main_sql_str.format(db.db_factory.place)
-    #g_date_sql_str = date_sql_str.format(db.db_factory.place)
-
     g_main_sql_str = main_sql_str_pg_index.format(db.db_factory.place) # Now intermediary index query
     g_date_sql_str = date_sql_str_pg_index.format(db.db_factory.place) # Now intermediary index query
 
@@ -150,7 +147,7 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         ##########################################
         #exec_sql_str = g_main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        #util.storeSQL(storedSQLStr,req)
+
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxTitle):
@@ -173,14 +170,14 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
                     qstr += " or a.title like " + q_ls  +  re.sub(r'^s','S',q) + q_le
         exec_sql_str = g_main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        #util.storeSQL(storedSQLStr,req)
+
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxURL):
         qstr = " b.url like " + q_ls + re.sub(r'^s','S',searchBoxURL) + q_le # sort_ord
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        #util.storeSQL(storedSQLStr,req)
+
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchDateStart) and util.isset(searchDateEnd) and (searchDateStart != searchDateEnd):
@@ -190,7 +187,7 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + " ( " + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        #util.storeSQL(storedSQLStr,req)
+
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
     elif util.isset(searchDateStart):
@@ -198,7 +195,7 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + " ( " + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        #util.storeSQL(storedSQLStr,req)
+
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
 ##############################################################################################
@@ -221,7 +218,7 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         elif tabtype == tabMap['tab_DATE']:
             exec_sql_str = g_date_sql_str 
         elif tabtype == tabMap['tab_SRCH_TITLE']:
-            #storedSQLStr = util.getStoredSQL(req)
+
             storedSQLStr = util.getStoredSQLDB(req)
             if not storedSQLStr:
                 exec_sql_str = g_date_sql_str + ORDER_BY_CRIT + sort_ord 
@@ -267,15 +264,15 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         print ("RowCountWBCursor " + str(curs.rowcount))
         
         print ("arg " + sessionID)
-        #sessObj = util.getSessionObject(sessionID)
+    
         sessObj = util.getSessionObjectDB(sessionID)
         print("HEERERER ", sessObj , " HERERERERE")
 
         dbRows_serialized = pickle.dumps(dbRows)
         print(dbRows_serialized, " WALL ")
-        #sessObj.SESSIONBLOB = dbRows_serialized
 
-        #sessObj.DATASTORE = dbRows
+
+
         sessObj.DATASTORE = dbRows_serialized
         
         sessObj.SESSIONID = sessionID
@@ -289,7 +286,7 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
 
         sessObj.USERID = user_id
 
-        #util.storeSessionObject(sessObj)
+
         util.storeSessionObjectDB(sessObj)
         
         conn.close()
@@ -318,13 +315,10 @@ def exec_page_nav(page,sessionID,tabtype,sort_crit,rowsPerPage,init):
     data = ()
     i = 0
     j = 0
-
-    #sessObj = util.getSessionObject(sessionID)
-    
+        
     sessObj = util.getSessionObjectDB(sessionID)
     
-    #dataRows = sessObj.DATASTORE
-    
+   
     dataRows_serialized = sessObj.DATASTORE
     dataRows = pickle.loads(dataRows_serialized)
 

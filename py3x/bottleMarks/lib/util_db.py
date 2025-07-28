@@ -99,13 +99,12 @@ def storeSessionObjectDB(sessObj):
     print("storeSessOBJ")
     conn = db_factory().connect()
     curs = conn.cursor()
-    print("fdsdsdfddsfd eeeeeeeeee ", sessObj.SESSIONID)
-    print("fdsdsdfddsfd  ", sessObj.DATASTORE)
+
     try:
         curs.execute(sqlUpdateSess.format(place,place,place,place,place,place), (sessObj.SESSIONDATA, sessObj.DATASTORE, sessObj.SORT, sessObj.ROWCOUNT,
                                                                      datetime.datetime.now(),sessObj.SESSIONID))
     except Exception as ex:
-        print ("--++--", ex, "--++--")
+
         conn.rollback()
         return Marks().renderDefaultView("red",Error(103).errText())
     else:
@@ -121,8 +120,6 @@ def getSessionObjectDB(sessionID):
     conn = db_factory().connect()
     curs = conn.cursor()
   
-    print("-----", sessionID,  "------")
-
     try:
         curs.execute(sqlSelectSess.format(place), (sessionID,))
 
