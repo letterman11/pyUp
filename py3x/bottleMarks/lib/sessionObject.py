@@ -4,6 +4,8 @@ class SessionObject(object):
         self.SESSIONID = sessionID
         self.USERID = userID
         self.USERNAME = userName 
-        self.SESSIONDATA = sessionData 
+        self.SESSIONDATA = sessionData
+        self.DATASTORE = None 
         self.ROWCOUNT = rowCount
         self.SORT = sort
+    

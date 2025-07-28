@@ -3,13 +3,15 @@ from datetime import datetime
 from marks import Marks
 from functools import wraps
 from PJJExecPageSQL import exec_page, exec_page_nav
-import lib.util as util 
+#import lib.util as util
+import lib.util_db as util 
 import time
 import connection_factory as db
 from globals import *
 import globals as g
 from error import *
 import re
+
 
 app = Bottle()  
 
@@ -462,7 +464,8 @@ def validate_session():
         return False
 
 def validate_session2(req):
-    return util.validateSession2(req) 
+    return util.validateSessionDB(req) 
+    #return util.validateSession2(req) 
 
 def authorize(user_id,user_name):
     sessionID = util.genSessionID()
@@ -477,7 +480,8 @@ def authorize(user_id,user_name):
     response.set_cookie('Counter', str(init_count), path=path, expires=fiveDayExpire)
     print(str(user_id) , " USERID")
     
-    util.saveSession(sessionID)
+    #util.saveSession(sessionID)
+    util.saveSessionDB(sessionID, user_id)
     return sessionID
 #   response.set_cookie('expires', 60*60)
 
@@ -568,7 +572,7 @@ def renderErrorPageView():
 
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8091', reloader=True, server='waitress', workers=3)
+#        app.run(debug=True, host="0.0.0.0", port='8091', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-#        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+        app.run(daemon=True, debug=False, host="0.0.0.0", port='8088', reloader=True, server='gunicorn', workers=3)
 

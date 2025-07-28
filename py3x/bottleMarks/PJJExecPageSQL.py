@@ -1,11 +1,14 @@
 from marks import *
 from SQLStrings import *
 from error import *
-import lib.util as util
+#import lib.util as util
+import lib.util_db as util
 import globals as g
 from globals import *
 import connection_factory as db
 import re
+import pickle
+
 ############################################
 ## Bottle Modified ExecPageSQL function #### 
 ## PJJExecPageSQL                       ####
@@ -79,6 +82,10 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
    
 
     conn = db.db_factory()
+
+    sql_server = db.db_factory.driver == 'pyodbc'
+    sqlite3 = db.db_factory.driver == 'sqlite3' 
+
     #g_main_sql_str = main_sql_str.format(db.db_factory.place)
     #g_date_sql_str = date_sql_str.format(db.db_factory.place)
 
@@ -106,67 +113,93 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
 ##########################################################
 # SearchBoxTitle + SearchBoxURL + AND/OR Radio Button
 ##########################################################
+    #if sql_server or sqlite3:
+    if not sqlite3:           
+        q_ls = "'%"
+        q_le = "%'"
+        try:
+             #search replace apostrophe
+             searchBoxTitle = re.sub(r"'","\\'",searchBoxTitle)
+        except:
+            pass       
+    else:
+        #q_ls = "'%"
+        #q_le = "%'"
+        q_ls = '"%'
+        q_le = '%"'
+             
     if searchTypeBool == "COMBO" and (util.isset(searchBoxTitle)) and (util.isset(searchBoxURL)):
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like \"%" + re.sub(r'^s','S',searchBoxTitle) + "%\"  and b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',searchBoxTitle) +  q_le + "  and b.url like " + q_ls + re.sub(r'^s','S',searchBoxURL) + q_le # sort_ord
+            
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like \"%" + re.sub(r'^s','S',queri[0]) + "%\" "
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',queri[0]) + q_le
             for q in queri[1:]:
                 if searchTypeBool == "OR":
-                    qstr += " or a.title like \"%" + re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " or a.title  like " + q_ls + re.sub(r'^s','S',q) + q_le
                 else:
-                    qstr += " and a.title like \"%" + re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " and a.title like " + q_ls + re.sub(r'^s','S',q) + q_le 
         ###########################################
         # added two lines below to include url in search save and commented out the replaced line which only had the regular title search terms 
         ##########################################
         if len(queri) >= 2:
-            qstr +=  " and b.url like '%" + re.sub(r'^s', 'S', searchBoxURL) + "%' " 
+            qstr +=  " and b.url like " + q_ls  + re.sub(r'^s', 'S', searchBoxURL) + q_le 
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE +  ' desc ' #sort_ord
         ##########################################
         #exec_sql_str = g_main_sql_str + qstr  + " and b.url like '%" + searchBoxURL + "%' " + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxTitle):
+
         print ("Hit search" + searchBoxTitle)
           #ORDER_BY_CRIT 
         #queri = re.split("\s*",searchBoxTitle)
         queri = re.split("\s+",searchBoxTitle)
         if len(queri) < 2:
-            qstr = " a.title like \"%" + re.sub(r'^s','S',searchBoxTitle) + "%\" "# sort_ord
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',searchBoxTitle) + q_le  # sort_ord                            
+            #qstr = " a.title like " + re.sub(r'^s','S',searchBoxTitle) + "%\" "# sort_ord            
             exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         else:
-            qstr = " a.title like \"%" +   re.sub(r'^s','S',queri[0])+ "%\" "
+            qstr = " a.title like " + q_ls + re.sub(r'^s','S',queri[0])+ q_le            
             for q in queri[1:]:
                 if searchTypeBool == "AND":
-                    qstr += " and a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " and a.title like " +  q_ls +  re.sub(r'^s','S',q) + q_le
+                    #qstr += " and a.title like \"%" +  re.sub(r'^s','S',q) + "%\" "                     
                 else:  
-                    qstr += " or a.title like \"%" +  re.sub(r'^s','S',q) + "%\" " 
+                    qstr += " or a.title like " + q_ls  +  re.sub(r'^s','S',q) + q_le
         exec_sql_str = g_main_sql_str + qstr  + ORDER_BY_DATE +  ' desc ' #sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchBoxURL):
-        qstr = " b.url like '%" + re.sub(r'^s','S',searchBoxURL) + "%' "# sort_ord
+        qstr = " b.url like " + q_ls + re.sub(r'^s','S',searchBoxURL) + q_le # sort_ord
         exec_sql_str = g_main_sql_str + qstr + ORDER_BY_DATE  +' desc '  # sort_ord
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchDateStart) and util.isset(searchDateEnd) and (searchDateStart != searchDateEnd):
+    #elif util.isset(searchDateStart) and util.isset(searchDateEnd):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateEnd) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
-        qstr =  "( dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
-        exec_sql_str = g_main_sql_str + qstr + " ) "
+#        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
+        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
+        exec_sql_str = g_main_sql_str + " ( " + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
     elif util.isset(searchDateStart):
         dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
-        exec_sql_str = g_main_sql_str + qstr 
+        exec_sql_str = g_main_sql_str + " ( " + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 
-        util.storeSQL(storedSQLStr,req)
+        #util.storeSQL(storedSQLStr,req)
+        util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
 ##############################################################################################
 # End of logic branches for SrcBoxTitle + SrchBoxURL + Radio Button
@@ -188,7 +221,8 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         elif tabtype == tabMap['tab_DATE']:
             exec_sql_str = g_date_sql_str 
         elif tabtype == tabMap['tab_SRCH_TITLE']:
-            storedSQLStr = util.getStoredSQL(req)
+            #storedSQLStr = util.getStoredSQL(req)
+            storedSQLStr = util.getStoredSQLDB(req)
             if not storedSQLStr:
                 exec_sql_str = g_date_sql_str + ORDER_BY_CRIT + sort_ord 
                 exec_sql_str_page = date_sql_str_page
@@ -233,15 +267,30 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         print ("RowCountWBCursor " + str(curs.rowcount))
         
         print ("arg " + sessionID)
-        sessObj = util.getSessionObject(sessionID)
+        #sessObj = util.getSessionObject(sessionID)
+        sessObj = util.getSessionObjectDB(sessionID)
+        print("HEERERER ", sessObj , " HERERERERE")
 
-        sessObj.DATASTORE = dbRows
+        dbRows_serialized = pickle.dumps(dbRows)
+        print(dbRows_serialized, " WALL ")
+        #sessObj.SESSIONBLOB = dbRows_serialized
+
+        #sessObj.DATASTORE = dbRows
+        sessObj.DATASTORE = dbRows_serialized
+        
+        sessObj.SESSIONID = sessionID
         sessObj.ROWCOUNT = rowCount
-        sessObj.ORDERBYCRIT = ORDER_BY_CRIT
-        sessObj.SORT_ORD = sort_ord
+
+        ########################################
+        #sessObj.ORDERBYCRIT = ORDER_BY_CRIT
+        #sessObj.SORT_ORD = sort_ord
+        ########################################
+        sessObj.SORT = sort_crit or 4
+
         sessObj.USERID = user_id
 
-        util.storeSessionObject(sessObj)
+        #util.storeSessionObject(sessObj)
+        util.storeSessionObjectDB(sessObj)
         
         conn.close()
 
@@ -270,11 +319,39 @@ def exec_page_nav(page,sessionID,tabtype,sort_crit,rowsPerPage,init):
     i = 0
     j = 0
 
-    sessObj = util.getSessionObject(sessionID)
+    #sessObj = util.getSessionObject(sessionID)
     
-    dataRows = sessObj.DATASTORE
-    ORDER_BY_CRIT = sessObj.ORDERBYCRIT
-    SORT_ORD = sessObj.SORT_ORD 
+    sessObj = util.getSessionObjectDB(sessionID)
+    
+    #dataRows = sessObj.DATASTORE
+    
+    dataRows_serialized = sessObj.DATASTORE
+    dataRows = pickle.loads(dataRows_serialized)
+
+####################################################
+#    ORDER_BY_CRIT = sessObj.ORDERBYCRIT
+#   SORT_ORD = sessObj.SORT_ORD 
+####################################################
+
+    sorter = int(sessObj.SORT)
+
+    sort_ord = ' desc '
+    
+    if sorter == 0:
+        ORDER_BY_CRIT = ORDER_BY_TITLE
+        sort_ord = ' asc '    
+    elif sorter == 1:
+        ORDER_BY_CRIT = ORDER_BY_TITLE
+        sorter = ' desc '
+    elif sorter == 2:
+        ORDER_BY_CRIT = ORDER_BY_DATE
+        sort_ord = ' asc '
+    else:
+        ORDER_BY_CRIT = ORDER_BY_DATE
+        sort_ord = ' desc '    
+
+    SORT_ORD = sort_ord
+
     rowCount = sessObj.ROWCOUNT
     totRows = rowCount
     

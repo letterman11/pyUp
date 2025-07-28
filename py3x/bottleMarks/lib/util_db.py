@@ -33,10 +33,15 @@ working_dir =  os.getcwd()
 session_dir = working_dir + dir_sep +  "sessions"
 print ("Session Dir " + session_dir)
 
-sqlSelectSess = "select sessiondata,userid,rowcount,sort from session where sessionid = {} "
+
+sqlSelectSess = "select sessiondata, sessionblob, userid,rowcount,sort from session where sessionid = {} "
+
+#sqlSelectSess = "select sessiondata,userid,rowcount,sort from session where sessionid = {} "
 sqlSelectSessSQLServer = "select sessiondata,userid,row_count,sort from session where sessionid = {} "
 sqlInsertSess = "insert into session ( sessionid,userid,DATE_TS )  values ( {}, {}, {} ) "
-sqlUpdateSess = "update session set sessiondata = {},  UPDATE_TS =  {}  where sessionid = {} "
+#sqlUpdateSess = "update session set sessiondata = {},  UPDATE_TS =  {}  where sessionid = {} "
+
+sqlUpdateSess = "update session set sessiondata = {}, sessionblob = {}, sort = {}, rowcount = {},  UPDATE_TS =  {}  where sessionid = {} "
 
 def digest_pass(passwd):
     if not passwd:
@@ -94,10 +99,13 @@ def storeSessionObjectDB(sessObj):
     print("storeSessOBJ")
     conn = db_factory().connect()
     curs = conn.cursor()
-    
+    print("fdsdsdfddsfd eeeeeeeeee ", sessObj.SESSIONID)
+    print("fdsdsdfddsfd  ", sessObj.DATASTORE)
     try:
-        curs.execute(sqlUpdateSess.format(place,place,place), (sessObj.SESSIONDATA,datetime.datetime.now(),sessObj.SESSIONID))
+        curs.execute(sqlUpdateSess.format(place,place,place,place,place,place), (sessObj.SESSIONDATA, sessObj.DATASTORE, sessObj.SORT, sessObj.ROWCOUNT,
+                                                                     datetime.datetime.now(),sessObj.SESSIONID))
     except Exception as ex:
+        print ("--++--", ex, "--++--")
         conn.rollback()
         return Marks().renderDefaultView("red",Error(103).errText())
     else:
@@ -106,6 +114,36 @@ def storeSessionObjectDB(sessObj):
         conn.close()
 
     return sessObj 
+
+def getSessionObjectDB(sessionID):
+    
+    print("storeSessOBJ")
+    conn = db_factory().connect()
+    curs = conn.cursor()
+  
+    print("-----", sessionID,  "------")
+
+    try:
+        curs.execute(sqlSelectSess.format(place), (sessionID,))
+
+        res = curs.fetchone()
+        
+    except Exception as ex:
+
+        print(ex, "except")
+        conn.close()
+   
+        return Marks().renderDefaultView("red",Error(103).errText())
+
+    sessObjNew = SessionObject()
+    sessObjNew.SESSIONDATA = res[0]
+    sessObjNew.DATASTORE   = res[1]
+    sessObjNew.USERID      = res[2]
+    sessObjNew.ROWCOUNT    = res[3]
+    sessObjNew.SORT        = res[4]
+
+    return sessObjNew 
+
 
 def validateSessionDB(req):
     sessionID = req.get_cookie('wmSessionID')
