@@ -105,6 +105,8 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
     else:
         ORDER_BY_CRIT = ORDER_BY_DATE
         sort_ord = ' desc '
+        #add below to make sort work
+        sort_crit = 3
 #############################################################################
 #############################################################################
 ##########################################################
@@ -282,7 +284,7 @@ def exec_page(req,user_id,user_name,errObj,sessionID,rowsPerPage,init):
         #sessObj.ORDERBYCRIT = ORDER_BY_CRIT
         #sessObj.SORT_ORD = sort_ord
         ########################################
-        sessObj.SORT = sort_crit or 4
+        sessObj.SORT = sort_crit 
 
         sessObj.USERID = user_id
 
@@ -329,6 +331,8 @@ def exec_page_nav(page,sessionID,tabtype,sort_crit,rowsPerPage,init):
 
     sorter = int(sessObj.SORT)
 
+
+    print (sorter, "SORTER NUM")
     sort_ord = ' desc '
     
     if sorter == 0:
@@ -352,15 +356,17 @@ def exec_page_nav(page,sessionID,tabtype,sort_crit,rowsPerPage,init):
     user_id = sessObj.USERID
 
     #No results do not bother with rest below
+
     if rowCount == 0:
         dbRows=None
         sort_crit = ()
-        return Marks(tabMap[tabtype],dbRows,rowCount).renderMainView(user_id,sort_crit,tabMap,page)
+        return Marks(tabMap[tabtype],dbRows,rowCount).renderTabTableView(user_id,sort_crit,tabMap,page)
 
     print(dataRows[0][0])
    
-    
+
 #### REVISIT BELOW ##############
+
     if page > 1:
  
         page = page - 1
