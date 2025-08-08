@@ -355,72 +355,75 @@ def exec_page_nav(page,sessionID,tabtype,sort_crit,rowsPerPage,init):
     
     user_id = sessObj.USERID
 
-    #No results do not bother with rest below
+    #If No results or rowcount == 0   
+    #page calc  logic will be skipped
+    #as well as exec of index sql query
+    #otherwise if rowcount != 0 proceed 
+    #-----------------------------------
 
-    if rowCount == 0:
-        dbRows=None
+    dbRows = None
+    if rowCount != 0:
+        
         sort_crit = ()
-        return Marks(tabMap[tabtype],dbRows,rowCount).renderTabTableView(user_id,sort_crit,tabMap,page)
-
-    print(dataRows[0][0])
-   
+        print(dataRows[0][0])
+  
 
 #### REVISIT BELOW ##############
 
-    if page > 1:
- 
-        page = page - 1
-        i = page * rowsPerPage
-        page = page + 1
-        j = page * rowsPerPage
- 
-        if j > totRows:
-            j = totRows
-    else:
-        i = 0
-        if totRows > rowsPerPage:     #all logic to account for page 1 ( really a spec case here ) being first of potentially 
-            j = rowsPerPage           #large result set or set less than a page
-        elif totRows < rowsPerPage:
-            j = totRows
+        if page > 1:
+    
+            page = page - 1
+            i = page * rowsPerPage
+            page = page + 1
+            j = page * rowsPerPage
+    
+            if j > totRows:
+                j = totRows
+        else:
+            i = 0
+            if totRows > rowsPerPage:     #all logic to account for page 1 ( really a spec case here ) being first of potentially 
+                j = rowsPerPage           #large result set or set less than a page
+            elif totRows < rowsPerPage:
+                j = totRows
+                
+            ##### python vs perl ######
             
-        ##### python vs perl ######
+    #### REVISIT ABOVE ####
+    
+        sql_str = "  " + str(dataRows[i][0]) + "  "
+    
+        i = i + 1
         
-#### REVISIT ABOVE ####
-   
-    sql_str = "  " + str(dataRows[i][0]) + "  "
-   
-    i = i + 1
-    
-    for qq in range(i,j):
-        data =  dataRows[qq][0]
-        sql_str += ", " + str(data) + "  " 
-     
-    sql_str +=  ") " + ORDER_BY_CRIT + " "
-    sql_str += SORT_ORD
+        for qq in range(i,j):
+            data =  dataRows[qq][0]
+            sql_str += ", " + str(data) + "  " 
+        
+        sql_str +=  ") " + ORDER_BY_CRIT + " "
+        sql_str += SORT_ORD
 
-    executed_sql_str_page = main_sql_str_page + sql_str
+        executed_sql_str_page = main_sql_str_page + sql_str
 
-    print(executed_sql_str_page)
-#### SQL execute start
-#######################
-    conn = db.db_factory()
-    conn = conn.connect()
-    conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
-    
-    try:
-        curs = conn.cursor()
+        print(executed_sql_str_page)
+    #### SQL execute start
+    #######################
+        conn = db.db_factory()
+        conn = conn.connect()
+        conn.text_factory = lambda x: x.decode("utf-8", errors = 'ignore')
+        
+        try:
+            curs = conn.cursor()
 
-        #curs.execute(executed_sql_str_page, (user_id,))
-        curs.execute(executed_sql_str_page)
-        dbRows = curs.fetchall()
+            #curs.execute(executed_sql_str_page, (user_id,))
+            curs.execute(executed_sql_str_page)
+            dbRows = curs.fetchall()
 
-    except Exception as inst:    
-        print (inst)
-        marks = Marks(tabMap[tabtype],None,None,Error(2000))
-        #return marks.renderMainView(user_name,sort_crit,tabMap)
-        return marks.renderMainView(user_id,sort_crit,tabMap)
-###################
-### sql execute end
+        except Exception as inst:    
+            print (inst)
+            marks = Marks(tabMap[tabtype],None,None,Error(2000))
+            #return marks.renderMainView(user_name,sort_crit,tabMap)
+            return marks.renderMainView(user_id,sort_crit,tabMap)
+    ###################
+    ### sql execute end
     
     
     markObj = Marks(tabMap[tabtype],dbRows,rowCount)
