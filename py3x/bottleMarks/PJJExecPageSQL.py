@@ -191,7 +191,12 @@ def exec_page(req,user_id,user_name,errObj,init):
         tabtype = tabMap['tab_SRCH_TITLE']
     elif util.isset(searchDateStart) and util.isset(searchDateEnd) and (searchDateStart != searchDateEnd):
     #elif util.isset(searchDateStart) and util.isset(searchDateEnd):
-        dateAddedEnd =  int(((util.convertDateEpoch(searchDateEnd) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
+
+        #delete of mozilla micorseconds
+        #dateAddedEnd =  int(((util.convertDateEpoch(searchDateEnd) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
+        #-------------------------------
+        dateAddedEnd =  int((util.convertDateEpoch(searchDateEnd) ) + (60 * 60 * 24))  
+
 #        qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(util.convertDateEpoch(searchDateEnd))
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
@@ -200,7 +205,12 @@ def exec_page(req,user_id,user_name,errObj,init):
         util.storeSQLDB(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
     elif util.isset(searchDateStart):
-        dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
+        #delete of mozilla microseconds
+        #dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
+        #---------------------------------------------------------------
+
+        dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) ) + (60 * 60 * 24))  ) 
+
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr + " ) "
         storedSQLStr = g_main_sql_str + qstr 

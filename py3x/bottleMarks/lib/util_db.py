@@ -163,6 +163,18 @@ def convertTime(dateAdded):
     #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
     return dateAdded
 
+def convertTime2(dateAdded):
+
+    if re.match('[0-9]{15,16}',str(dateAdded)):
+        return convertTime(dateAdded)
+
+    (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded)[0:6]
+    curr_date_tuple  = time.localtime( dateAdded)
+    day_of_week = time.strftime("%a",curr_date_tuple)
+    dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
+    #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
+    return dateAdded
+
 def convertDateEpoch(humanDate):
 
     res1 = re.match(r'([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})',humanDate)
@@ -181,7 +193,8 @@ def convertDateEpoch(humanDate):
         day = res.group(3)
 
     dateAdded = datetime.datetime(int(year),int(month),int(day),0,0).timestamp()
-    dateAdded = int(dateAdded) * (1000 * 1000);
+    #dateAdded = int(dateAdded) * (1000 * 1000);
+    dateAdded = int(dateAdded);
 
     return dateAdded
 
