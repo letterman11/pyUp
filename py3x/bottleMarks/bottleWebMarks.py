@@ -174,7 +174,6 @@ def registerAuth():
     insert_sql_str = "INSERT INTO WM_USER (USER_ID,USER_NAME,USER_PASSWD,EMAIL_ADDRESS) VALUES ({},{},{},{})".format(place,place,place,place)
     
     try:
-        #curs.execute(insert_sql_str, (user_id, user_name, user_pass1, email_address,))
         curs.execute(insert_sql_str, (user_id, user_name, hash_pass, email_address,))
     except Exception:
         print ("Insert Error Error Error wm_user")
@@ -246,7 +245,13 @@ def addWebMark():
     unix_epochs = int(time.time())
 
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+
+    #delete of mozilla microseconds
+    #dateAdded = unix_epochs * (1000 * 1000)
+    #------------------------------------
+
+    dateAdded = unix_epochs
+
     date_Added = unix_epochs # for new datetime column
     (year, mon, day, hour, mins, secs)  = time.localtime(date_Added)[0:6]
     date_Added = ('{}-{}-{} {}:{}:{}').format(year,mon,day,hour,mins,secs)
@@ -319,7 +324,8 @@ def updateMark():
  
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+
+    #dateAdded = unix_epochs * (1000 * 1000)
 
     conn = db.db_factory().connect()
     curs = conn.cursor()
@@ -359,7 +365,9 @@ def deleteMark():
 
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+
+    #dateAdded = unix_epochs * (1000 * 1000)
+
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
@@ -398,7 +406,6 @@ def deleteMark():
 def deltaPass():
     
     try:
-        #(user_id,user_name,user_pass) = pre_auth() or (None,None,None)
         (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
     except:
         return renderMainView(request.params['user_name'],Error(112))
@@ -414,7 +421,6 @@ def deltaPass():
             conn = db.db_factory().connect()
             curs = conn.cursor()
 
-            #curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_passwd,user_name));
             curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_hash_pass,user_name));
         except:
             return renderMainView(user_id,Error(102))
@@ -454,7 +460,6 @@ def validate_session():
         return False
 
 def validate_session2(req):
-    #return util.validateSession2(req) 
     return util.validateSessionDB(req) 
 
 def authorize(user_id,user_name):
@@ -470,9 +475,7 @@ def authorize(user_id,user_name):
     response.set_cookie('Counter', str(init_count), path=path, expires=fiveDayExpire)
     print(str(user_id) , " USERID")
     
-#    util.saveSession(sessionID)
     util.saveSessionDB(sessionID,user_id)
-#   response.set_cookie('expires', 60*60)
 
 def renderMainView(user_id=None,errObj=None):
     user_name=None
@@ -490,6 +493,9 @@ def renderErrorPageView():
           return Marks().renderErrorPageView()
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8072', reloader=True, server='waitress', workers=3)
+       #app.run(debug=True, host="0.0.0.0", port='8072', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-#        app.run(daemon=False, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+#        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
+        app.run(daemon=True, debug=False, host="0.0.0.0", port='8096', reloader=True, server='gunicorn', workers=3)
+#        app.run(daemon=True, debug=False, host="0.0.0.0", port='8096', reloader=True, server='gunicorn', workers=3)
+# waitress-serve --port=8080 --url-scheme=http bottleWebMarks:app
