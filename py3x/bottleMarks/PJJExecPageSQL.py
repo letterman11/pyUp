@@ -158,7 +158,11 @@ def exec_page(req,user_id,user_name,errObj,sessionID):
         util.storeSQL(storedSQLStr,req)
         tabtype = tabMap['tab_SRCH_DATE']
     elif util.isset(searchDateStart):
-        dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
+
+        #delete of mozilla microseconds
+        #dateAddedEnd =  int(((util.convertDateEpoch(searchDateStart) / (1000 * 1000)) + (60 * 60 * 24)) * (1000 * 1000) ) 
+        dateAddedEnd =  int((util.convertDateEpoch(searchDateEnd) ) + (60 * 60 * 24))  
+
         qstr =  " dateAdded between " + str(util.convertDateEpoch(searchDateStart)) + " and " + str(dateAddedEnd)
         exec_sql_str = g_main_sql_str + qstr 
         storedSQLStr = g_main_sql_str + qstr 

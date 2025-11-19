@@ -246,7 +246,13 @@ def addWebMark():
     unix_epochs = int(time.time())
 
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+
+    #delete mozilla microseconds
+    #dateAdded = unix_epochs * (1000 * 1000)
+    #--------------------------------------
+
+    dateAdded = unix_epochs 
+
     date_Added = unix_epochs # for new datetime column
     (year, mon, day, hour, mins, secs)  = time.localtime(date_Added)[0:6]
     date_Added = ('{}-{}-{} {}:{}:{}').format(year,mon,day,hour,mins,secs)
@@ -313,7 +319,10 @@ def updateMark():
  
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+
+    #dateAdded = unix_epochs * (1000 * 1000)
+
+    dateAdded = unix_epochs
 
     conn = db.db_factory().connect()
     curs = conn.cursor()
@@ -353,7 +362,11 @@ def deleteMark():
 
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+
+    #dateAdded = unix_epochs * (1000 * 1000)
+
+    dateAdded = unix_epochs 
+
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
@@ -504,6 +517,6 @@ def renderMainViewPageNav(page):
 '''
 
 if __name__ ==  '__main__':
-        app.run(debug=True, host="0.0.0.0", port='8099', reloader=True, server='waitress', workers=3)
+        app.run(debug=True, host="0.0.0.0", port='8099', reloader=True, server='waitress')
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
 #        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
