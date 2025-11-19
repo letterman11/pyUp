@@ -128,7 +128,8 @@ class Marks(object):
         for row in self.dbObject:
             (url,title,added) = (row[0],row[1],row[2])
             bk_id = row[3]
-            added = self.convertTime(added)
+            #added = self.convertTime(added)
+            added = self.convertTime2(added)
             i += 1
             alt =  (i % 2) or 2    
             row_color = "row_color" + str(alt)
@@ -157,4 +158,12 @@ class Marks(object):
 
     def convertTime(self, dateAdded):
         dateAdded = datetime.datetime.fromtimestamp( dateAdded/(1000 * 1000) ).strftime("%m-%d-%Y %H:%M:%S")
+        return dateAdded
+
+    def convertTime2(self, dateAdded):
+
+        if re.match('[0-9]{15,16}',str(dateAdded)):
+            return self.convertTime(dateAdded)  
+
+        dateAdded = datetime.datetime.fromtimestamp( dateAdded ).strftime("%m-%d-%Y %H:%M:%S")
         return dateAdded

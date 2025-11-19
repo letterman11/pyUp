@@ -15,7 +15,7 @@ import re
 
 app = Bottle()  
 
-app_cookie_path="/pyWebMarks"
+app_cookie_path="/ex2WebMarks"
 
 place = db.db_factory().place
 
@@ -24,6 +24,7 @@ place = db.db_factory().place
 # server like Apache or Nginx
 @app.route('/public/css/<filename>')
 @app.route('/static/css/<filename>')
+@app.route('/static/ex2/css/<filename>')
 def server_static_css(filename):
     return static_file(filename, root="./public/css")
      
@@ -34,6 +35,7 @@ def server_static_imgs(filename):
 
 @app.route('/public/js/<filename>')
 @app.route('/static/js/<filename>')
+@app.route('/static/ex2/js/<filename>')
 def server_static_js(filename):
     return static_file(filename, root="./public/js")
 ###########################################################
@@ -124,13 +126,13 @@ def pre_auth2():
         return None
     
 
-@app.route("/pyWebMarks/registration")
+@app.route("/ex2WebMarks/registration")
 @app.route('/registration')
 def register():
     return Marks().renderRegistrationView()
 
 
-@app.post("/pyWebMarks/regAuth")
+@app.post("/ex2WebMarks/regAuth")
 @app.post('/regAuth')
 def registerAuth():
 
@@ -188,7 +190,7 @@ def registerAuth():
 
     return Marks().renderDefaultView("red", "Successfully Registered " + user_name)
 
-@app.route("/pyWebMarks/default")
+@app.route("/ex2WebMarks/default")
 @app.route('/default')
 def logIn():
     return Marks().renderDefaultView()
@@ -204,45 +206,45 @@ def error404(error):
 ###  --  Authenticated routes -- via authenticate decorator -- ###
 ##################################################################
 
-@app.route("/pyWebMarks")
+@app.route("/ex2WebMarks")
 @app.route("/")
 @authenticate
 def index():
     return renderMainView()
 
-@app.route("/pyWebMarks/webMarks")
+@app.route("/ex2WebMarks/webMarks")
 @app.route("/webMarks")
 @authenticate
 def indexWB():
     return renderMainView()
 
 
-@app.route("/pyWebMarks/tabView")
+@app.route("/ex2WebMarks/tabView")
 @app.route("/tabView")
 @authenticate
 def indexView():
     return renderMainView()
 
-@app.route("/pyWebMarks/tabTableView")
+@app.route("/ex2WebMarks/tabTableView")
 @app.route("/tabTableView")
 @authenticate
 def tabTableView():
     return renderTabTableView(1)
     
-@app.route("/pyWebMarks/tabTableViewNav/<page:int>/<rowsPerPage:int>")
+@app.route("/ex2WebMarks/tabTableViewNav/<page:int>/<rowsPerPage:int>")
 @app.route("/tabTableViewNav/<page:int>/<rowsPerPage:int>")
 @authenticate
 def tabTableViewNav(page,rowsPerPage):
     return renderTabTableViewNav(page,rowsPerPage)
 
-@app.post("/pyWebMarks/searchMark")
+@app.post("/ex2WebMarks/searchMark")
 @app.post("/searchMark")
 @authenticate
 def searchWebMark():
     return renderMainView(init=False)
     #return renderTabTableView()
     
-@app.post("/pyWebMarks/insertMark")
+@app.post("/ex2WebMarks/insertMark")
 @app.post("/insertMark")
 @authenticate
 def addWebMark():
@@ -262,7 +264,13 @@ def addWebMark():
     unix_epochs = int(time.time())
 
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+
+    #delete of mozilla microseconds
+    #dateAdded = unix_epochs * (1000 * 1000)
+    #------------------------------------
+
+    dateAdded = unix_epochs
+
     date_Added = unix_epochs # for new datetime column
     (year, mon, day, hour, mins, secs)  = time.localtime(date_Added)[0:6]
     date_Added = ('{}-{}-{} {}:{}:{}').format(year,mon,day,hour,mins,secs)
@@ -311,7 +319,7 @@ def addWebMark():
       
     return renderMainView()
 
-@app.post("/pyWebMarks/updateMark")
+@app.post("/ex2WebMarks/updateMark")
 @app.post("/updateMark")
 @authenticate
 def updateMark():
@@ -329,7 +337,8 @@ def updateMark():
  
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+    #dateAdded = unix_epochs * (1000 * 1000)
+    dateAdded = unix_epochs 
 
     conn = db.db_factory().connect()
     curs = conn.cursor()
@@ -359,7 +368,7 @@ def updateMark():
     return renderMainView()
 
 
-@app.post("/pyWebMarks/deleteMark")
+@app.post("/ex2WebMarks/deleteMark")
 @app.post("/deleteMark")
 @authenticate
 def deleteMark():
@@ -369,7 +378,9 @@ def deleteMark():
 
     unix_epochs = int(time.time())
     #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+    #dateAdded = unix_epochs * (1000 * 1000)
+
+    dateAdded = unix_epochs 
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
@@ -402,7 +413,7 @@ def deleteMark():
  
     return renderMainView()
 
-@app.post("/pyWebMarks/deltaPass")
+@app.post("/ex2WebMarks/deltaPass")
 @app.post("/deltaPass")
 @authenticate
 def deltaPass():
@@ -439,12 +450,12 @@ def deltaPass():
 ## end authenticated routes via decorator ############################
 ######################################################################
 
-@app.route("/pyWebMarks/logout")
+@app.route("/ex2WebMarks/logout")
 @app.route("/logout")
 def logOut():
     return Marks().renderDefaultView()
 
-@app.post("/pyWebMarks/authenCred")
+@app.post("/ex2WebMarks/authenCred")
 @app.post("/authenCred")
 def authenCredFunc():
 
@@ -574,5 +585,5 @@ def renderErrorPageView():
 if __name__ ==  '__main__':
 #        app.run(debug=True, host="0.0.0.0", port='8091', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-        app.run(daemon=True, debug=False, host="0.0.0.0", port='8088', reloader=True, server='gunicorn', workers=3)
+        app.run(daemon=True, debug=False, host="0.0.0.0", port='8089', reloader=True, server='gunicorn', workers=3)
 
