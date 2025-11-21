@@ -1,8 +1,8 @@
 import sqlite3
 import mysql.connector
-import pyodbc
+#import pyodbc
 import re
-
+import time
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 dbConf = "stockDbConfig.dat" #@@@@@@@
@@ -14,6 +14,7 @@ class db_factory(object):
     
     place = None 
     driver = None
+    azure_db_wait = 70
     
     def __init__(self, config_file=None):
         self.config_file = config_file
@@ -71,6 +72,9 @@ class db_factory(object):
     def db_driver(self):
         return config_hash['driver']
 
+    def db_port(self):
+        return config_hash['port']
+
     def connect(self):
 
         if re.match(r'sqlite3', self.db_driver()):
@@ -83,16 +87,31 @@ class db_factory(object):
             return  mysql.connector.connect(user=self.db_user(), password=self.db_passwd(),
                               host=self.db_host(),
                               database=self.db_name(),
-                              use_pure=False)
+                              port=self.db_port() or 3306 ,
+                              #use_pure=False)
+                              use_pure=True)
 
         elif re.match(r'pyodbc', self.db_driver()):
 
+            conn=None
             user=self.db_user()
             password=self.db_passwd()
             host=self.db_host()
             database=self.db_name()
 
-            connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no'
-            return pyodbc.connect(connectionString)
-           
- 
+            #Using free tier Azure SQL which pauses db so retry needed to wakeup paused db
+            # rough logic just to get past auto-pause of free tier
+            connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={host};DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no;ConnectionTimeout=120;ConnectionRetryCount=2'
+            try:
+                print("First Connection Call")
+                conn =  pyodbc.connect(connectionString)
+            except Exception as ex:
+                print("Second Connection Call")
+                time.sleep(db_factory.azure_db_wait)
+                conn =  pyodbc.connect(connectionString)
+            finally:
+                if not conn:
+                    Marks().renderDefaultView(red, "Database TimeOut")                    
+                else:
+                    print(conn)
+                    return conn
