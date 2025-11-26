@@ -280,6 +280,8 @@ def addWebMark():
     curs = conn.cursor()
     place = db.db_factory.place
 
+    conn.autocommit = False
+
     curs.execute("select max(BOOKMARK_ID) from WM_BOOKMARK")
     (tbl1MaxId,) = curs.fetchone()
     curs.execute("select max(PLACE_ID) from WM_PLACE")
@@ -343,12 +345,14 @@ def updateMark():
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
+    conn.autocommit = False
+
     try:
         curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place) , (tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute update")
-        raise ex
+        #raise ex
         return renderMainView(user_id,Error(153))
 
     (tblPlaceId,) = curs.fetchone()
@@ -358,7 +362,8 @@ def updateMark():
         curs.execute("update WM_BOOKMARK set TITLE = {} where BOOKMARK_ID = {} ".format(place,place), (title, tblBookMarkId,))
         curs.execute("update WM_PLACE set  URL = {} , TITLE = {} where PLACE_ID = {} ".format(place,place,place), (url, title,tblPlaceId,))
     except Exception as ex:
-        raise ex
+        #raise ex
+        conn.rollback()
         return renderMainView(user_id,Error(153))
     else:
         conn.commit()
@@ -384,12 +389,14 @@ def deleteMark():
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
+    conn.autocommit = False
+
     try:
         curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place), (tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute select in deleteMark")
-        raise ex
+        #raise ex
         return renderMainView(user_id,Error(153))
 
     (tblPlaceId,) = curs.fetchone()
@@ -403,7 +410,8 @@ def deleteMark():
 
     except Exception as ex:
         print ("error execute delettion")
-        raise ex
+        #raise ex
+        conn.rollback()
         return renderMainView(user_id,Error(153))
 
     else:
