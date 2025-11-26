@@ -23,17 +23,17 @@ place = db.db_factory().place
 # served by bottle -- ideally would be served by static 
 # server like Apache or Nginx
 @app.route('/public/css/<filename>')
-@app.route('/static/css/<filename>')
+@app.route('/static/ex/css/<filename>')
 def server_static_css(filename):
     return static_file(filename, root="./public/css")
      
 @app.route('/public/images/<filename>')
-@app.route('/static/images/<filename>')
+@app.route('/static/ex/images/<filename>')
 def server_static_imgs(filename):
     return static_file(filename, root="./public/images")
 
 @app.route('/public/js/<filename>')
-@app.route('/static/js/<filename>')
+@app.route('/static/ex/js/<filename>')
 def server_static_js(filename):
     return static_file(filename, root="./public/js")
 ###########################################################
@@ -272,6 +272,8 @@ def addWebMark():
     curs = conn.cursor()
     place = db.db_factory.place
 
+    conn.autocommit = False
+
     curs.execute("select max(BOOKMARK_ID) from WM_BOOKMARK")
     (tbl1MaxId,) = curs.fetchone()
     curs.execute("select max(PLACE_ID) from WM_PLACE")
@@ -345,6 +347,8 @@ def updateMark():
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
+    conn.autocommit = False
+
     try:
         curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place) , (tblBookMarkId,))
 
@@ -360,7 +364,8 @@ def updateMark():
         curs.execute("update WM_BOOKMARK set TITLE = {} where BOOKMARK_ID = {} ".format(place,place), (title, tblBookMarkId,))
         curs.execute("update WM_PLACE set  URL = {} , TITLE = {} where PLACE_ID = {} ".format(place,place,place), (url, title,tblPlaceId,))
     except Exception as ex:
-        raise ex
+        conn.rollback()
+        #raise ex
         return renderMainView(user_id,Error(153))
     else:
         conn.commit()
@@ -387,12 +392,15 @@ def deleteMark():
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
+    conn.autocommit = False
+
     try:
         curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place), (tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute select in deleteMark")
-        raise ex
+         
+        #raise ex
         return renderMainView(user_id,Error(153))
 
     (tblPlaceId,) = curs.fetchone()
@@ -406,7 +414,8 @@ def deleteMark():
 
     except Exception as ex:
         print ("error execute delettion")
-        raise ex
+        conn.rollback()
+        #raise ex
         return renderMainView(user_id,Error(153))
 
     else:
@@ -541,3 +550,4 @@ if __name__ ==  '__main__':
 #        app.run(debug=True, host="0.0.0.0", port='8070', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
         app.run(daemon=False, debug=False, host="0.0.0.0", port='8088', reloader=True, server='gunicorn', workers=3)
+#        app.run(daemon=False, debug=False, host="0.0.0.0", port='8097', reloader=True, server='gunicorn', workers=3)
