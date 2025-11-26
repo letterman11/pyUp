@@ -167,6 +167,8 @@ def registerAuth():
     ########################################
     conn = db.db_factory().connect()
     curs = conn.cursor()
+
+    conn.autocommit = False
     ########################################
 
     hash_pass = util.digest_pass(user_pass1)
@@ -177,6 +179,7 @@ def registerAuth():
         curs.execute(insert_sql_str, (user_id, user_name, hash_pass, email_address,))
     except Exception:
         print ("Insert Error Error Error wm_user")
+        conn.rollback()
         return Marks().renderRegistrationView(Error(120).errText())
     else:
         conn.commit()
@@ -260,6 +263,8 @@ def addWebMark():
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
+    conn.autocommit = False
+
     curs.execute("select max(BOOKMARK_ID) from WM_BOOKMARK")
     (tbl1MaxId,) = curs.fetchone()
     curs.execute("select max(PLACE_ID) from WM_PLACE")
@@ -330,12 +335,14 @@ def updateMark():
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
+    conn.autocommit = False
+
     try:
         curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place) , (tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute update")
-        raise ex
+        #raise ex
         return renderMainView(user_id,Error(153))
 
     (tblPlaceId,) = curs.fetchone()
@@ -345,7 +352,8 @@ def updateMark():
         curs.execute("update WM_BOOKMARK set TITLE = {} where BOOKMARK_ID = {} ".format(place,place), (title, tblBookMarkId,))
         curs.execute("update WM_PLACE set  URL = {} , TITLE = {} where PLACE_ID = {} ".format(place,place,place), (url, title,tblPlaceId,))
     except Exception as ex:
-        raise ex
+        conn.rollback()
+        #raise ex
         return renderMainView(user_id,Error(153))
     else:
         conn.commit()
@@ -371,12 +379,13 @@ def deleteMark():
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
+    conn.autocommit = False
+
     try:
         curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place), (tblBookMarkId,))
 
     except Exception as ex:
         print ("error execute select in deleteMark")
-        raise ex
         return renderMainView(user_id,Error(153))
 
     (tblPlaceId,) = curs.fetchone()
@@ -389,8 +398,10 @@ def deleteMark():
         curs.execute("delete from  WM_BOOKMARK  where BOOKMARK_ID = {} ".format(place),(tblBookMarkId,))
 
     except Exception as ex:
-        print ("error execute delettion")
-        raise ex
+        print ("error execute deletion")
+        
+        conn.rollback()
+        #raise ex
         return renderMainView(user_id,Error(153))
 
     else:
@@ -496,6 +507,6 @@ if __name__ ==  '__main__':
        #app.run(debug=True, host="0.0.0.0", port='8072', reloader=True, server='waitress', workers=3)
 #        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
 #        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
-        app.run(daemon=True, debug=False, host="0.0.0.0", port='8096', reloader=True, server='gunicorn', workers=3)
+        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
 #        app.run(daemon=True, debug=False, host="0.0.0.0", port='8096', reloader=True, server='gunicorn', workers=3)
 # waitress-serve --port=8080 --url-scheme=http bottleWebMarks:app
