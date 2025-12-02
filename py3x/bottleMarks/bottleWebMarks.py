@@ -1,512 +1,536 @@
-from bottle import Bottle, run, route, request, response, static_file, error
-from datetime import datetime
-from marks import Marks
+
+"""
+Webmarks Application - Bookmark Management System
+A Bottle-based web application for managing and syncing bookmarks.
+author: angus brooks -- refactored and cleaned by ai
+"""
+
+from bottle import Bottle, request, response, static_file, error
+from datetime import datetime, timedelta
 from functools import wraps
-from PJJExecPageSQL import exec_page
-import lib.util_db as util 
+from typing import Optional, Tuple
 import time
+import re
+import logging
+
+from marks import Marks
+from PJJExecPageSQL import exec_page
+import lib.util_db as util
 import connection_factory as db
 from error import Error
-import re
 
-app = Bottle()  
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-app_cookie_path="/pyWebMarks" 
+# Initialize application
+app = Bottle()
+APP_COOKIE_PATH = "/pyWebMarks"
+COOKIE_EXPIRY_DAYS = 5
 
-place = db.db_factory().place
+# Database placeholder for parameterized queries
+PLACE = db.db_factory().place
 
-# static files ############################################
-# served by bottle -- ideally would be served by static 
-# server like Apache or Nginx
+
+#----------------------------------------------------------#
+# Static File Routes
+#----------------------------------------------------------#
+
 @app.route('/public/css/<filename>')
 @app.route('/static/css/<filename>')
-def server_static_css(filename):
+def serve_static_css(filename):
+    """Serve CSS files (ideally use Nginx/Apache in production)."""
     return static_file(filename, root="./public/css")
-     
+
+
 @app.route('/public/images/<filename>')
 @app.route('/static/images/<filename>')
-def server_static_imgs(filename):
+def serve_static_images(filename):
+    """Serve image files."""
     return static_file(filename, root="./public/images")
+
 
 @app.route('/public/js/<filename>')
 @app.route('/static/js/<filename>')
-def server_static_js(filename):
+def serve_static_js(filename):
+    """Serve JavaScript files."""
     return static_file(filename, root="./public/js")
-###########################################################
 
 
-### decorator functions
+#----------------------------------------------------------#
+# Authentication & Authorization
+#----------------------------------------------------------#
+
 def authenticate(f):
+    """Decorator to protect routes requiring authentication."""
     @wraps(f)
     def wrapper(*args, **kwargs):
-        #if validate_session() == False:
-        aa = [ (k,v) for k,v in request.forms.allitems()]
-        print( aa )
-        if validate_session2(request) == False:
+        if not validate_session(request):
+            logger.warning("Unauthorized access attempt")
             return Marks().renderDefaultView()
         return f(*args, **kwargs)
     return wrapper
 
 
-def pre_auth(): 
+def validate_session(req) -> bool:
+    """Validate user session from database."""
+    return util.validateSessionDB(req)
+
+
+def authenticate_user(username: str, password: str, old_password: Optional[str] = None) -> Optional[Tuple[str, str, str]]:
+    """
+    Authenticate user credentials.
     
-    usr_name = util.unWrap(request, 'user_name') 
-    usr_pass = util.unWrap(request, 'user_pass')
-    old_usr_pass = util.unWrap(request, 'old_user_pass')
+    Args:
+        username: User's username
+        password: User's password
+        old_password: Old password (for password changes)
     
-    exec_sql_str = str()
-
-    if old_usr_pass: # for update
-        exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_passwd = '" + old_usr_pass +  "' and user_name ='"  + usr_name + "' "
-    else:
-        exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_passwd = '" + usr_pass + "' and user_name ='" + usr_name  + "' "
-
-    ### error checking ????? ##############
-    conn = db.db_factory().connect()
-    curs = conn.cursor()
-    curs.execute(exec_sql_str)
-    user_row = curs.fetchall()
-    conn.close()
-	
-    if user_row:
-        user_row= user_row[0]
-        print (user_row)
-        print ("user row list above")
-        usr_id,usr_name,usr_pass = user_row[0],user_row[1],user_row[2]
-       
-        return (usr_id,usr_name,usr_pass)
-
-    else:
+    Returns:
+        Tuple of (user_id, username, password) if valid, None otherwise
+    """
+    if not username or not password:
+        return None
+    
+    password_digest = util.digest_pass(password)
+    old_password_digest = util.digest_pass(old_password) if old_password else None
+    
+    query = "SELECT user_id, user_name, user_passwd FROM WM_USER WHERE user_name = {}".format(PLACE)
+    
+    try:
+        conn = db.db_factory().connect()
+        cursor = conn.cursor()
+        cursor.execute(query, (username,))
+        db_row = cursor.fetchall()
+        conn.close()
+        
+        if not db_row:
+            return None
+        
+        db_user_id, db_username, db_password_hash = db_row[0]
+        
+        # Check if old password matches (for password changes)
+        if old_password and (db_password_hash == old_password or db_password_hash == old_password_digest):
+            return (db_user_id, db_username, password)
+        
+        # Check if current password matches
+        if db_password_hash == password or db_password_hash == password_digest:
+            return (db_user_id, db_username, db_password_hash)
+        
         return None
         
-def pre_auth2():
-    
-    usr_name = util.unWrap(request, 'user_name') 
-    usr_pass = util.unWrap(request, 'user_pass')
-    old_usr_pass = util.unWrap(request, 'old_user_pass')
-    
-    if not usr_name or not usr_pass:
-        return None;
-
-    password_digest = util.digest_pass(usr_pass);
-    password_old_digest = util.digest_pass(old_usr_pass);
-        
-    exec_sql_str = "select user_id, user_name, user_passwd from WM_USER where user_name = '" + usr_name + "' ";
-    
-    ### error checking ????? ##############
-
-    conn = db.db_factory().connect()
-    curs = conn.cursor()
-    curs = conn.cursor()
-    curs.execute(exec_sql_str)
-    
-    db_row = curs.fetchall()
-
-    conn.close()
-    
-    if db_row:
-        print (db_row)
-        (db_usr_id, db_usr_name, db_usr_pass) = db_row.pop()
-    else:
+    except Exception as ex:
+        logger.error(f"Authentication error: {ex}")
         return None
-              
-   
-    if(util.isset(old_usr_pass) and (db_usr_pass == old_usr_pass) or db_usr_pass == password_old_digest):
-         
-        return (db_usr_id, db_usr_name, usr_pass); 
+
+
+def create_session(user_id: str, username: str):
+    """Create user session and set cookies."""
+    session_id = util.genSessionID()
+    expiry_timestamp = int(time.time()) + (60 * 60 * 24 * COOKIE_EXPIRY_DAYS)
     
-    elif ((db_usr_pass == usr_pass) or (db_usr_pass == password_digest)):
+    response.set_cookie('wmSessionID', str(session_id), path=APP_COOKIE_PATH, expires=expiry_timestamp)
+    response.set_cookie('wmUserID', str(user_id), path=APP_COOKIE_PATH, expires=expiry_timestamp)
+    response.set_cookie('wmUserName', str(username), path=APP_COOKIE_PATH, expires=expiry_timestamp)
+    response.set_cookie('Counter', '0', path=APP_COOKIE_PATH, expires=expiry_timestamp)
     
-        return (db_usr_id, db_usr_name, db_usr_pass) 
+    util.saveSessionDB(session_id, user_id)
+    logger.info(f"Session created for user: {username}")
+
+
+#----------------------------------------------------------#
+# Database Helper Functions
+#----------------------------------------------------------#
+
+def get_max_ids(cursor) -> Tuple[int, int]:
+    """Get maximum bookmark and place IDs."""
+    cursor.execute("SELECT MAX(BOOKMARK_ID) FROM WM_BOOKMARK")
+    bookmark_id = cursor.fetchone()[0] or 0
     
-    else:
-        return None
+    cursor.execute("SELECT MAX(PLACE_ID) FROM WM_PLACE")
+    place_id = cursor.fetchone()[0] or 0
     
+    return bookmark_id + 1, place_id + 1
+
+
+def check_duplicate_bookmark(cursor, user_id: str, url: str) -> bool:
+    """Check if bookmark already exists for user."""
+    query = """
+        SELECT b.url FROM WM_BOOKMARK a, WM_PLACE b 
+        WHERE a.PLACE_ID = b.PLACE_ID AND a.USER_ID = {} AND b.URL = {}
+    """.format(PLACE, PLACE)
+    
+    cursor.execute(query, (user_id, url))
+    return cursor.fetchone() is not None
+
+
+def get_place_id_for_bookmark(cursor, bookmark_id: str) -> Optional[int]:
+    """Get place_id for a given bookmark_id."""
+    query = "SELECT PLACE_ID FROM WM_BOOKMARK WHERE BOOKMARK_ID = {}".format(PLACE)
+    cursor.execute(query, (bookmark_id,))
+    result = cursor.fetchone()
+    return result[0] if result else None
+
+
+#----------------------------------------------------------#
+# Public Routes
+#----------------------------------------------------------#
 
 @app.route("/pyWebMarks/registration")
 @app.route('/registration')
 def register():
+    """Display registration page."""
     return Marks().renderRegistrationView()
 
 
 @app.post("/pyWebMarks/regAuth")
 @app.post('/regAuth')
-def registerAuth():
-
+def register_user():
+    """Handle user registration."""
     try:
-        user_name = request.params['user_name']
-        user_pass1 = request.params['new_user_pass1']
-        user_pass2 = request.params['new_user_pass2']
-        email_address = request.params['email_address']
-
+        username = request.params['user_name']
+        password1 = request.params['new_user_pass1']
+        password2 = request.params['new_user_pass2']
+        email = request.params['email_address']
     except KeyError:
-        return Marks().renderRegistrationView(Error(112).errText()) 
-         
-
-    if (re.match(r'^$',user_name) or re.match(r'^$',user_pass1) or re.match(r'^$',user_pass2)):
-        return Marks().renderRegistrationView(Error(107).errText()) 
+        return Marks().renderRegistrationView(Error(112).errText())
     
-    if (user_pass1 !=  user_pass2):
-        return Marks().renderRegistrationView(Error(113).errText()) 
-
-    if len(user_pass1) < 6:
+    # Validation
+    if not username or not password1 or not password2:
+        return Marks().renderRegistrationView(Error(107).errText())
+    
+    if password1 != password2:
+        return Marks().renderRegistrationView(Error(113).errText())
+    
+    if len(password1) < 6:
         return Marks().renderRegistrationView(Error(111).errText())
-
-    if not re.match(r"^[a-zA-z0-9\.]+\@[a-zA-Z0-9\.]+",email_address):
-        return Marks().renderRegistrationView(Error(119).errText())
-   
-
-    ##########################################################    
-
-    part_id = util.genSessionID()
-    user_id = user_name[0:5]
-    part_id = part_id[0:5]
-
-    user_id = user_id+"_"+part_id
-
-    ########################################
-    conn = db.db_factory().connect()
-    curs = conn.cursor()
-
-    conn.autocommit = False
-    ########################################
-
-    hash_pass = util.digest_pass(user_pass1)
     
-    insert_sql_str = "INSERT INTO WM_USER (USER_ID,USER_NAME,USER_PASSWD,EMAIL_ADDRESS) VALUES ({},{},{},{})".format(place,place,place,place)
+    if not re.match(r"^[a-zA-Z0-9\.]+@[a-zA-Z0-9\.]+", email):
+        return Marks().renderRegistrationView(Error(119).errText())
+    
+    # Generate user ID
+    part_id = util.genSessionID()[0:5]
+    user_id = f"{username[0:5]}_{part_id}"
+    
+    # Hash password
+    password_hash = util.digest_pass(password1)
+    
+    # Insert user
+    insert_query = "INSERT INTO WM_USER (USER_ID, USER_NAME, USER_PASSWD, EMAIL_ADDRESS) VALUES ({},{},{},{})".format(
+        PLACE, PLACE, PLACE, PLACE
+    )
     
     try:
-        curs.execute(insert_sql_str, (user_id, user_name, hash_pass, email_address,))
-    except Exception:
-        print ("Insert Error Error Error wm_user")
+        conn = db.db_factory().connect()
+        cursor = conn.cursor()
+        conn.autocommit = False
+        
+        cursor.execute(insert_query, (user_id, username, password_hash, email))
+        conn.commit()
+        
+        logger.info(f"New user registered: {username}")
+        return Marks().renderDefaultView("red", f"Successfully Registered {username}")
+        
+    except Exception as ex:
+        logger.error(f"Registration error: {ex}")
         conn.rollback()
         return Marks().renderRegistrationView(Error(120).errText())
-    else:
-        conn.commit()
     finally:
         conn.close()
 
-    return Marks().renderDefaultView("red", "Successfully Registered " + user_name)
 
 @app.route("/pyWebMarks/default")
 @app.route('/default')
-def logIn():
+def login():
+    """Display login page."""
     return Marks().renderDefaultView()
-    #return renderDefaultView()
+
+
+@app.route("/pyWebMarks/logout")
+@app.route("/logout")
+def logout():
+    """Log out user."""
+    return Marks().renderDefaultView()
+
+
+@app.route("/authenCred", method=['GET', 'POST'])
+@app.route("/pyWebMarks/authenCred", method=['GET', 'POST'])
+def authenticate_credentials():
+    """Authenticate user credentials and create session."""
+    username = util.unWrap(request, 'user_name')
+    password = util.unWrap(request, 'user_pass')
+    old_password = util.unWrap(request, 'old_user_pass')
+    
+    auth_result = authenticate_user(username, password, old_password)
+    
+    if auth_result:
+        user_id, username, _ = auth_result
+        create_session(user_id, username)
+        return render_main_view(user_id)
+    else:
+        return Marks().renderDefaultView(
+            colorStyle="red",
+            displayText=Error(112).errText()
+        )
+
 
 @app.error(404)
-def error404(error):
-    return renderErrorPageView()
+def error_404(error):
+    """Handle 404 errors."""
+    return Marks().renderErrorPageView()
 
 
-
-##################################################################
-###  --  Authenticated routes -- via authenticate decorator -- ###
-##################################################################
+#----------------------------------------------------------#
+# Authenticated Routes
+#----------------------------------------------------------#
 
 @app.route("/pyWebMarks")
 @app.route("/")
 @authenticate
 def index():
-    return renderMainView()
+    """Main application page."""
+    return render_main_view()
+
 
 @app.route("/pyWebMarks/webMarks")
 @app.route("/webMarks")
 @authenticate
-def indexWB():
-    return renderMainView()
+def webmarks():
+    """Webmarks view."""
+    return render_main_view()
+
 
 @app.route("/pyWebMarks/tabView")
 @app.route("/tabView")
 @authenticate
-def indexView():
-    return renderMainView()
+def tab_view():
+    """Tab view."""
+    return render_main_view()
+
 
 @app.post("/pyWebMarks/searchMark")
 @app.post("/searchMark")
 @authenticate
-def searchWebMark():
-    return renderMainView()
+def search_bookmark():
+    """Search bookmarks."""
+    return render_main_view()
+
 
 @app.post("/pyWebMarks/insertMark")
 @app.post("/insertMark")
 @authenticate
-def addWebMark():
-    user_id = request.get_cookie('wmUserID')	
-
-    #utf-8 decoded-presented bottle forms post version
-    title = request.forms.mark_title
-    #utf-8 decoded-presented bottle forms post version
-    url = request.forms.mark_url
-
-    #time.daylight
-
-    if not util.isset(title) or not util.isset(url):
-        return renderMainView(user_id,Error(151))
-
-    #unix_epochs = int(time.time()) - time.timezone
-    unix_epochs = int(time.time())
-
-    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-
-    #delete of mozilla microseconds
-    #dateAdded = unix_epochs * (1000 * 1000)
-    #------------------------------------
-
-    dateAdded = unix_epochs
-
-    date_Added = unix_epochs # for new datetime column
-    (year, mon, day, hour, mins, secs)  = time.localtime(date_Added)[0:6]
-    date_Added = ('{}-{}-{} {}:{}:{}').format(year,mon,day,hour,mins,secs)
-
-
-    conn = db.db_factory().connect()
-    curs = conn.cursor()
-
-    conn.autocommit = False
-
-    curs.execute("select max(BOOKMARK_ID) from WM_BOOKMARK")
-    (tbl1MaxId,) = curs.fetchone()
-    curs.execute("select max(PLACE_ID) from WM_PLACE")
-    (tbl2MaxId,) = curs.fetchone()
-
-    print (tbl1MaxId)
-    print (tbl2MaxId)
-
-    if not tbl1MaxId:
-        tbl1MaxId = 0
-
-    if not tbl2MaxId:
-        tbl2MaxId = 0
-
-    tbl1MaxId += 1
-    tbl2MaxId += 1
-
-    curs.execute("select b.url from WM_BOOKMARK a, WM_PLACE b where a.PLACE_ID = b.PLACE_ID and a.USER_ID = {} and b.URL =  {} ".format(place,place), (user_id, url))
-    dup_check = curs.fetchone()
+def add_bookmark():
+    """Add new bookmark."""
+    user_id = request.get_cookie('wmUserID')
+    title = request.forms.get('mark_title', '').strip()
+    url = request.forms.get('mark_url', '').strip()
     
-    if dup_check:
-        print ("Duplicate")
-        return renderMainView(user_id,Error(150))
+    if not title or not url:
+        return render_main_view(user_id, Error(151))
+    
+    # Generate timestamp
+    unix_timestamp = int(time.time())
+    year, mon, day, hour, mins, secs = time.localtime(unix_timestamp)[0:6]
+    date_string = f'{year}-{mon}-{day} {hour}:{mins}:{secs}'
     
     try:
-        curs.execute("insert into WM_PLACE (PLACE_ID, URL, TITLE) values ({},{},{})".format(place,place,place), (tbl2MaxId, url, title,))
-    except Exception as ex:
-        print (ex)
-        print ("Insert Error wmplace")
-        conn.rollback()
-        return renderMainView(user_id,Error(2001))
-
-    try:
-        curs.execute("insert into WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) values ({},{},{},{},{},{})".format(place
-                                ,place,place,place,place,place), (tbl1MaxId, user_id, tbl2MaxId, title, dateAdded, date_Added,))
-    except Exception as ex:
-        print (ex)
-        print ("Insert Error wmbookmark")
-        conn.rollback()
-        return renderMainView(user_id,Error(2001))
-    else:
+        conn = db.db_factory().connect()
+        cursor = conn.cursor()
+        conn.autocommit = False
+        
+        # Get next IDs
+        bookmark_id, place_id = get_max_ids(cursor)
+        
+        # Check for duplicates
+        if check_duplicate_bookmark(cursor, user_id, url):
+            logger.warning(f"Duplicate bookmark attempt: {url}")
+            return render_main_view(user_id, Error(150))
+        
+        # Insert into WM_PLACE
+        cursor.execute(
+            "INSERT INTO WM_PLACE (PLACE_ID, URL, TITLE) VALUES ({},{},{})".format(PLACE, PLACE, PLACE),
+            (place_id, url, title)
+        )
+        
+        # Insert into WM_BOOKMARK
+        cursor.execute(
+            "INSERT INTO WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) VALUES ({},{},{},{},{},{})".format(
+                PLACE, PLACE, PLACE, PLACE, PLACE, PLACE
+            ),
+            (bookmark_id, user_id, place_id, title, unix_timestamp, date_string)
+        )
+        
         conn.commit()
+        logger.info(f"Bookmark added: {title} by user {user_id}")
+        
+    except Exception as ex:
+        logger.error(f"Error adding bookmark: {ex}")
+        conn.rollback()
+        return render_main_view(user_id, Error(2001))
     finally:
         conn.close()
-      
-    return renderMainView()
+    
+    return render_main_view()
+
 
 @app.post("/pyWebMarks/updateMark")
 @app.post("/updateMark")
 @authenticate
-def updateMark():
-
-    user_id = request.get_cookie('PYwmUserID')	
-
-    #utf-8 decoded-presented bottle forms post version
-    title = request.forms.title_update
-    #utf-8 decoded-presented bottle forms post version
-    url = request.forms.url_update
-
-    tblBookMarkId = request.params['bk_id']
-    print (tblBookMarkId)
- 
-    unix_epochs = int(time.time())
-    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-
-    #dateAdded = unix_epochs * (1000 * 1000)
-
-    conn = db.db_factory().connect()
-    curs = conn.cursor()
-
-    conn.autocommit = False
-
+def update_bookmark():
+    """Update existing bookmark."""
+    user_id = request.get_cookie('wmUserID')
+    title = request.forms.get('title_update', '').strip()
+    url = request.forms.get('url_update', '').strip()
+    bookmark_id = request.params.get('bk_id')
+    
+    if not bookmark_id:
+        return render_main_view(user_id, Error(153))
+    
     try:
-        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place) , (tblBookMarkId,))
-
-    except Exception as ex:
-        print ("error execute update")
-        #raise ex
-        return renderMainView(user_id,Error(153))
-
-    (tblPlaceId,) = curs.fetchone()
-    print ("PlaceID " + str(tblPlaceId))
-
-    try:
-        curs.execute("update WM_BOOKMARK set TITLE = {} where BOOKMARK_ID = {} ".format(place,place), (title, tblBookMarkId,))
-        curs.execute("update WM_PLACE set  URL = {} , TITLE = {} where PLACE_ID = {} ".format(place,place,place), (url, title,tblPlaceId,))
-    except Exception as ex:
-        conn.rollback()
-        #raise ex
-        return renderMainView(user_id,Error(153))
-    else:
+        conn = db.db_factory().connect()
+        cursor = conn.cursor()
+        conn.autocommit = False
+        
+        # Get place_id
+        place_id = get_place_id_for_bookmark(cursor, bookmark_id)
+        if not place_id:
+            return render_main_view(user_id, Error(153))
+        
+        # Update bookmark and place
+        cursor.execute(
+            "UPDATE WM_BOOKMARK SET TITLE = {} WHERE BOOKMARK_ID = {}".format(PLACE, PLACE),
+            (title, bookmark_id)
+        )
+        cursor.execute(
+            "UPDATE WM_PLACE SET URL = {}, TITLE = {} WHERE PLACE_ID = {}".format(PLACE, PLACE, PLACE),
+            (url, title, place_id)
+        )
+        
         conn.commit()
+        logger.info(f"Bookmark updated: {bookmark_id}")
+        
+    except Exception as ex:
+        logger.error(f"Error updating bookmark: {ex}")
+        conn.rollback()
+        return render_main_view(user_id, Error(153))
     finally:
         conn.close()
- 
-    return renderMainView()
+    
+    return render_main_view()
 
 
 @app.post("/pyWebMarks/deleteMark")
 @app.post("/deleteMark")
 @authenticate
-def deleteMark():
+def delete_bookmark():
+    """Delete bookmark."""
     user_id = request.get_cookie('wmUserID')
-    tblBookMarkId = request.params['bk_id']
-    print (tblBookMarkId)
-
-    unix_epochs = int(time.time())
-    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-
-    #dateAdded = unix_epochs * (1000 * 1000)
-
-    conn = db.db_factory().connect()
-    curs = conn.cursor()
-
-    conn.autocommit = False
-
+    bookmark_id = request.params.get('bk_id')
+    
+    if not bookmark_id:
+        return render_main_view(user_id, Error(153))
+    
     try:
-        curs.execute("select PLACE_ID from WM_BOOKMARK where BOOKMARK_ID = {} ".format(place), (tblBookMarkId,))
-
-    except Exception as ex:
-        print ("error execute select in deleteMark")
-        return renderMainView(user_id,Error(153))
-
-    (tblPlaceId,) = curs.fetchone()
-    print ("PlaceID " + str(tblPlaceId))
-
-
-
-    try:
-        curs.execute("delete from  WM_PLACE  where PLACE_ID = {} ".format(place), (tblPlaceId,))
-        curs.execute("delete from  WM_BOOKMARK  where BOOKMARK_ID = {} ".format(place),(tblBookMarkId,))
-
-    except Exception as ex:
-        print ("error execute deletion")
+        conn = db.db_factory().connect()
+        cursor = conn.cursor()
+        conn.autocommit = False
         
-        conn.rollback()
-        #raise ex
-        return renderMainView(user_id,Error(153))
-
-    else:
+        # Get place_id
+        place_id = get_place_id_for_bookmark(cursor, bookmark_id)
+        if not place_id:
+            return render_main_view(user_id, Error(153))
+        
+        # Delete from both tables
+        cursor.execute(
+            "DELETE FROM WM_PLACE WHERE PLACE_ID = {}".format(PLACE),
+            (place_id,)
+        )
+        cursor.execute(
+            "DELETE FROM WM_BOOKMARK WHERE BOOKMARK_ID = {}".format(PLACE),
+            (bookmark_id,)
+        )
+        
         conn.commit()
+        logger.info(f"Bookmark deleted: {bookmark_id}")
+        
+    except Exception as ex:
+        logger.error(f"Error deleting bookmark: {ex}")
+        conn.rollback()
+        return render_main_view(user_id, Error(153))
     finally:
         conn.close()
- 
-    return renderMainView()
+    
+    return render_main_view()
+
 
 @app.post("/pyWebMarks/deltaPass")
 @app.post("/deltaPass")
 @authenticate
-def deltaPass():
+def change_password():
+    """Change user password."""
+    username = util.unWrap(request, 'user_name')
+    password = util.unWrap(request, 'user_pass')
+    old_password = util.unWrap(request, 'old_user_pass')
+    
+    auth_result = authenticate_user(username, password, old_password)
+    
+    if not auth_result:
+        return render_main_view(username, Error(112))
+    
+    user_id, username, _ = auth_result
+    new_password = request.params.get('user_pass')
+    new_password_hash = util.digest_pass(new_password)
     
     try:
-        (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
-    except:
-        return renderMainView(request.params['user_name'],Error(112))
-   
-    new_passwd = request.params['user_pass']
-
-    new_hash_pass = util.digest_pass(new_passwd);
-
-    if not user_id:
-        return renderMainView(user_id,Error(112))
-    else:
-        try:
-            conn = db.db_factory().connect()
-            curs = conn.cursor()
-
-            curs.execute("update WM_USER set USER_PASSWD = {}  where USER_NAME = {} ".format(place,place), (new_hash_pass,user_name));
-        except:
-            return renderMainView(user_id,Error(102))
-        else:
-            conn.commit()
-        finally:
-            conn.close()
-    return renderMainView()
-
-######################################################################
-## end authenticated routes via decorator ############################
-######################################################################
-
-@app.route("/pyWebMarks/logout")
-@app.route("/logout")
-def logOut():
-    return Marks().renderDefaultView()
-
-@app.route("/authenCred", method=['GET', 'POST'])
-@app.route("/pyWebMarks/authenCred", method=['GET', 'POST'])
-def authenCredFunc():
-
-    #(user_id,user_name,user_pass) = pre_auth() or (None,None,None)
-    (user_id,user_name,user_pass) = pre_auth2() or (None,None,None)
-
-    if user_id:
-        authorize(user_id,user_name)
-    else:
-        return Marks().renderDefaultView(colorStyle="red",displayText=Error(112).errText())
+        conn = db.db_factory().connect()
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            "UPDATE WM_USER SET USER_PASSWD = {} WHERE USER_NAME = {}".format(PLACE, PLACE),
+            (new_password_hash, username)
+        )
+        conn.commit()
+        
+        logger.info(f"Password changed for user: {username}")
+        
+    except Exception as ex:
+        logger.error(f"Error changing password: {ex}")
+        return render_main_view(user_id, Error(102))
+    finally:
+        conn.close()
     
-    return renderMainView(user_id)
+    return render_main_view()
 
-def validate_session():
-    wmSID = request.get_cookie('wmSessionID')
-    user_id = request.get_cookie('wmUserID')
-    if not wmSID:
-        return False
 
-def validate_session2(req):
-    return util.validateSessionDB(req) 
+#----------------------------------------------------------#
+# View Rendering
+#----------------------------------------------------------#
 
-def authorize(user_id,user_name):
-    sessionID = util.genSessionID()
-    init_count = 0
-
-    fiveDayExpire = int(time.time()) + 60 * 60 *24 *5
+def render_main_view(user_id: Optional[str] = None, err_obj: Optional[Error] = None):
+    """Render the main application view."""
+    username = request.params.get('user_name')
     
-    path = app_cookie_path    
-    response.set_cookie('wmSessionID',str(sessionID), path=path, expires=fiveDayExpire)
-    response.set_cookie('wmUserID',str(user_id), path=path, expires=fiveDayExpire)
-    response.set_cookie('wmUserName', str(user_name), path=path, expires=fiveDayExpire)
-    response.set_cookie('Counter', str(init_count), path=path, expires=fiveDayExpire)
-    print(str(user_id) , " USERID")
-    
-    util.saveSessionDB(sessionID,user_id)
-
-def renderMainView(user_id=None,errObj=None):
-    user_name=None
-    try:
-        user_name = request.params['user_name']
-    except:
-        pass
-    if not user_id or not user_name:
+    if not user_id or not username:
         user_id = request.get_cookie('wmUserID')
-        user_name = request.get_cookie('wmUserName')
-
-    return exec_page(request,user_id,user_name,errObj)
+        username = request.get_cookie('wmUserName')
     
-def renderErrorPageView():
-          return Marks().renderErrorPageView()
+    return exec_page(request, user_id, username, err_obj)
 
-if __name__ ==  '__main__':
-       #app.run(debug=True, host="0.0.0.0", port='8072', reloader=True, server='waitress', workers=3)
-#        app.run(debug=True, host="0.0.0.0", port='8092', reloader=True, server='waitress', workers=3)
-#        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
-        app.run(daemon=True, debug=False, host="0.0.0.0", port='8086', reloader=True, server='gunicorn', workers=3)
-#        app.run(daemon=True, debug=False, host="0.0.0.0", port='8096', reloader=True, server='gunicorn', workers=3)
-# waitress-serve --port=8080 --url-scheme=http bottleWebMarks:app
+
+#----------------------------------------------------------#
+# Application Entry Point
+#----------------------------------------------------------#
+
+if __name__ == '__main__':
+    app.run(
+        daemon=True,
+        debug=False,
+        host="0.0.0.0",
+        port=8096,
+        reloader=True,
+        server='gunicorn',
+        workers=3
+    )
