@@ -342,8 +342,11 @@ def add_bookmark():
         conn.autocommit = False
         
         # Get next IDs
-        bookmark_id, place_id = get_max_ids(cursor)
-        
+        #--- not necessary and race cond prone
+        #bookmark_id, place_id = get_max_ids(cursor)
+        #       
+
+ 
         # Check for duplicates
         if check_duplicate_bookmark(cursor, user_id, url):
             logger.warning(f"Duplicate bookmark attempt: {url}")
@@ -351,16 +354,18 @@ def add_bookmark():
         
         # Insert into WM_PLACE
         cursor.execute(
-            "INSERT INTO WM_PLACE (PLACE_ID, URL, TITLE) VALUES ({},{},{})".format(PLACE, PLACE, PLACE),
-            (place_id, url, title)
+            "INSERT INTO WM_PLACE (URL, TITLE) VALUES ({},{})".format(PLACE, PLACE),
+            (url, title)
         )
+
+        place_id = cursor.lastrowid
         
         # Insert into WM_BOOKMARK
         cursor.execute(
-            "INSERT INTO WM_BOOKMARK (BOOKMARK_ID, USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) VALUES ({},{},{},{},{},{})".format(
-                PLACE, PLACE, PLACE, PLACE, PLACE, PLACE
+            "INSERT INTO WM_BOOKMARK (USER_ID, PLACE_ID, TITLE, DATEADDED, DATE_ADDED) VALUES ({},{},{},{},{})".format(
+                PLACE, PLACE, PLACE, PLACE, PLACE
             ),
-            (bookmark_id, user_id, place_id, title, unix_timestamp, date_string)
+            (user_id, place_id, title, unix_timestamp, date_string)
         )
         
         conn.commit()
