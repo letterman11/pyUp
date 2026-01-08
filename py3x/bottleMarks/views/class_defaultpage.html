@@ -4,18 +4,25 @@
 <title> WebMarks Application </title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=.5">
-<link rel="stylesheet" media="screen and (min-device-width:800px)" href="/static/css/style.css" type="text/css" />
-<link rel="stylesheet" media="screen and (max-device-width:600px)" href="/static/css/mobile_style.css" type="text/css" />
+<link rel="stylesheet" media="screen and (min-device-width:800px)" href="/static/ex/css/style.css" type="text/css" />
+<link rel="stylesheet" media="screen and (max-device-width:600px)" href="/static/ex/css/mobile_style.css" type="text/css" />
   <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
   <link rel="shortcut icon" href="/static/images/dc.ico">
   <link rel="icon" href="/static/images/dc.ico">
-  <link rel="stylesheet" href="/static/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/static/ex/css/style.css" type="text/css">
+<script language="javascript">
+function d_init()
+{
+    document.getElementsByName("user_name")[0].value = 'boxtop';
+    document.getElementsByName("user_pass")[0].value = 'boxtop';
+}
+</script>
 </head>
-<body>
+<body onload="d_init()">
 <div id="main">
 <div id="header">
-  <a href="/exWebMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webMarksBeta_brownies_yellow.png" /> </a>
-  <a href="/"> <img class="banner_image" alt="dcoda logo" src="/static/images/DCBANNER_CROP2_219_31_2.jpg" /> </a>
+  <a href="/exWebMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/ex/images/webMarksBeta_brownies_yellow.png" /> </a>
+  <a href="/"> <img class="banner_image" alt="dcoda logo" src="/static/ex/images/DCBANNER_CROP2_219_31_2.jpg" /> </a>
  </div>
  <div class="landing">
      <form name="credentials" class="credentials" method="POST" action="/exWebMarks/authenCred"> 
