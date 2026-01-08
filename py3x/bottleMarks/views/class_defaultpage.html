@@ -10,8 +10,15 @@
   <link rel="shortcut icon" href="/static/images/dc.ico">
   <link rel="icon" href="/static/images/dc.ico">
   <link rel="stylesheet" href="/static/css/style.css" type="text/css">
+<script language="javascript">
+function d_init()
+{
+    document.getElementsByName("user_name")[0].value = 'boxtop';
+    document.getElementsByName("user_pass")[0].value = 'boxtop';
+}
+</script>
 </head>
-<body>
+<body onload="d_init()">
 <div id="main">
 <div id="header">
   <a href="/pyWebMarks/webMarks"> <img class="banner_image_left" alt="webmarks logo" src="/static/images/webmarks_yellow.png" /> </a>
