@@ -147,8 +147,8 @@ def saveSessionDB(sessionID,userID):
         conn.close()
 
 def convertTime(dateAdded):
-    (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded/(1000 * 1000))[0:6]
-    curr_date_tuple  = time.localtime( dateAdded/(1000 * 1000))
+    (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded)[0:6]
+    curr_date_tuple  = time.localtime( dateAdded)
     day_of_week = time.strftime("%a",curr_date_tuple)
     dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
     #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
@@ -172,7 +172,7 @@ def convertDateEpoch(humanDate):
         day = res.group(3)
 
     dateAdded = datetime.datetime(int(year),int(month),int(day),0,0).timestamp()
-    dateAdded = int(dateAdded) * (1000 * 1000);
+    dateAdded = int(dateAdded);
 
     return dateAdded
 

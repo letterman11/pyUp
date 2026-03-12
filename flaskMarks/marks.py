@@ -96,8 +96,8 @@ class Marks(object):
         return tbl
 
     def convertTime(self, dateAdded):
-        (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded/(1000 * 1000))[0:6]
-        curr_date_tuple  = time.localtime( dateAdded/(1000 * 1000))
+        (year, mon, day, hour, mins, secs)  = time.localtime( dateAdded)[0:6]
+        curr_date_tuple  = time.localtime( dateAdded)
         day_of_week = time.strftime("%a",curr_date_tuple)
         dateAdded = ('{}-{}-{} {}:{}:{}').format(mon,day,year,hour,mins,secs)
         #dateAdded = ('{}-{}-{} {}:{}:{} {}').format(mon,day,year,hour,mins,secs, day_of_week)
@@ -109,6 +109,5 @@ class Marks(object):
         month = res.group(2) 
         day = res.group(3)
         dateAdded = datetime.datetime(year,month,day,0,0).strftime('%s')
-        dateAdded = dateAdded * (1000 * 1000);
         return dateAdded
         #datetime.datetime(2012,4,1,0,0).timestamp()

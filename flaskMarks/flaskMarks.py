@@ -5,12 +5,11 @@ from datetime import datetime
 from marks import Marks
 from functools import wraps
 from PJJExecPageSQL import exec_page
-#import lib.util as util 
 import lib.util_db as util
 import time
 import connection_factory as db
 from globals import *
-from error import *
+from error import Error
 import re
 import uuid
 
@@ -256,8 +255,7 @@ def updateMark():
     print (tblBookMarkId)
  
     unix_epochs = int(time.time())
-    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+    dateAdded = unix_epochs 
 
     conn = db.db_factory().connect()
     curs = conn.cursor()
@@ -297,8 +295,7 @@ def deleteMark():
     print (tblBookMarkId)
 
     unix_epochs = int(time.time())
-    #use antique mozilla time format (1000 * 1000) unix epoch seconds => microseconds 
-    dateAdded = unix_epochs * (1000 * 1000)
+    dateAdded = unix_epochs 
     conn = db.db_factory().connect()
     curs = conn.cursor()
 
